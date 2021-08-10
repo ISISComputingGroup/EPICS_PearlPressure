@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tests.pearlpc.PEARLPCTests-20210726162431" tests="1" file="tests/pearlpc.py" time="0.544" timestamp="2021-07-26T16:24:45" failures="0" errors="0" skipped="0">
+	<testcase classname="tests.pearlpc.PEARLPCTests" name="test_WHEN_pressure_set_THEN_pressure_readback_correctly" time="0.544" timestamp="2021-07-26T16:24:45" file="tests\pearlpc.py" line="38"/>
+</testsuite>

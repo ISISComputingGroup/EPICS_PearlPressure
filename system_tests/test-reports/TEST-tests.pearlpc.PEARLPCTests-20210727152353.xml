@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tests.pearlpc.PEARLPCTests-20210727152353" tests="2" file="tests/pearlpc.py" time="40.192" timestamp="2021-07-27T15:24:46" failures="2" errors="0" skipped="0">
+	<testcase classname="tests.pearlpc.PEARLPCTests" name="test_WHEN_max_pressure_set_THEN_pressure_readback_correclty" time="20.136" timestamp="2021-07-27T15:24:26" file="tests\pearlpc.py" line="39">
+		<failure type="AssertionError" message="Expected PV, 'TE:NDLT1544:PEARLPC_01:PRESSURE' to have value '1111' (type: 'int').
+Final PV value was '0.0' (type: 'float')"><![CDATA[Traceback (most recent call last):
+  File "C:\Instrument\Apps\EPICS\support\PearlPressureContainer\master\system_tests\tests\pearlpc.py", line 40, in test_WHEN_max_pressure_set_THEN_pressure_readback_correclty
+    self.ca.assert_setting_setpoint_sets_readback(1111, "PRESSURE")
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\channel_access.py", line 554, in assert_setting_setpoint_sets_readback
+    self.assert_that_pv_is(readback_pv, expected_value, timeout=timeout)
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\channel_access.py", line 269, in assert_that_pv_is
+    return self.assert_that_pv_value_causes_func_to_return_true(
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\channel_access.py", line 248, in assert_that_pv_value_causes_func_to_return_true
+    raise AssertionError(err)
+AssertionError: Expected PV, 'TE:NDLT1544:PEARLPC_01:PRESSURE' to have value '1111' (type: 'int').
+Final PV value was '0.0' (type: 'float')
+]]></failure>
+	</testcase>
+	<testcase classname="tests.pearlpc.PEARLPCTests" name="test_WHEN_pressure_set_THEN_pressure_readback_correctly" time="20.056" timestamp="2021-07-27T15:24:46" file="tests\pearlpc.py" line="36">
+		<failure type="AssertionError" message="Expected PV, 'TE:NDLT1544:PEARLPC_01:PRESSURE' to have value '1000' (type: 'int').
+Final PV value was '0.0' (type: 'float')"><![CDATA[Traceback (most recent call last):
+  File "C:\Instrument\Apps\EPICS\support\PearlPressureContainer\master\system_tests\tests\pearlpc.py", line 37, in test_WHEN_pressure_set_THEN_pressure_readback_correctly
+    self.ca.assert_setting_setpoint_sets_readback(1000, "PRESSURE")
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\channel_access.py", line 554, in assert_setting_setpoint_sets_readback
+    self.assert_that_pv_is(readback_pv, expected_value, timeout=timeout)
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\channel_access.py", line 269, in assert_that_pv_is
+    return self.assert_that_pv_value_causes_func_to_return_true(
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\channel_access.py", line 248, in assert_that_pv_value_causes_func_to_return_true
+    raise AssertionError(err)
+AssertionError: Expected PV, 'TE:NDLT1544:PEARLPC_01:PRESSURE' to have value '1000' (type: 'int').
+Final PV value was '0.0' (type: 'float')
+]]></failure>
+	</testcase>
+</testsuite>

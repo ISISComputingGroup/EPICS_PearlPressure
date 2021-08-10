@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ReportFailLoadTestsuiteTestCase-20210804115226" tests="1" file=".py" time="0.005" timestamp="2021-08-04T11:52:37" failures="1" errors="0" skipped="0">
+	<testcase classname="ReportFailLoadTestsuiteTestCase" name="pearlpc_module_failed_to_load" time="0.005" timestamp="2021-08-04T11:52:37" file="..\..\..\IocTestFramework\master\run_tests.py" line="250">
+		<!--
+        Function to be used as basis of "runTest" unittest.TestCase function.
+        -->
+		<failure type="AssertionError" message="Error while attempting to load test suite: Traceback (most recent call last):
+  File &quot;C:\Instrument\Apps\EPICS\support\IocTestFramework\master\run_tests.py&quot;, line 285, in run_tests
+    with modified_environment(**settings), device_launchers:
+  File &quot;C:\Instrument\Apps\Python3\lib\contextlib.py&quot;, line 113, in __enter__
+    return next(self.gen)
+  File &quot;C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\device_launcher.py&quot;, line 31, in device_collection_launcher
+    stack.enter_context(device)
+  File &quot;C:\Instrument\Apps\Python3\lib\contextlib.py&quot;, line 425, in enter_context
+    result = _cm_type.__enter__(cm)
+  File &quot;C:\Instrument\Apps\Python3\lib\contextlib.py&quot;, line 113, in __enter__
+    return next(self.gen)
+  File &quot;C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\device_launcher.py&quot;, line 16, in device_launcher
+    with lewis, ioc:
+  File &quot;C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\ioc_launcher.py&quot;, line 208, in __enter__
+    self.open()
+  File &quot;C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\ioc_launcher.py&quot;, line 179, in open
+    self._process = subprocess.Popen(&quot; &quot;.join(self.command_line), creationflags=subprocess.CREATE_NEW_CONSOLE,
+  File &quot;C:\Instrument\Apps\Python3\lib\subprocess.py&quot;, line 854, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File &quot;C:\Instrument\Apps\Python3\lib\subprocess.py&quot;, line 1307, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+"><![CDATA[Traceback (most recent call last):
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\run_tests.py", line 285, in run_tests
+    with modified_environment(**settings), device_launchers:
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\run_tests.py", line 254, in fail_with_msg
+    self.fail(self.msg)
+AssertionError: Error while attempting to load test suite: Traceback (most recent call last):
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\run_tests.py", line 285, in run_tests
+    with modified_environment(**settings), device_launchers:
+  File "C:\Instrument\Apps\Python3\lib\contextlib.py", line 113, in __enter__
+    return next(self.gen)
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\device_launcher.py", line 31, in device_collection_launcher
+    stack.enter_context(device)
+  File "C:\Instrument\Apps\Python3\lib\contextlib.py", line 425, in enter_context
+    result = _cm_type.__enter__(cm)
+  File "C:\Instrument\Apps\Python3\lib\contextlib.py", line 113, in __enter__
+    return next(self.gen)
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\device_launcher.py", line 16, in device_launcher
+    with lewis, ioc:
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\ioc_launcher.py", line 208, in __enter__
+    self.open()
+  File "C:\Instrument\Apps\EPICS\support\IocTestFramework\master\utils\ioc_launcher.py", line 179, in open
+    self._process = subprocess.Popen(" ".join(self.command_line), creationflags=subprocess.CREATE_NEW_CONSOLE,
+  File "C:\Instrument\Apps\Python3\lib\subprocess.py", line 854, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Instrument\Apps\Python3\lib\subprocess.py", line 1307, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+
+]]></failure>
+	</testcase>
+</testsuite>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tests.pearlpc.PEARLPCTests-20210727153648" tests="2" file="tests/pearlpc.py" time="1.514" timestamp="2021-07-27T15:37:02" failures="0" errors="0" skipped="0">
+	<testcase classname="tests.pearlpc.PEARLPCTests" name="test_WHEN_max_pressure_set_THEN_pressure_readback_correclty" time="0.513" timestamp="2021-07-27T15:37:01" file="tests\pearlpc.py" line="39"/>
+	<testcase classname="tests.pearlpc.PEARLPCTests" name="test_WHEN_pressure_set_THEN_pressure_readback_correctly" time="1.001" timestamp="2021-07-27T15:37:02" file="tests\pearlpc.py" line="36"/>
+</testsuite>

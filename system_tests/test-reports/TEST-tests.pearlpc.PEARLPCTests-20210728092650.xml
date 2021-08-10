@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tests.pearlpc.PEARLPCTests-20210728092650" tests="2" file="tests/pearlpc.py" time="0.724" timestamp="2021-07-28T09:27:15" failures="0" errors="1" skipped="0">
+	<testcase classname="tests.pearlpc.PEARLPCTests" name="test_WHEN_pressure_set_THEN_pressure_readback_correctly" time="0.721" timestamp="2021-07-28T09:27:15" file="tests\pearlpc.py" line="36"/>
+	<testcase classname="tests.pearlpc.PEARLPCTests" name="test_WHEN_max_pressure_set_THEN_max_pressure_set_correctly" time="0.003" timestamp="2021-07-28T09:27:15" file="tests\pearlpc.py" line="39">
+		<error type="AttributeError" message="'ChannelAccess' object has no attribute 'set_pvPvalue'"><![CDATA[Traceback (most recent call last):
+  File "C:\Instrument\Apps\EPICS\support\PearlPressureContainer\master\system_tests\tests\pearlpc.py", line 42, in test_WHEN_max_pressure_set_THEN_max_pressure_set_correctly
+    self.ca.set_pvPvalue("PRESSURE:SP", pressure_mx)
+AttributeError: 'ChannelAccess' object has no attribute 'set_pvPvalue'
+]]></error>
+	</testcase>
+</testsuite>
