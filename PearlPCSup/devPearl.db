@@ -19,72 +19,12 @@ record(calc, "$(P)$(IOC_NAME)BUFFER2"){
     field(INPL, "$(P)$(IOC_NAME)STATUS")
 }
 
-record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
-    field(DESC, "Set Pressure")
-    field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_ra $(PORT)")
-}
-
-record(ai, "$(P)$(IOC_NAME)PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER1.K CP MS")
-    field(DESC, "Get Pressure")
-    field(DTYP, "Soft Channel")
-}
-
 record(ai, "$(P)$(IOC_NAME)STATUS"){
     field(DESC, "Get Pressure")
     field(DTYP, "stream")
     field(INP, "@PearlPC.proto get_st($(P)$(IOC_NAME)BUFFER1, $(P)$(IOC_NAME)BUFFER2) $(PORT)")
     field(SCAN, "1 second")
     field(FLNK, "$(P)$(IOC_NAME)BUFFER1")
-}
-
-record(ao, "$(P)$(IOC_NAME)MX_PRESSURE:SP"){
-    field(DESC, "Set Max Pressure Value")
-    field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_mx $(PORT)")
-}
-
-record(ai, "$(P)$(IOC_NAME)MX_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER2.C CP MS")
-    field(DESC, "Get Max Pressure")
-    field(DTYP, "Soft Channel")
-}
-
-record(ao, "$(P)$(IOC_NAME)MN_PRESSURE:SP"){
-    field(DESC, "Set Min Pressure Value")
-    field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_mn $(PORT)")
-}
-
-record(ai, "$(P)$(IOC_NAME)MN_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER2.A CP MS")
-    field(DESC, "Get Min Pressure")
-    field(DTYP, "Soft Channel")
-}
-
-record(ao, "$(P)$(IOC_NAME)SP_PRESSURE:SP"){
-    field(DESC, "Set Setpoint Pressure Value")
-    field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_sp $(PORT)")
-}
-
-record(ai, "$(P)$(IOC_NAME)SP_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER2.B CP MS")
-    field(DESC, "Get Setpoint Pressure")
-    field(DTYP, "Soft Channel")
-}
-
-record(ao, "$(P)$(IOC_NAME)SF_PRESSURE:SP"){
-    field(DESC, "Set Seal Fail Pressure Value")
-    field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_sf $(PORT)")
-}
-
-record(ai, "$(P)$(IOC_NAME)SF_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER1.I CP MS")
-    field(DESC, "Get Seal Fail Pressure")
-    field(DTYP, "Soft Channel")
 }
 
 record(ao, "$(P)$(IOC_NAME)SI_PRESSURE:SP"){
@@ -116,27 +56,15 @@ record(stringin, "$(P)$(IOC_NAME)ID_PRESSURE") {
     field(SCAN, "1 second")
 }
 
-record(ao, "$(P)$(IOC_NAME)SL_PRESSURE:SP"){
-    field(DESC, "Set toggle for loop pressure mode")
+record(ao, "$(P)$(IOC_NAME)EM_PRESSURE:SP") {
+    field(DESC, "EM stop circuit status")
     field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_sloop $(PORT)")
+    field(OUT, "@PearlPC.proto set_EM $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)SL_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER1.H CP MS")
-    field(DESC, "Get loop pressure mode")
-    field(DTYP, "Soft Channel")
-}
-
-record(ao, "$(P)$(IOC_NAME)BY_PRESSURE:SP") {
-    field(DESC, "Set Busy bit if busy or not")
-    field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_by $(PORT)")
-}
-
-record(ai, "$(P)$(IOC_NAME)BY_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER1.E CP MS")
-    field(DESC, "Get Busy bit if busy or not")
+record(ai, "$(P)$(IOC_NAME)EM_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER1.A CP MS")
+    field(DESC,  "EM stop circuit status")
     field(DTYP, "Soft Channel")
 }
 
@@ -176,27 +104,27 @@ record(ai, "$(P)$(IOC_NAME)St_PRESSURE"){
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)EM_PRESSURE:SP") {
-    field(DESC, "EM stop circuit status")
+record(ao, "$(P)$(IOC_NAME)BY_PRESSURE:SP") {
+    field(DESC, "Set Busy bit if busy or not")
     field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_EM $(PORT)")
+    field(OUT, "@PearlPC.proto set_by $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)EM_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER1.A CP MS")
-    field(DESC,  "EM stop circuit status")
+record(ai, "$(P)$(IOC_NAME)BY_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER1.E CP MS")
+    field(DESC, "Get Busy bit if busy or not")
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)ER_PRESSURE:SP") {
-    field(DESC, "Last Error Code returned")
+record(ao, "$(P)$(IOC_NAME)GO_PRESSURE:SP") {
+    field(DESC, "Set system initiated by host status")
     field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_ER $(PORT)")
+    field(OUT, "@PearlPC.proto set_GO $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)ER_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER1.J CP MS")
-    field(DESC,  "Last Error Code returned")
+record(ai, "$(P)$(IOC_NAME)GO_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER1.F CP MS")
+    field(DESC, "Get system initiated by host status")
     field(DTYP, "Soft Channel")
 }
 
@@ -212,14 +140,86 @@ record(ai, "$(P)$(IOC_NAME)AM_PRESSURE"){
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)GO_PRESSURE:SP") {
-    field(DESC, "Set system initiated by host status")
+record(ao, "$(P)$(IOC_NAME)SL_PRESSURE:SP"){
+    field(DESC, "Set toggle for loop pressure mode")
     field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_GO $(PORT)")
+    field(OUT, "@PearlPC.proto set_sloop $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)GO_PRESSURE"){
-    field(INP, "$(P)$(IOC_NAME)BUFFER1.F CP MS")
-    field(DESC, "Get system initiated by host status")
+record(ai, "$(P)$(IOC_NAME)SL_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER1.H CP MS")
+    field(DESC, "Get loop pressure mode")
+    field(DTYP, "Soft Channel")
+}
+
+record(ao, "$(P)$(IOC_NAME)SF_PRESSURE:SP"){
+    field(DESC, "Set Seal Fail Pressure Value")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto set_sf $(PORT)")
+}
+
+record(ai, "$(P)$(IOC_NAME)SF_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER1.I CP MS")
+    field(DESC, "Get Seal Fail Pressure")
+    field(DTYP, "Soft Channel")
+}
+
+record(ao, "$(P)$(IOC_NAME)ER_PRESSURE:SP") {
+    field(DESC, "Last Error Code returned")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto set_ER $(PORT)")
+}
+
+record(ai, "$(P)$(IOC_NAME)ER_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER1.J CP MS")
+    field(DESC,  "Last Error Code returned")
+    field(DTYP, "Soft Channel")
+}
+
+record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
+    field(DESC, "Set Pressure")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto set_ra $(PORT)")
+}
+
+record(ai, "$(P)$(IOC_NAME)PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER1.K CP MS")
+    field(DESC, "Get Pressure")
+    field(DTYP, "Soft Channel")
+}
+
+record(ao, "$(P)$(IOC_NAME)MN_PRESSURE:SP"){
+    field(DESC, "Set Min Pressure Value")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto set_mn $(PORT)")
+}
+
+record(ai, "$(P)$(IOC_NAME)MN_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER2.A CP MS")
+    field(DESC, "Get Min Pressure")
+    field(DTYP, "Soft Channel")
+}
+
+record(ao, "$(P)$(IOC_NAME)SP_PRESSURE:SP"){
+    field(DESC, "Set Setpoint Pressure Value")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto set_sp $(PORT)")
+}
+
+record(ai, "$(P)$(IOC_NAME)SP_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER2.B CP MS")
+    field(DESC, "Get Setpoint Pressure")
+    field(DTYP, "Soft Channel")
+}
+
+record(ao, "$(P)$(IOC_NAME)MX_PRESSURE:SP"){
+    field(DESC, "Set Max Pressure Value")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto set_mx $(PORT)")
+}
+
+record(ai, "$(P)$(IOC_NAME)MX_PRESSURE"){
+    field(INP, "$(P)$(IOC_NAME)BUFFER2.C CP MS")
+    field(DESC, "Get Max Pressure")
     field(DTYP, "Soft Channel")
 }
