@@ -56,13 +56,13 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_em_stop_bit_set_THEN_em_stop_bit_value_read_back_correctly(self):
         self.ca.assert_that_pv_is("BUFFER1.A", self.default_initial_value)
         self.ca.set_pv_value("EM_PRESSURE:SP", self.set_loop_status)
-        self.ca.assert_that_pv_is("EM_PRESSURE:SP", self.set_loop_status)
+        self.ca.assert_that_pv_is("EM_PRESSURE:SP.RVAL", self.set_loop_status)
         self.ca.assert_that_pv_is("BUFFER1.A", self.set_loop_status)
     
     def test_WHEN_run_bit_set_THEN_run_bit_read_back_correctly(self):
         self.ca.assert_that_pv_is("BUFFER1.B", self.default_initial_value)
         self.ca.set_pv_value("RU_PRESSURE:SP", self.set_loop_status)
-        self.ca.assert_that_pv_is("RU_PRESSURE:SP", self.set_loop_status)
+        self.ca.assert_that_pv_is("RU_PRESSURE:SP.RVAL", self.set_loop_status)
         self.ca.assert_that_pv_is("BUFFER1.B", self.set_loop_status)
 
     def test_WHEN_reset_value_set_THEN_reset_value_read_back_correctly(self):
@@ -74,31 +74,31 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_stop_bit_set_THEN_stop_bit_value_read_back_correctly(self):
         self.ca.assert_that_pv_is("BUFFER1.D", self.default_initial_value)
         self.ca.set_pv_value("St_PRESSURE:SP", self.set_loop_status)
-        self.ca.assert_that_pv_is("St_PRESSURE:SP", self.set_loop_status)
+        self.ca.assert_that_pv_is("St_PRESSURE:SP.RVAL", self.set_loop_status)
         self.ca.assert_that_pv_is("BUFFER1.D", self.set_loop_status)
 
     def test_WHEN_busy_bit_set_THEN_busy_bit_read_back_correctly(self):
         self.ca.assert_that_pv_is("BUFFER1.E", self.default_initial_value)
         self.ca.set_pv_value("BY_PRESSURE:SP", self.set_loop_status)
-        self.ca.assert_that_pv_is("BY_PRESSURE:SP", self.set_loop_status)
+        self.ca.assert_that_pv_is("BY_PRESSURE:SP.RVAL", self.set_loop_status)
         self.ca.assert_that_pv_is("BUFFER1.E", self.set_loop_status)
 
     def test_WHEN_GO_status_set_THEN_GO_status_read_back_correctly(self):
         self.ca.assert_that_pv_is("BUFFER1.F", self.default_initial_value)
         self.ca.set_pv_value("GO_PRESSURE:SP", self.set_loop_status)
-        self.ca.assert_that_pv_is("GO_PRESSURE:SP", self.set_loop_status)
+        self.ca.assert_that_pv_is("GO_PRESSURE:SP.RVAL", self.set_loop_status)
         self.ca.assert_that_pv_is("BUFFER1.F", self.set_loop_status)
 
     def test_WHEN_AM_mode_set_THEN_AM_mode_read_back_correctly(self):
         self.ca.assert_that_pv_is("BUFFER1.G", self.default_initial_value)
         self.ca.set_pv_value("AM_PRESSURE:SP", self.set_loop_status)
-        self.ca.assert_that_pv_is("AM_PRESSURE:SP", self.set_loop_status)
+        self.ca.assert_that_pv_is("AM_PRESSURE:SP.RVAL", self.set_loop_status)
         self.ca.assert_that_pv_is("BUFFER1.G", self.set_loop_status)
 
     def test_WHEN_loop_mode_set_THEN_loop_mode_read_back_correctly(self):
         self.ca.assert_that_pv_is("BUFFER1.H", self.default_initial_value)
         self.ca.set_pv_value("SL_PRESSURE:SP", self.set_loop_status)
-        self.ca.assert_that_pv_is("SL_PRESSURE:SP", self.set_loop_status)
+        self.ca.assert_that_pv_is("SL_PRESSURE:SP.RVAL", self.set_loop_status)
         self.ca.assert_that_pv_is("BUFFER1.H", self.set_loop_status)
 
     def test_WHEN_Seal_Fail_pressure_set_THEN_Seal_Fail_pressure_read_back_correctly(self):

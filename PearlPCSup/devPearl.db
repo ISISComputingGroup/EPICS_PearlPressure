@@ -56,25 +56,25 @@ record(stringin, "$(P)$(IOC_NAME)ID_PRESSURE") {
     field(SCAN, "1 second")
 }
 
-record(ao, "$(P)$(IOC_NAME)EM_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)EM_PRESSURE:SP") {
     field(DESC, "EM stop circuit status")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_EM $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)EM_PRESSURE"){
+record(bi, "$(P)$(IOC_NAME)EM_PRESSURE"){
     field(INP, "$(P)$(IOC_NAME)BUFFER1.A CP MS")
     field(DESC,  "EM stop circuit status")
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)RU_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)RU_PRESSURE:SP") {
     field(DESC, "Set Mechanically active status")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_ru $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)RU_PRESSURE"){
+record(bi, "$(P)$(IOC_NAME)RU_PRESSURE"){
     field(INP, "$(P)$(IOC_NAME)BUFFER1.B CP MS")
     field(DESC, "Get Mechanically active status")
     field(DTYP, "Soft Channel")
@@ -92,61 +92,61 @@ record(ai, "$(P)$(IOC_NAME)RE_PRESSURE"){
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)St_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)St_PRESSURE:SP") {
     field(DESC, "Stop bit after each move/manually")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_St $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)St_PRESSURE"){
+record(bi, "$(P)$(IOC_NAME)St_PRESSURE"){
     field(INP, "$(P)$(IOC_NAME)BUFFER1.D CP MS")
     field(DESC, "Stop bit after each move/manually")
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)BY_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)BY_PRESSURE:SP") {
     field(DESC, "Set Busy bit if busy or not")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_by $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)BY_PRESSURE"){
+record(bi, "$(P)$(IOC_NAME)BY_PRESSURE"){
     field(INP, "$(P)$(IOC_NAME)BUFFER1.E CP MS")
     field(DESC, "Get Busy bit if busy or not")
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)GO_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)GO_PRESSURE:SP") {
     field(DESC, "Set system initiated by host status")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_GO $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)GO_PRESSURE"){
+record(bi, "$(P)$(IOC_NAME)GO_PRESSURE"){
     field(INP, "$(P)$(IOC_NAME)BUFFER1.F CP MS")
     field(DESC, "Get system initiated by host status")
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)AM_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)AM_PRESSURE:SP") {
     field(DESC, "Sets auto/manual switch position")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_AM $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)AM_PRESSURE"){
+record(bi, "$(P)$(IOC_NAME)AM_PRESSURE"){
     field(INP, "$(P)$(IOC_NAME)BUFFER1.G CP MS")
     field(DESC, "Gets auto/manual switch position")
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)$(IOC_NAME)SL_PRESSURE:SP"){
+record(bo, "$(P)$(IOC_NAME)SL_PRESSURE:SP"){
     field(DESC, "Set toggle for loop pressure mode")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_sloop $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)SL_PRESSURE"){
+record(bi, "$(P)$(IOC_NAME)SL_PRESSURE"){
     field(INP, "$(P)$(IOC_NAME)BUFFER1.H CP MS")
     field(DESC, "Get loop pressure mode")
     field(DTYP, "Soft Channel")

@@ -14,7 +14,7 @@ class PearlPCStreamInterface(StreamInterface):
         CmdBuilder("set_si").escape("si").arg("[0-9]{4}").eos().build(),
         CmdBuilder("set_sd").escape("sd").arg("[0-9]{4}").eos().build(),
         # Device Set commands
-        CmdBuilder("set_em_stop_status").escape("Em").arg("[0-1]{1}").eos().build(),
+        CmdBuilder("set_em_stop_status").escape("Em").arg("[0-1]").eos().build(),
         CmdBuilder("set_ru").escape("Ru").arg("[0-1]{1}").eos().build(),
         CmdBuilder("set_re").escape("Re").arg("[0-4]{1}").eos().build(),
         CmdBuilder("set_stop_bit").escape("St").arg("[0-1]{1}").eos().build(),
