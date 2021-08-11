@@ -242,9 +242,9 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.go_status = go_status
         self.add_to_dict(value_id="GO", unvalidated_value=self._device.go_status)
 
-    def handle_error(self, request, error):
+    def handle_error(self, request:object, error:object):
         """
         Return any errors which have occurred when sending requests to device.
-        @rtype: object
+        @return: (str) Formatted error message
         """
-        print("An error occurred at request " + repr(request) + ": " + repr(error))
+        print(f"An error occurred at request {repr(request)} : {repr(error)}")
