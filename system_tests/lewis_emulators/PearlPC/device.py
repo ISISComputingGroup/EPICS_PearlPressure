@@ -11,8 +11,9 @@ class SimulatedCCD100(StateMachineDevice):
         self.secondary_id_prefix = "1111"
         self.em_stop_status = 0  # Bool [0-1]
         self.run_bit = 0  # Bool [0-1]
-        self.reset_value = 0
-        self.stop_bit = 0  # Bool [0-1]\
+        self.reset_value = 0 # Bool [0-1]
+        self.piston_reset_phase = 0
+        self.stop_bit = 0  # Bool [0-1]
         self.busy_bit = 0  # Bool [0-1]
         self.go_status = 0
         self.am_mode = 0

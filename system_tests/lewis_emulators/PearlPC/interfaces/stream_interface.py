@@ -27,7 +27,8 @@ class PearlPCStreamInterface(StreamInterface):
         CmdBuilder("set_ra").escape("ra").arg("[0-9]{4}").eos().build(),
         CmdBuilder("set_mn").escape("mn").arg("[0-9]{4}").eos().build(),
         CmdBuilder("set_sp").escape("sp").arg("[0-9]{4}").eos().build(),
-        CmdBuilder("set_mx").escape("mx").arg("[0-9]{4}").eos().build() 
+        CmdBuilder("set_mx").escape("mx").arg("[0-9]{4}").eos().build(),
+        CmdBuilder("set_reset").escape("reset").arg("[0-1]{1}").eos().build(), 
     }
 
     in_terminator = "\r\n"
@@ -117,14 +118,26 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.run_bit = run_bit
         self.add_to_dict(value_id="ru", unvalidated_value=self._device.run_bit)
 
-    def set_re(self, reset_value: int):
+    def set_re(self, piston_reset_phase: int):
         """
         Set the reset value to represent the 4 stages of resetting the pistons
         @param reset_value: (int) value representing each stage during piston reset - range [0-4]
         """
+        print(f"Received reset phase value: {piston_reset_phase}")
+        self._device.reset_value = piston_reset_phase
+        self.add_to_dict(value_id="re", unvalidated_value=self._device.piston_reset_phase)
+
+    def set_reset(self, reset_value: int):
+        """
+        Set the reset bit to fully open pistons
+        1: Pistons open
+        0: Pistons closed
+        @param reset_value: (int) value representing if pistons are open or closed range [0-1]
+        """
         print(f"Received reset value: {reset_value}")
         self._device.reset_value = reset_value
-        self.add_to_dict(value_id="re", unvalidated_value=self._device.reset_value)
+        return f"{reset_value}"
+        # self.add_to_dict(value_id="re", unvalidated_value=self._device.reset_value)
     
     def set_stop_bit(self, stop_bit: int):
         """

@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="tests.pearlpc.PEARLPCTests-20210726153138" tests="1" file="tests/pearlpc.py" time="0.001" timestamp="2021-07-26T15:36:12" failures="0" errors="0" skipped="0">
-	<testcase classname="tests.pearlpc.PEARLPCTests" name="test_SOMETHING" time="0.001" timestamp="2021-07-26T15:36:12" file="tests\pearlpc.py" line="34"/>
-</testsuite>

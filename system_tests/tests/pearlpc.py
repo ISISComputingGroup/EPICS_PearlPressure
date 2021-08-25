@@ -138,6 +138,13 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("BUFFER2.C", self.pressure_value)
         # self.ca.assert_setting_setpoint_sets_readback(self.pressure_value, "MX_PRESSURE")
 
+    def test_WHEN_reset_bit_value_set_THEN_reset_bit_value_read_back_correctly(self):
+        # self.ca.assert_that_pv_is("BUFFER1.C", self.default_initial_value)
+        self.ca.set_pv_value("RESET_PRESSURE:SP", self.set_loop_status)
+        self.ca.assert_that_pv_is("RESET_PRESSURE:SP", self.set_loop_status)
+        # self.ca.assert_that_pv_is("BUFFER1.C", self.set_loop_status)
+
+
     # def test_WHEN_buffer_values_set_THEN_buffer_read_back_correctly_updated(self):
     #     self.ca.set_pv_value("GO_PRESSURE:SP", self.set_loop_status)
     #     self.ca.assert_that_pv_is

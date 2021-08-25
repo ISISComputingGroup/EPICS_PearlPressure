@@ -77,3 +77,12 @@ get_id {
 	out "id";
 	in "%/[0-9]{4} [0-9]{4}/";
 }
+
+set_reset_status {
+	out "reset%#01d"
+}
+
+get_piston_status {
+	out "reset";
+	in "%/[0-1]";
+}
