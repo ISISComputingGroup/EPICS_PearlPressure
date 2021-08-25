@@ -18,3 +18,4 @@ runIOC.sh
 relPaths.sh
 .project
 /data
+.idea/
