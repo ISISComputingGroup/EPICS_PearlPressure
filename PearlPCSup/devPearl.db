@@ -34,21 +34,11 @@ record(ao, "$(P)$(IOC_NAME)SI_PRESSURE:SP"){
     field(OUT, "@PearlPC.proto set_si $(PORT)")
 }
 
-# record(ai, "$(P)$(IOC_NAME)SI_PRESSURE"){
-#     field(DESC, "Get initial ID prefix")
-#     field(DTYP, "Soft Channel")
-# }
-
 record(ao, "$(P)$(IOC_NAME)SD_PRESSURE:SP"){
     field(DESC, "Set secondary ID prefix")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_sd $(PORT)")
 }
-
-# record(ai, "$(P)$(IOC_NAME)SD_PRESSURE"){
-#     field(DESC, "Get secondary ID prefix")
-#     field(DTYP, "Soft Channel")
-# }
 
 record(stringin, "$(P)$(IOC_NAME)ID_PRESSURE") {
     field(DESC, "Get ID prefix")
@@ -171,6 +161,23 @@ record(ai, "$(P)$(IOC_NAME)SF_PRESSURE"){
     field(DESC, "Get Seal Fail Pressure")
     field(INP, "$(P)$(IOC_NAME)BUFFER1.I CP MS")
     field(DTYP, "Soft Channel")
+    field(FLNK, "$(P)$(IOC_NAME)DETECT_SEAL_FAIL CP")
+}
+
+record(calcout, "$(P)$(IOC_NAME)DETECT_SEAL_FAIL") {
+    field(DESC, "Detect pressure seal fail")
+    field(CALC, "(A < B) && ((A - B) > C) ? 1 : 0 ; B := A")
+    field(INPA, "$(P)$(IOC_NAME)PRESSURE")
+    field(INPC, "$(P)$(IOC_NAME)SF_PRESSURE")
+    field(OUT, "$(P)$(IOC_NAME)SF_MODE_PRESSURE CP")
+}
+
+record(bi, "$(P)$(IOC_NAME)SF_MODE_PRESSURE"){
+    field(DESC, "Set Seal Fail Mode")
+    field(DTYP, "Soft Channel")
+    field(INP, "$(P)$(IOC_NAME)DETECT_SEAL_FAIL")
+    field(ZNAM, "OFF")
+    field(ONAM, "ON")
 }
 
 record(ao, "$(P)$(IOC_NAME)ER_PRESSURE:SP") {
@@ -180,28 +187,47 @@ record(ao, "$(P)$(IOC_NAME)ER_PRESSURE:SP") {
 }
 
 record(ai, "$(P)$(IOC_NAME)ER_PRESSURE"){
-    field(DESC,  "Last Error Code returned")
+    field(DESC, "Last Error Code returned")
     field(INP, "$(P)$(IOC_NAME)BUFFER1.J CP MS")
     field(DTYP, "Soft Channel")
+    field(FLNK, "$(P)$(IOC_NAME)GENERAL_ERROR_CHECK CP")
+}
+
+record(calcout, "$(P)$(IOC_NAME)GENERAL_ERROR_CHECK") {
+    field(DESC, "Check if error code higher than 0 present")
+    field(CALC, "A != 0? 1 : 0")
+    field(INPA, "$(P)$(IOC_NAME)ER_PRESSURE")
+    field(FLNK, "$(P)$(IOC_NAME)GENERAL_ERROR")
+}
+
+record(bi, "$(P)$(IOC_NAME)GENERAL_ERROR") {
+    field(DESC, "Bool indicating if error has occured")
+    field(DTYP, "Soft Channel")
+    field(INP, "$(P)$(IOC_NAME)GENERAL_ERROR_CHECK")
+    field(ZNAM, "OFF")
+    field(ONAM, "ONE")
 }
 
 record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
     field(DESC, "Set Pressure")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_ra $(PORT)")
+    field(DRVH, "1000")
+    field(DRVL, "10")
 }
 
 record(ai, "$(P)$(IOC_NAME)PRESSURE"){
     field(DESC, "Get Pressure from buffer1")
     field(INP, "$(P)$(IOC_NAME)BUFFER1.K CP MS")
     field(DTYP, "Soft Channel")
+    field(FLNK, "$(P)$(IOC_NAME)HIGH_PRESSURE_RESET_CHECK")
 }
 
 record(calc, "$(P)$(IOC_NAME)PRESSURE_COMPARISON"){
     field(DESC, "Compare pressure against previous val")
-    field(SCAN, "1 second") # change to .1 seconds for production?
+    field(SCAN, "1 second")
     field(CALC, "A - B; B := A")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE")
+    field(INPA, "$(P)$(IOC_NAME)PRESSURE CP")
     field(FLNK, "$(P)$(IOC_NAME)PRESSURE_FANOUT")
 }
 
@@ -243,6 +269,15 @@ record(ao, "$(P)$(IOC_NAME)MN_PRESSURE:SP"){
     field(DESC, "Set Min Pressure Value")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_mn $(PORT)")
+    field(FLNK, "$(P)$(IOC_NAME)MN_PRESSURE_FANOUT CP")
+}
+
+record(dfanout, "$(P)$(IOC_NAME)MN_PRESSURE_FANOUT") {
+    field(DESC, "dfanout min Pressure value")
+    field(OUTA, "$(P)$(IOC_NAME)PRESSURE:SP.DRVL")
+    field(DOL,  "$(P)$(IOC_NAME)MN_PRESSURE:SP")
+    field(OMSL, "closed_loop")
+    field(FLNK, "$(P)$(IOC_NAME)PRESSURE:SP")
 }
 
 record(ai, "$(P)$(IOC_NAME)MN_PRESSURE"){
@@ -267,6 +302,14 @@ record(ao, "$(P)$(IOC_NAME)MX_PRESSURE:SP"){
     field(DESC, "Set Max Pressure Value")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_mx $(PORT)")
+    field(FLNK, "$(P)$(IOC_NAME)MX_PRESSURE_FANOUT PP")
+}
+
+record(dfanout, "$(P)$(IOC_NAME)MX_PRESSURE_FANOUT") {
+    field(DESC, "dfanout max Pressure value")
+    field(OUTA, "$(P)$(IOC_NAME)PRESSURE:SP.DRVH")
+    field(DOL,  "$(P)$(IOC_NAME)MX_PRESSURE:SP")
+    field(OMSL, "closed_loop")
 }
 
 record(ai, "$(P)$(IOC_NAME)MX_PRESSURE"){
@@ -275,18 +318,75 @@ record(ai, "$(P)$(IOC_NAME)MX_PRESSURE"){
     field(DTYP, "Soft Channel")
 }
 
-record(bi, "$(P)$(IOC_NAME)RESET_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)RESET_PRESSURE:SP") {
     field(DESC, "Return pistons to open/closed")
     field(DTYP, "Soft Channel")
     field(OUT, "@PearlPC.proto set_reset_pistons $(PORT)")
-    field(ZNAM, "CLOSE")
-    field(ONAM, "OPEN")
+    field(ZNAM, "RESET")
+    field(ONAM, "RESETTING")
+    field(FLNK, "$(P)$(IOC_NAME)RESET_PRESSURE_STATUS CP")
 }
 
-record(bo, "$(P)$(IOC_NAME)RESET_PRESSURE") {
+record(calcout, "$(P)$(IOC_NAME)RESET_PRESSURE_STATUS") {
+    field(DESC, "Check pressure is < 100 bar to reset")
+    field(CALC, "(B = 1) && (A < 100) ? 1 : 0")
+    field(INPA, "$(P)$(IOC_NAME)PRESSURE")
+    field(INPB, "$(P)$(IOC_NAME)RESET_PRESSURE:SP")
+    field(FLNK, "$(P)$(IOC_NAME)RESET_PRESSURE CP")
+}
+
+record(bi, "$(P)$(IOC_NAME)RESET_PRESSURE") {
     field(DESC, "Return pistons to open/closed")
-    field(INP, "$(P)$(IOC_NAME)BUFFER1.D CP MS")
-    field(DTYP, "stream")
-    field(ZNAM, "CLOSE")
-    field(ONAM, "OPEN")
+    field(INP, "$(P)$(IOC_NAME)RESET_PRESSURE_STATUS")
+    field(ZNAM, "RESET")
+    field(ONAM, "RESETTING")
+}
+
+record(calcout, "$(P)$(IOC_NAME)HIGH_PRESSURE_RESET_CHECK") {
+    field(DESC, "Check pressure is < 100 bar to reset")
+    field(CALC, "(A < 100) ? 0 : 1")
+    field(INPA, "$(P)$(IOC_NAME)PRESSURE")
+    field(FLNK, "$(P)$(IOC_NAME)RESET_PRESSURE_TOO_HIGH CP")
+}
+
+record(bi, "$(P)$(IOC_NAME)RESET_PRESSURE_TOO_HIGH") {
+    field(DESC, "Pressure too high to reset")    
+    field(INP, "$(P)$(IOC_NAME)HIGH_PRESSURE_RESET_CHECK")
+    field(ZNAM, "LOW")
+    field(ONAM, "HIGH")
+}
+
+record(mbbo, "PRESSURE_RESTART_STAGES") {
+    field(DESC, "Display stages of pressure restart")
+     field(DTYP, "Soft Channel")
+     field(OUT,  "$(dev):range PP")
+     field(ONVL, "0")
+     field(TWVL, "1")
+     field(THVL, "2")
+     field(FRVL, "3")
+     field(FVVL, "4")
+     field(ONST, "Not Resetting or Purging")
+     field(TWST, "Reset complete – now power down!")
+     field(THST, "Resetting")
+     field(FRST, "Purge done")
+     field(FVST, "Purging")
+}
+
+record(calcout, "$(P)$(IOC_NAME)READY_STATE_CHECKS") {
+    field(DESC, "Ready state check validation")
+    field(CALC, "!A & !B & !C & !D & !E & !F")
+    field(INPA, "$(P)$(IOC_NAME)RESET_PRESSURE") # Not restarting must be 0
+    field(INPB, "$(P)$(IOC_NAME)SF_MODE_PRESSURE") # Not in Seal fail must be 0/RVAl OFF
+    field(INPC, "$(P)$(IOC_NAME)ER_PRESSURE") # General error must be 0
+    field(INPE, "$(P)$(IOC_NAME)INCREASING_PRESSURE") # Must be 0 - no increase
+    field(INPF,  "$(P)$(IOC_NAME)DECREASING_PRESSURE") # Must be 0 - no decrease
+    field(OUT, "$(P)$(IOC_NAME)READY_STATE CP")
+    field(SCAN, "1 second")
+}
+
+record(bi, "$(P)$(IOC_NAME)READY_STATE") {
+    field(DESC, "Ready for operation in man/auto")
+    field(INP, "$(P)$(IOC_NAME)READY_STATE_CHECKS")
+    field(ZNAM, "NOT READY")
+    field(ONAM, "READY")
 }

@@ -78,11 +78,11 @@ get_id {
 	in "%/[0-9]{4} [0-9]{4}/";
 }
 
-set_reset_status {
+set_reset_pistons {
 	out "reset%#01d"
 }
 
 get_piston_status {
 	out "reset";
-	in "%/[0-1]";
+	in "%/[0-1]{1}";
 }
