@@ -51,12 +51,16 @@ record(bo, "$(P)$(IOC_NAME)EM_PRESSURE:SP") {
     field(DESC, "EM stop circuit status")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_EM $(PORT)")
+    field(ZNAM, "Start")
+    field(ONAM, "Stop")
 }
 
 record(bi, "$(P)$(IOC_NAME)EM_PRESSURE"){
     field(INP, "$(P)$(IOC_NAME)BUFFER1.A CP MS")
     field(DESC,  "EM stop circuit status")
     field(DTYP, "Soft Channel")
+    field(ZNAM, "Start")
+    field(ONAM, "Stop")
 }
 
 record(bo, "$(P)$(IOC_NAME)RU_PRESSURE:SP") {
@@ -91,48 +95,64 @@ record(bo, "$(P)$(IOC_NAME)St_PRESSURE:SP") {
     field(DESC, "Stop bit after each move/manually")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_St $(PORT)")
+    field(ZNAM, "Running")
+    field(ONAM, "Stopped")
 }
 
 record(bi, "$(P)$(IOC_NAME)St_PRESSURE"){
     field(DESC, "Stop bit after each move/manually")
     field(INP, "$(P)$(IOC_NAME)BUFFER1.D CP MS")
     field(DTYP, "Soft Channel")
+    field(ZNAM, "Running")
+    field(ONAM, "Stopped")
 }
 
 record(bo, "$(P)$(IOC_NAME)BY_PRESSURE:SP") {
     field(DESC, "Set Busy bit if busy or not")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_by $(PORT)")
+    field(ZNAM, "Inactive")
+    field(ONAM, "Active")
 }
 
 record(bi, "$(P)$(IOC_NAME)BY_PRESSURE"){
     field(DESC, "Get Busy bit if busy or not")
     field(INP, "$(P)$(IOC_NAME)BUFFER1.E CP MS")
     field(DTYP, "Soft Channel")
+    field(ZNAM, "Inactive")
+    field(ONAM, "Active")
 }
 
 record(bo, "$(P)$(IOC_NAME)GO_PRESSURE:SP") {
     field(DESC, "Set system initiated by host status")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_GO $(PORT)")
+    field(ZNAM, "FALSE")
+    field(ONAM, "TRUE")
 }
 
 record(bi, "$(P)$(IOC_NAME)GO_PRESSURE"){
     field(DESC, "Get system initiated by host status")
     field(INP, "$(P)$(IOC_NAME)BUFFER1.F CP MS")
     field(DTYP, "Soft Channel")
+    field(ZNAM, "FALSE")
+    field(ONAM, "TRUE")
 }
 
 record(bo, "$(P)$(IOC_NAME)AM_PRESSURE:SP") {
     field(DESC, "Sets auto/manual switch position")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_AM $(PORT)")
+    field(ZNAM, "Manual")
+    field(ONAM, "Auto")
 }
 
 record(bi, "$(P)$(IOC_NAME)AM_PRESSURE"){
     field(DESC, "Gets auto/manual switch position")
     field(INP, "$(P)$(IOC_NAME)BUFFER1.G CP MS")
     field(DTYP, "Soft Channel")
+    field(ZNAM, "Manual")
+    field(ONAM, "Auto")
 }
 
 record(bo, "$(P)$(IOC_NAME)SL_PRESSURE:SP"){
@@ -205,7 +225,7 @@ record(bi, "$(P)$(IOC_NAME)GENERAL_ERROR") {
     field(DTYP, "Soft Channel")
     field(INP, "$(P)$(IOC_NAME)GENERAL_ERROR_CHECK")
     field(ZNAM, "OFF")
-    field(ONAM, "ONE")
+    field(ONAM, "ON")
 }
 
 record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
