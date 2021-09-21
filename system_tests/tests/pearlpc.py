@@ -94,6 +94,10 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.set_pv_value("ER_PRESSURE:SP", 1)
         self.ca.assert_that_pv_is("GENERAL_ERROR", "ON")
 
+    def test_WHEN_value_set_THEN_status_readback_correctly(self):
+        self.ca.set_pv_value("PRESSURE:SP", 500)
+        self.ca.assert_that_pv_is("STATUS_ARRAY.RVAL", "1 0 0 0 0 0 0 0 0 0 500 0 0 0")
+
     #TODO: Rework Test
     # def test_WHEN_pressure_decreasing_THEN_decreasing_pressure_readback_correctly(self):
     #     pass

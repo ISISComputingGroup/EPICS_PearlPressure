@@ -20,12 +20,34 @@ record(calc, "$(P)$(IOC_NAME)BUFFER2"){
     field(INPL, "$(P)$(IOC_NAME)STATUS")
 }
 
+# record(scalcout, "$(P)$(IOC_NAME)BUFFER1"){
+#     field(DESC, "Buffer 1 status values A-K")
+#     field(CALC, "L = A + B + C + D + E + F + G + H + I + J + K")
+#     field(INPL, "$(P)$(IOC_NAME)STATUS")
+#     field(FLNK, "$(P)$(IOC_NAME)BUFFER2")
+# }
+
+# record(scalcout, "$(P)$(IOC_NAME)BUFFER2"){
+#     field(DESC, "Buffer 2 status values A-D")
+#     field(CALC, "L = A + B + C + D + E + F + G + H + I + J + K")
+#     field(INPL, "$(P)$(IOC_NAME)STATUS")
+# }
+
 record(ai, "$(P)$(IOC_NAME)STATUS"){
     field(DESC, "Get Pressure Device Status")
     field(DTYP, "stream")
     field(INP, "@PearlPC.proto get_st($(P)$(IOC_NAME)BUFFER1, $(P)$(IOC_NAME)BUFFER2) $(PORT)")
     field(SCAN, "1 second")
     field(FLNK, "$(P)$(IOC_NAME)BUFFER1")
+}
+
+record(waveform, "$(P)$(IOC_NAME)record_name") {
+    field(DESC, "Return status")
+    field(DTYP, "stream")
+    field(INP, "@PearlPC.proto get_st_array $(PORT)")
+    field(NELM, "15")
+    field(SCAN, "1 second")
+    field(FTVL, "DOUBLE")
 }
 
 # record(aai, "$(P)$(IOC_NAME)STATUS"){
@@ -38,14 +60,7 @@ record(ai, "$(P)$(IOC_NAME)STATUS"){
 #     field(FLNK, "$(P)$(IOC_NAME)BUFFER1")
 # }
 
-record(stringin, "$(P)$(IOC_NAME)RETURN_STATUS"){
-    # TODO: return st string
-    field(DESC, "Get Pressure Device Status")
-    field(DTYP, "stream")
-    field(INP, "@PearlPC.proto get_st_array($(P)$(IOC_NAME)BUFFER1, $(P)$(IOC_NAME)BUFFER2) $(PORT)")
-    field(SCAN, "1 second")
-    field(FLNK, "$(P)$(IOC_NAME)BUFFER1")
-}
+# 
 
 record(ao, "$(P)$(IOC_NAME)SI_PRESSURE:SP"){
     field(DESC, "Set initial ID prefix")
@@ -397,21 +412,12 @@ record(bi, "$(P)$(IOC_NAME)RESET_PRESSURE_TOO_HIGH") {
     field(ONAM, "HIGH")
 }
 
-record(mbbi, "PRESSURE_RESTART_STAGES") {
+# THis record is currently not processed
+# The device should populate this PV after reset command set to 1
+record(mbbi, "$(P)$(IOC_NAME)PRESSURE_RESTART_STAGES") {
     field(DESC, "Get stage of pressure restart")
     field(INP, "$(P)$(IOC_NAME)BUFFER1.C CP MS")
     field(ZRST, "Not Resetting or Purging")            field(ZRVL, "0")
-    field(ONST, "Reset complete – now power down!")    field(ONVL, "1")
-    field(TWST, "Resetting")                           field(TWVL, "2")
-    field(THST, "Purge done")                          field(THVL, "3")
-    field(FRST, "Purging")                             field(FRVL, "4")
-}
-
-record(mbbo, "$(P)$(IOC_NAME)PRESSURE_RESTART_STAGES:SP") {
-    field(DESC, "Display stages of pressure restart")
-    field(DTYP, "Soft Channel")
-    field(OUT, "@PearlPC.proto set_reset_pistons $(PORT)")
-    field(ZRST, "Not Resetting or Purging" )           field(ZRVL, "0")
     field(ONST, "Reset complete – now power down!")    field(ONVL, "1")
     field(TWST, "Resetting")                           field(TWVL, "2")
     field(THST, "Purge done")                          field(THVL, "3")
@@ -426,7 +432,6 @@ record(calcout, "$(P)$(IOC_NAME)READY_STATE_CHECKS") {
     field(INPC, "$(P)$(IOC_NAME)ER_PRESSURE") # General error must be 0
     field(INPE, "$(P)$(IOC_NAME)INCREASING_PRESSURE") # Must be 0 - no increase
     field(INPF,  "$(P)$(IOC_NAME)DECREASING_PRESSURE") # Must be 0 - no decrease
-    # field(OUT, "$(P)$(IOC_NAME)READY_STATE CP")
     field(FLNK, "$(P)$(IOC_NAME)READY_STATE CP")
     field(SCAN, "1 second")
 }
