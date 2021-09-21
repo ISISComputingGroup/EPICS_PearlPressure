@@ -38,17 +38,6 @@ class PEARLPCTests(unittest.TestCase):
         self.lewis, self.ioc = get_running_lewis_and_ioc(DEVICE_A_PREFIX, DEVICE_A_PREFIX)
         self.ca = ChannelAccess(default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_A_PREFIX)
 
-    def test_WHEN_initial_ID_prefix_set_THEN_initial_ID_prefix_read_back_correctly(self):
-        self.ca.set_pv_value("SI_PRESSURE:SP", self.pressure_value)
-        self.ca.assert_that_pv_is("SI_PRESSURE:SP", self.pressure_value)
-
-    def test_WHEN_secondary_ID_prefix_set_THEN_secondary_ID_prefix_read_back_correctly(self):
-        self.ca.set_pv_value("SD_PRESSURE:SP", self.pressure_value)
-        self.ca.assert_that_pv_is("SD_PRESSURE:SP", self.pressure_value)
-
-    def test_WHEN_id_prefixes_not_set_THEN_default_id_prefixes_read_back_correctly(self):
-        self.ca.assert_that_pv_is("ID_PRESSURE", f"{self.default_id_prefix} {self.default_id_prefix}")
-
     @parameterized.expand([
         ("EM_PRESSURE" ,"EM_PRESSURE", "BUFFER1.A", "Stop", 1),
         ("RU_PRESSURE" ,"RU_PRESSURE", "BUFFER1.B", "Stop", 1),
@@ -69,6 +58,18 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.set_pv_value("{}:SP".format(pv_record), setpoint_value)
         self.ca.assert_that_pv_is(pv_record, setpoint_value)
         self.ca.assert_that_pv_is(buffer_location, buffer_value)
+
+    def test_WHEN_initial_ID_prefix_set_THEN_initial_ID_prefix_read_back_correctly(self):
+        self.ca.set_pv_value("SI_PRESSURE:SP", self.pressure_value)
+        self.ca.assert_that_pv_is("SI_PRESSURE:SP", self.pressure_value)
+        # self.ca.assert_setting_setpoint_sets_readback(self.pressure_value, "SI_PRESSURE")
+
+    def test_WHEN_secondary_ID_prefix_set_THEN_secondary_ID_prefix_read_back_correctly(self):
+        self.ca.set_pv_value("SD_PRESSURE:SP", self.pressure_value)
+        self.ca.assert_that_pv_is("SD_PRESSURE:SP", self.pressure_value)
+
+    def test_WHEN_id_prefixes_not_set_THEN_default_id_prefixes_read_back_correctly(self):
+        self.ca.assert_that_pv_is("ID_PRESSURE", f"{self.default_id_prefix} {self.default_id_prefix}")
 
     def test_WHEN_id_prefixes_set_THEN_id_prefixes_read_back_correctly(self):
         self.ca.set_pv_value("SI_PRESSURE:SP", self.pressure_value)
@@ -95,11 +96,12 @@ class PEARLPCTests(unittest.TestCase):
 
     #TODO: Rework Test
     # def test_WHEN_pressure_decreasing_THEN_decreasing_pressure_readback_correctly(self):
-    #     self.ca.set_pv_value("PRESSURE:SP", 100)
-    #     self.ca.set_pv_value("PRESSURE:SP", 95)
-    #     self.ca.set_pv_value("PRESSURE:SP", 90)
-    #     self.ca.set_pv_value("PRESSURE:SP", 70)
-    #     self.ca.assert_that_pv_is("DECREASING_PRESSURE", "one_name")
+    #     pass
+        # self.ca.set_pv_value("PRESSURE:SP", 100)
+        # self.ca.set_pv_value("PRESSURE:SP", 95)
+        # self.ca.set_pv_value("PRESSURE:SP", 90)
+        # self.ca.set_pv_value("PRESSURE:SP", 70)
+        # self.ca.assert_that_pv_is("DECREASING_PRESSURE", "one_name")
 
     #TODO: Complete intial buffer value checks
     # def test_WHEN_np_pv_set_THEN_intitial_buffer_value_readback_correctly(self):
@@ -108,6 +110,18 @@ class PEARLPCTests(unittest.TestCase):
     #TODO: Complete status return readback test
     # def test_WHEN_all_pvs_set_THEN_status_readback_correctly(self):
     #     pass
+
+    # def test_WHEN_correct_conditions_met_THEN_device_ready_state_readback_correctly(self):
+    # # self._lewis.backdoor_set_on_device("READY_STATE", "READY")
+    # # self.log.debug()
+    # # self.ca.assert_that_pv_is("RESET_PRESSURE", 1)
+    # # self.lewis.backdoor_set_on_device("READY_STATE_CHECKS", 0)
+
+    #     self.ca.assert_that_pv_is("READY_STATE", "READY")
+
+    def test_WHEN_conditions_are_not_met_THEN_device_ready_state_readback_correctly(self):
+        self.ca.set_pv_value("RESET_PRESSURE", 1)
+        self.ca.assert_that_pv_is("READY_STATE", "NOT READY")
 
 
 
