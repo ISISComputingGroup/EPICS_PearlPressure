@@ -37,6 +37,7 @@ class PEARLPCTests(unittest.TestCase):
         self.low_pressure = 50
         self.lewis, self.ioc = get_running_lewis_and_ioc(DEVICE_A_PREFIX, DEVICE_A_PREFIX)
         self.ca = ChannelAccess(default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_A_PREFIX)
+        self.lewis.backdoor_run_function_on_device("re_initialise")
 
     @parameterized.expand([
         ("EM_PRESSURE" ,"EM_PRESSURE", "BUFFER1.A", "Stop", 1),
@@ -62,7 +63,6 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_initial_ID_prefix_set_THEN_initial_ID_prefix_read_back_correctly(self):
         self.ca.set_pv_value("SI_PRESSURE:SP", self.pressure_value)
         self.ca.assert_that_pv_is("SI_PRESSURE:SP", self.pressure_value)
-        # self.ca.assert_setting_setpoint_sets_readback(self.pressure_value, "SI_PRESSURE")
 
     def test_WHEN_secondary_ID_prefix_set_THEN_secondary_ID_prefix_read_back_correctly(self):
         self.ca.set_pv_value("SD_PRESSURE:SP", self.pressure_value)
@@ -90,38 +90,18 @@ class PEARLPCTests(unittest.TestCase):
 
     def test_WHEN_General_error_occurs_THEN_general_error_readback_correctly(self):
         self.ca.assert_that_pv_is("GENERAL_ERROR", "OFF")
-        # self.ca.assert_setting_setpoint_sets_readback("GENERAL_ERROR", 1)
         self.ca.set_pv_value("ER_PRESSURE:SP", 1)
         self.ca.assert_that_pv_is("GENERAL_ERROR", "ON")
 
     def test_WHEN_value_set_THEN_status_readback_correctly(self):
         self.ca.set_pv_value("PRESSURE:SP", 500)
-        self.ca.assert_that_pv_is("STATUS_ARRAY.RVAL", "1 0 0 0 0 0 0 0 0 0 500 0 0 0")
+        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0, 0, 0])
 
-    #TODO: Rework Test
-    # def test_WHEN_pressure_decreasing_THEN_decreasing_pressure_readback_correctly(self):
-    #     pass
-        # self.ca.set_pv_value("PRESSURE:SP", 100)
-        # self.ca.set_pv_value("PRESSURE:SP", 95)
-        # self.ca.set_pv_value("PRESSURE:SP", 90)
-        # self.ca.set_pv_value("PRESSURE:SP", 70)
-        # self.ca.assert_that_pv_is("DECREASING_PRESSURE", "one_name")
+    def test_WHEN_np_pv_set_THEN_intitial_buffer_value_readback_correctly(self):
+        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
-    #TODO: Complete intial buffer value checks
-    # def test_WHEN_np_pv_set_THEN_intitial_buffer_value_readback_correctly(self):
-    #     pass
-
-    #TODO: Complete status return readback test
-    # def test_WHEN_all_pvs_set_THEN_status_readback_correctly(self):
-    #     pass
-
-    # def test_WHEN_correct_conditions_met_THEN_device_ready_state_readback_correctly(self):
-    # # self._lewis.backdoor_set_on_device("READY_STATE", "READY")
-    # # self.log.debug()
-    # # self.ca.assert_that_pv_is("RESET_PRESSURE", 1)
-    # # self.lewis.backdoor_set_on_device("READY_STATE_CHECKS", 0)
-
-    #     self.ca.assert_that_pv_is("READY_STATE", "READY")
+    def test_WHEN_correct_conditions_met_THEN_device_ready_state_readback_correctly(self):
+        self.ca.assert_that_pv_is("READY_STATE", "READY")
 
     def test_WHEN_conditions_are_not_met_THEN_device_ready_state_readback_correctly(self):
         self.ca.set_pv_value("RESET_PRESSURE", 1)

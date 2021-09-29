@@ -7,6 +7,25 @@ from collections import OrderedDict
 class SimulatedCCD100(StateMachineDevice):
 
     def _initialize_data(self):
+        self.re_initialise()
+
+        # When the device is in an error state it can respond with junk
+        self.is_giving_errors = False
+        self.out_error = "}{<7f>w"
+        self.out_terminator_in_error = ""
+
+    def _get_state_handlers(self):
+        return {
+            'default': DefaultState(),
+        }
+
+    def _get_initial_state(self):
+        return 'default'
+
+    def _get_transition_handlers(self):
+        return OrderedDict([])
+
+    def re_initialise(self):
         self.initial_id_prefix = "1111"
         self.secondary_id_prefix = "1111"
         self.em_stop_status = 0  # Bool [0-1]
@@ -24,20 +43,4 @@ class SimulatedCCD100(StateMachineDevice):
         self.min_value_pre_servoing = 0
         self.setpoint_value = 0
         self.max_value_pre_servoing = 0
-
-        # When the device is in an error state it can respond with junk
-        self.is_giving_errors = False
-        self.out_error = "}{<7f>w"
-        self.out_terminator_in_error = ""
-
-    def _get_state_handlers(self):
-        return {
-            'default': DefaultState(),
-        }
-
-    def _get_initial_state(self):
-        return 'default'
-
-    def _get_transition_handlers(self):
-        return OrderedDict([])
 
