@@ -1,0 +1,93 @@
+OutTerminator = "\r\n";
+InTerminator = "\r\r\n";
+
+ReplyTimeout = 2000;
+
+get_st {
+	out "st";
+	in "%(\$1.A)d %(\$1.B)d %(\$1.C)d %(\$1.D)d %(\$1.E)d %(\$1.F)d %(\$1.G)d %(\$1.H)d %(\$1.I)d %(\$1.J)d %(\$1.K)d %(\$2.A)d %(\$2.B)d %(\$2.C)d %(\$2.D)d";
+}
+
+get_st_array {
+	out "st";
+	in "%d";
+}
+
+set_ra{
+	out "ra%#04d"
+}
+
+set_mx{
+	out "mx%#04d"
+}
+
+set_mn{
+	out "mn%#04d"
+}
+
+set_sp{
+	out "sp%#04d"
+}
+
+set_sf{
+	out "sf%#04d"
+}
+
+set_si{
+	out "si%#04d"
+}
+
+set_sd{
+	out "sd%#04d"
+}
+
+set_sloop{
+	out "sloop%#01d"
+}
+
+set_by{
+	out "By%#01d"
+}
+
+set_ru{
+	out "Ru%#01d"
+}
+
+set_re{
+	out "Re%#01d"
+}
+
+set_St{
+	out "St%#01d"
+}
+
+set_EM{
+	out "Em%#01d"
+}
+
+set_ER{
+	out "Er%#01d"
+}
+
+set_AM{
+	out "AM%#01d"
+}
+
+set_GO{
+	out "GO%d"
+}
+
+get_id {
+	ExtraInput = Ignore;
+	out "id";
+	in "%/[0-9]{4} [0-9]{4}/";
+}
+
+set_reset_pistons {
+	out "reset%#01d"
+}
+
+get_piston_status {
+	out "reset";
+	in "%/[0-1]{1}";
+}
