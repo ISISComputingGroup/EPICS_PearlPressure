@@ -33,3 +33,8 @@ To test the IOC using LEWIS emulator, execute the `run_test.bat` script located:
 `master\system_tests\run_tests.bat`
 
 Add `-a` flag to `run_test.bat` to run IOC emulator and not tests straight away if wishing to view in IBEX or check PV values when testing.
+
+
+To test, use the [IOC Test Framework](https://github.com/ISISComputingGroup/EPICS-IOC_Test_Framework) and follow [README.md](https://github.com/ISISComputingGroup/EPICS-IOC_Test_Framework/blob/master/README.md) documentation to run tests or emulator.
+
+Add `-a` flag when running using the IOC Test Framework to run the IOC emulator and not the tests straight away if wishing to view in IBEX or check PV values when testing.
