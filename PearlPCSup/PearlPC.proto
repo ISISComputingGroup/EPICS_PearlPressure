@@ -1,12 +1,7 @@
-OutTerminator = "\r\n";
-InTerminator = "\r\r\n";
+OutTerminator = "\r";
+InTerminator = "\r\n";
 
 ReplyTimeout = 2000;
-
-get_st {
-	out "st";
-	in "%(\$1.A)d %(\$1.B)d %(\$1.C)d %(\$1.D)d %(\$1.E)d %(\$1.F)d %(\$1.G)d %(\$1.H)d %(\$1.I)d %(\$1.J)d %(\$1.K)d %(\$2.A)d %(\$2.B)d %(\$2.C)d %(\$2.D)d";
-}
 
 get_st_array {
 	out "st";
