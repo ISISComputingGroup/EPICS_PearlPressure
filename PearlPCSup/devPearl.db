@@ -11,7 +11,7 @@ record(waveform, "$(P)$(IOC_NAME)STATUS_ARRAY") {
     field(DESC, "Return status")
     field(DTYP, "stream")
     field(INP, "@PearlPC.proto get_st_array $(PORT)")
-    field(NELM, "16")
+    field(NELM, "15")
     field(SCAN, "1 second")
     field(FTVL, "SHORT")
 }
@@ -80,7 +80,7 @@ record(ai, "$(P)$(IOC_NAME)RE_PRESSURE"){
     field(DTYP, "Soft Channel")
 }
 
-record(bo, "$(P)$(IOC_NAME)St_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)ST_PRESSURE:SP") {
     field(DESC, "Stop bit after each move/manually")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_St $(PORT)")
@@ -88,7 +88,7 @@ record(bo, "$(P)$(IOC_NAME)St_PRESSURE:SP") {
     field(ONAM, "Stopped")
 }
 
-record(bi, "$(P)$(IOC_NAME)St_PRESSURE"){
+record(bi, "$(P)$(IOC_NAME)ST_PRESSURE"){
     field(DESC, "Stop bit after each move/manually")
     field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[3] CP MS")
     field(DTYP, "Soft Channel")
