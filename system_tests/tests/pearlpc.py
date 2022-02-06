@@ -47,7 +47,7 @@ class PEARLPCTests(unittest.TestCase):
         ("BY_PRESSURE", "BY_PRESSURE",  4, "Active", 1),
         ("GO_PRESSURE", "GO_PRESSURE",  5, "TRUE", 1),
         ("AM_PRESSURE", "AM_PRESSURE",  6, "Auto", 1),
-        ("SL_PRESSURE", "SL_PRESSURE",  7, "ON", 1),
+        ("SL_PRESSURE", "SL_PRESSURE",  7, "Closed Loop", 1),
         ("SF_PRESSURE", "SF_PRESSURE",  8, 1, 1),
         ("ER_PRESSURE", "ER_PRESSURE",  9, 1, 1),
         ("PRESSURE",    "PRESSURE",    10, 1000, 1000),

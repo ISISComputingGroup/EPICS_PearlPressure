@@ -13,16 +13,17 @@ record(waveform, "$(P)$(IOC_NAME)STATUS_ARRAY") {
     field(INP, "@PearlPC.proto get_st_array $(PORT)")
     field(NELM, "15")
     field(SCAN, "1 second")
+    field(SDIS, "$(P)$(IOC_NAME)DISABLE")
     field(FTVL, "SHORT")
 }
 
-record(ao, "$(P)$(IOC_NAME)SI_PRESSURE:SP"){
+record(longout, "$(P)$(IOC_NAME)SI_PRESSURE:SP"){
     field(DESC, "Set initial ID prefix")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_si $(PORT)")
 }
 
-record(ao, "$(P)$(IOC_NAME)SD_PRESSURE:SP"){
+record(longout, "$(P)$(IOC_NAME)SD_PRESSURE:SP"){
     field(DESC, "Set secondary ID prefix")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_sd $(PORT)")
@@ -33,6 +34,7 @@ record(stringin, "$(P)$(IOC_NAME)ID_PRESSURE") {
     field(DTYP, "stream")
     field(INP, "@PearlPC.proto get_id $(PORT)")
     field(SCAN, "1 second")
+    field(SDIS, "$(P)$(IOC_NAME)DISABLE")
 }
 
 record(bo, "$(P)$(IOC_NAME)EM_PRESSURE:SP") {
@@ -67,16 +69,16 @@ record(bi, "$(P)$(IOC_NAME)RU_PRESSURE"){
     field(ONAM, "Stop")
 }
 
-record(ao, "$(P)$(IOC_NAME)RE_PRESSURE:SP") {
+record(longout, "$(P)$(IOC_NAME)RE_PRESSURE:SP") {
     field(DESC, "Reset stage for each piston")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_re $(PORT)")
-    field(FLNK, "$(P)$(IOC_NAME)RE_PRESSURE")
 }
 
-record(ai, "$(P)$(IOC_NAME)RE_PRESSURE"){
+# could this be mbbi of states?
+record(longin, "$(P)$(IOC_NAME)RE_PRESSURE"){
     field(DESC, "Reset stage for each piston")
-    field(INP, "$(P)$(IOC_NAME)RE_PRESSURE:SP")
+    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[2] CP MS")
     field(DTYP, "Soft Channel")
 }
 
@@ -148,31 +150,33 @@ record(bo, "$(P)$(IOC_NAME)SL_PRESSURE:SP"){
     field(DESC, "Set toggle for loop pressure mode")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_sloop $(PORT)")
-    field(ZNAM, "OFF")
-    field(ONAM, "ON")
+    field(ZNAM, "Open Loop")
+    field(ONAM, "Closed Loop")
 }
 
 record(bi, "$(P)$(IOC_NAME)SL_PRESSURE"){
     field(DESC, "Get loop pressure mode")
     field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[7] CP MS")
     field(DTYP, "Soft Channel")
-    field(ZNAM, "OFF")
-    field(ONAM, "ON")
+    field(ZNAM, "Open Loop")
+    field(ONAM, "Closed Loop")
 }
 
-record(ao, "$(P)$(IOC_NAME)SF_PRESSURE:SP"){
+record(longout, "$(P)$(IOC_NAME)SF_PRESSURE:SP"){
     field(DESC, "Set Seal Fail Pressure Value")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_sf $(PORT)")
 }
 
-record(ai, "$(P)$(IOC_NAME)SF_PRESSURE"){
-    field(DESC, "Get Seal Fail Pressure")
+# this would appear to be a binary of wther seal has failed not the SF setpoint from above?
+record(longin, "$(P)$(IOC_NAME)SF_PRESSURE"){
+    field(DESC, "Get Seal Fail Status")
     field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[8] CP MS")
     field(DTYP, "Soft Channel")
     field(FLNK, "$(P)$(IOC_NAME)DETECT_SEAL_FAIL")
 }
 
+# not sure i understand logic here
 record(calcout, "$(P)$(IOC_NAME)DETECT_SEAL_FAIL") {
     field(DESC, "Detect pressure seal fail")
     field(CALC, "(A < B) && ((A - B) > C) ? 1 : 0 ; B := A")
@@ -182,19 +186,20 @@ record(calcout, "$(P)$(IOC_NAME)DETECT_SEAL_FAIL") {
 }
 
 record(bi, "$(P)$(IOC_NAME)SF_MODE_PRESSURE"){
-    field(DESC, "Set Seal Fail Mode")
+    field(DESC, "Get Seal Fail Mode")
     field(DTYP, "Soft Channel")
     field(INP, "$(P)$(IOC_NAME)DETECT_SEAL_FAIL")
     field(ZNAM, "OFF")
     field(ONAM, "ON")
 }
 
-record(ao, "$(P)$(IOC_NAME)ER_PRESSURE:SP") {
+record(bo, "$(P)$(IOC_NAME)ER_PRESSURE:SP") {
     field(DESC, "Set Last Error Code returned")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_ER $(PORT)")
 }
 
+# could this be an mbbi of error codes?
 record(ai, "$(P)$(IOC_NAME)ER_PRESSURE"){
     field(DESC, "Last Error Code returned")
     field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[9] CP MS")
@@ -217,6 +222,7 @@ record(bi, "$(P)$(IOC_NAME)GENERAL_ERROR") {
     field(ONAM, "ON")
 }
 
+# isn't this pressure rate rather than pressure?
 record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
     field(DESC, "Set Pressure")
     field(DTYP, "stream")
@@ -225,6 +231,7 @@ record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
     field(DRVL, "10")
 }
 
+# as above, isn't this pressure rate rather than pressure ? perssure is [14] i believe
 record(ai, "$(P)$(IOC_NAME)PRESSURE"){
     field(DESC, "Get Pressure")
     field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[10] CP MS")
@@ -391,6 +398,7 @@ record(calcout, "$(P)$(IOC_NAME)READY_STATE_CHECKS") {
     field(INPE, "$(P)$(IOC_NAME)INCREASING_PRESSURE") # Must be 0 - no increase
     field(INPF,  "$(P)$(IOC_NAME)DECREASING_PRESSURE") # Must be 0 - no decrease
     field(FLNK, "$(P)$(IOC_NAME)READY_STATE")
+    field(SDIS, "$(P)$(IOC_NAME)DISABLE")
     field(SCAN, "1 second")
 }
 
