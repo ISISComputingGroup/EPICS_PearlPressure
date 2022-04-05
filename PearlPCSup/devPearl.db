@@ -69,17 +69,32 @@ record(bi, "$(P)$(IOC_NAME)RU_PRESSURE"){
     field(ONAM, "Stop")
 }
 
-record(longout, "$(P)$(IOC_NAME)RE_PRESSURE:SP") {
+record(mbbo, "$(P)$(IOC_NAME)RE_PRESSURE:SP") {
     field(DESC, "Reset stage for each piston")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_re $(PORT)")
+    field(ZRST, "Not Resetting/Purging")
+    field(ONST, "Reset complete")
+    field(TWST, "Resetting")
+    field(THST, "Purge done")
+    field(FRST, "Purging")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(FRVL, "4")
 }
 
-# could this be mbbi of states?
-record(longin, "$(P)$(IOC_NAME)RE_PRESSURE"){
+record(mbbi, "$(P)$(IOC_NAME)RE_PRESSURE"){
     field(DESC, "Reset stage for each piston")
     field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[2] CP MS")
     field(DTYP, "Soft Channel")
+    field(ZRST, "Not Resetting/Purging")
+    field(ONST, "Reset complete")
+    field(TWST, "Resetting")
+    field(THST, "Purge done")
+    field(FRST, "Purging")
+    # do not need ZRVL etc as soft channel and consecutive integers
 }
 
 record(bo, "$(P)$(IOC_NAME)ST_PRESSURE:SP") {
@@ -244,6 +259,7 @@ record(calc, "$(P)$(IOC_NAME)PRESSURE_COMPARISON"){
     field(CALC, "A - B; B := A")
     field(INPA, "$(P)$(IOC_NAME)PRESSURE CP")
     field(FLNK, "$(P)$(IOC_NAME)PRESSURE_FANOUT")
+    field(SCAN, "1 second")
 }
 
 record(fanout, "$(P)$(IOC_NAME)PRESSURE_FANOUT") {
@@ -336,7 +352,7 @@ record(ai, "$(P)$(IOC_NAME)MX_PRESSURE"){
 
 record(bo, "$(P)$(IOC_NAME)RESET_PRESSURE:SP") {
     field(DESC, "Return pistons to open/closed")
-    field(DTYP, "Soft Channel")
+    field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_reset_pistons $(PORT)")
     field(ZNAM, "RESET")
     field(ONAM, "RESETTING")
@@ -407,4 +423,51 @@ record(bi, "$(P)$(IOC_NAME)READY_STATE") {
     field(INP, "$(P)$(IOC_NAME)READY_STATE_CHECKS")
     field(ZNAM, "NOT READY")
     field(ONAM, "READY")
+}
+
+## error message must be max 40 characters
+record(waveform, "$(P)$(IOC_NAME)ERROR_MSGS")
+{
+    field(DESC, "error message list")
+    field(FTVL, "STRING")
+    field(NELM, "20")
+    field(INP, ["no error", 
+                "Pressure above safe reset level",
+                "\\\\",
+                ">",
+                "/",
+                "non numeric char from host PC",
+                "EMERGENCY STOPPED",
+                "Motors at limits", "Seal Failure",
+                "Transducer Configuration Error",
+                "Transducers diff > threshold",
+                "Transducer problem",
+                "Pressure above user limit",
+                "Pressure incr should be decr",
+                "Pressure decr should be incr",
+                "READ_2_PRESSURE process stopped",
+                "MOTOR process has stopped",
+                "DISPLAY process has stopped",
+                "PEARL_FG process has stopped",
+                "MONITOR process has stopped"])
+}
+
+record(longout, "$(P)$(IOC_NAME)_ERROR_MSG_LU")
+{
+    field(DOL, "$(P)$(IOC_NAME)ER_PRESSURE CP")
+    field(OMSL, "closed_loop")
+    field(OUT, "$(P)$(IOC_NAME)_ERROR_MSG_SA.INDX PP")
+}
+
+# INDX set by _ERROR_MSG_LU PV
+record(subArray, "$(P)$(IOC_NAME)_ERROR_MSG_SA")
+{
+    field(INP, "$(P)$(IOC_NAME)ERROR_MSGS")
+    field(FTVL, "STRING")
+    field(FLNK, "$(P)$(IOC_NAME)LAST_ERR")
+}
+
+record(stringin, "$(P)$(IOC_NAME)LAST_ERR")
+{
+    field(INP, "$(P)$(IOC_NAME)_ERROR_MSG_SA")
 }
