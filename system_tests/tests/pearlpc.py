@@ -40,25 +40,25 @@ class PEARLPCTests(unittest.TestCase):
         self.lewis.backdoor_run_function_on_device("re_initialise")
 
     @parameterized.expand([
-        ("EM_PRESSURE" ,"EM_PRESSURE", "BUFFER1.A", "Stop", 1),
-        ("RU_PRESSURE" ,"RU_PRESSURE", "BUFFER1.B", "Stop", 1),
-        ("RE_PRESSURE" ,"RE_PRESSURE", "BUFFER1.C", 1, 1),
-        ("St_PRESSURE" ,"St_PRESSURE", "BUFFER1.D", "Stopped", 1),
-        ("BY_PRESSURE" ,"BY_PRESSURE", "BUFFER1.E", "Active", 1),
-        ("GO_PRESSURE" ,"GO_PRESSURE", "BUFFER1.F", "TRUE", 1),
-        ("AM_PRESSURE" ,"AM_PRESSURE", "BUFFER1.G", "Auto", 1),
-        ("SL_PRESSURE" ,"SL_PRESSURE", "BUFFER1.H", "ON", 1),
-        ("SF_PRESSURE" ,"SF_PRESSURE", "BUFFER1.I", 1, 1),
-        ("ER_PRESSURE" ,"ER_PRESSURE", "BUFFER1.J", 1, 1),
-        ("PRESSURE", "PRESSURE", "BUFFER1.K",  1000, 1000),
-        ("MN_PRESSURE", "MN_PRESSURE", "BUFFER2.A",  1000, 1000),
-        ("SP_PRESSURE", "SP_PRESSURE", "BUFFER2.B",  1000, 1000),
-        ("MX_PRESSURE", "MX_PRESSURE", "BUFFER2.C",  1000, 1000)
+        ("EM_PRESSURE", "EM_PRESSURE",  0, "Stop", 1),
+        ("RU_PRESSURE", "RU_PRESSURE",  1, "Stop", 1),
+        ("RE_PRESSURE", "RE_PRESSURE",  2, "Reset complete", 1),
+        ("ST_PRESSURE", "ST_PRESSURE",  3, "Stopped", 1),
+        ("BY_PRESSURE", "BY_PRESSURE",  4, "Active", 1),
+        ("GO_PRESSURE", "GO_PRESSURE",  5, "TRUE", 1),
+        ("AM_PRESSURE", "AM_PRESSURE",  6, "Auto", 1),
+        ("SL_PRESSURE", "SL_PRESSURE",  7, "Closed Loop", 1),
+        ("SF_PRESSURE", "SF_PRESSURE",  8, 1, 1),
+        ("ER_PRESSURE", "ER_PRESSURE",  9, 1, 1),
+        ("PRESSURE",    "PRESSURE",    10, 1000, 1000),
+        ("MN_PRESSURE", "MN_PRESSURE", 11, 1000, 1000),
+        ("SP_PRESSURE", "SP_PRESSURE", 12, 1000, 1000),
+        ("MX_PRESSURE", "MX_PRESSURE", 13, 1000, 1000)
     ])
     def test_WHEN_pv_set_THEN_pv_and_buffer_readback_correctly(self, _, pv_record, buffer_location, setpoint_value, buffer_value):
         self.ca.set_pv_value("{}:SP".format(pv_record), setpoint_value)
         self.ca.assert_that_pv_is(pv_record, setpoint_value)
-        self.ca.assert_that_pv_is(buffer_location, buffer_value)
+        self.ca.assert_that_pv_is("STATUS_ARRAY.[{}]".format(buffer_location), buffer_value)
 
     def test_WHEN_initial_ID_prefix_set_THEN_initial_ID_prefix_read_back_correctly(self):
         self.ca.set_pv_value("SI_PRESSURE:SP", self.pressure_value)

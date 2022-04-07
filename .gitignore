@@ -1,15 +1,15 @@
 __pycache__/
 *.py[cod]
 *$py.class
-/test-reports/
+test-reports/
 
 O.*/
-/db
-/bin
-/dbd
-/include
-/lib
-/templates
+/db/
+/bin/
+/dbd/
+/include/
+/lib/
+/templates/
 envPaths
 cdCommands
 dllPath.bat
@@ -17,5 +17,5 @@ runIOC.bat
 runIOC.sh
 relPaths.sh
 .project
-/data
+/data/
 .idea/

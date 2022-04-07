@@ -31,8 +31,8 @@ class PearlPCStreamInterface(StreamInterface):
         CmdBuilder("set_reset").escape("reset").arg("[0-1]{1}").eos().build(), 
     }
 
-    in_terminator = "\r\n"
-    good_out_terminator = "\r\r\n"
+    in_terminator = "\r"
+    out_terminator = "\r\n"
 
     def __init__(self, status_dictionary=None):
         super().__init__()

@@ -4,7 +4,7 @@ from .states import DefaultState
 from collections import OrderedDict
 
 
-class SimulatedCCD100(StateMachineDevice):
+class SimulatedPearlPC(StateMachineDevice):
 
     def _initialize_data(self):
         self.re_initialise()
