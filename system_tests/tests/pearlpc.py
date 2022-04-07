@@ -42,7 +42,7 @@ class PEARLPCTests(unittest.TestCase):
     @parameterized.expand([
         ("EM_PRESSURE", "EM_PRESSURE",  0, "Stop", 1),
         ("RU_PRESSURE", "RU_PRESSURE",  1, "Stop", 1),
-        ("RE_PRESSURE", "RE_PRESSURE",  2, 1, 1),
+        ("RE_PRESSURE", "RE_PRESSURE",  2, "Reset complete", 1),
         ("ST_PRESSURE", "ST_PRESSURE",  3, "Stopped", 1),
         ("BY_PRESSURE", "BY_PRESSURE",  4, "Active", 1),
         ("GO_PRESSURE", "GO_PRESSURE",  5, "TRUE", 1),
