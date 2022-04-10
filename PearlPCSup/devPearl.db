@@ -11,7 +11,7 @@ record(waveform, "$(P)$(IOC_NAME)STATUS_ARRAY") {
     field(DESC, "Return status")
     field(DTYP, "stream")
     field(INP, "@PearlPC.proto get_st_array $(PORT)")
-    field(NELM, "15")
+    field(NELM, "16")
     field(SCAN, "1 second")
     field(SDIS, "$(P)$(IOC_NAME)DISABLE")
     field(FTVL, "SHORT")
@@ -301,6 +301,8 @@ record(ao, "$(P)$(IOC_NAME)MN_PRESSURE:SP"){
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_mn $(PORT)")
     field(FLNK, "$(P)$(IOC_NAME)MN_PRESSURE_FANOUT")
+    field(DRVH, "9999")
+    field(DRVL, "1")
 }
 
 record(dfanout, "$(P)$(IOC_NAME)MN_PRESSURE_FANOUT") {
@@ -321,6 +323,8 @@ record(ao, "$(P)$(IOC_NAME)SP_PRESSURE:SP"){
     field(DESC, "Set Setpoint Pressure Value")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_sp $(PORT)")
+    field(DRVH, "1000")
+    field(DRVL, "1")
 }
 
 record(ai, "$(P)$(IOC_NAME)SP_PRESSURE"){
@@ -334,7 +338,8 @@ record(ao, "$(P)$(IOC_NAME)MX_PRESSURE:SP"){
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_mx $(PORT)")
     field(FLNK, "$(P)$(IOC_NAME)MX_PRESSURE_FANOUT")
-}
+    field(DRVH, "9999")
+    field(DRVL, "1")}
 
 record(dfanout, "$(P)$(IOC_NAME)MX_PRESSURE_FANOUT") {
     field(DESC, "dfanout max Pressure value")
@@ -353,7 +358,7 @@ record(ai, "$(P)$(IOC_NAME)MX_PRESSURE"){
 record(bo, "$(P)$(IOC_NAME)RESET_PRESSURE:SP") {
     field(DESC, "Return pistons to open/closed")
     field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto set_reset_pistons $(PORT)")
+    field(OUT, "@PearlPC.proto reset $(PORT)")
     field(ZNAM, "RESET")
     field(ONAM, "RESETTING")
     field(FLNK, "$(P)$(IOC_NAME)RESET_PRESSURE_STATUS")

@@ -5,7 +5,10 @@ ReplyTimeout = 2000;
 
 get_st_array {
 	out "st";
+	in "Status Report";
+	in "%*/Inputs$/";
 	in "%d";
+	in "OK";
 }
 
 set_ra{
@@ -78,11 +81,20 @@ get_id {
 	in "%/[0-9]{4} [0-9]{4}/";
 }
 
-set_reset_pistons {
-	out "reset%#01d"
+reset {
+	out "reset"
 }
 
-get_piston_status {
-	out "reset";
-	in "%/[0-1]{1}";
+run {
+	out "run"
+}
+
+stop {
+	out "stop"
+}
+
+get_memory{
+	ExtraInput = Ignore;
+	out "vr%#04d";
+	in "vr%*04d %d";
 }
