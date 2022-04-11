@@ -93,8 +93,9 @@ stop {
 	out "stop"
 }
 
+## $1 argument zero padded 4 digits
 get_memory{
 	ExtraInput = Ignore;
-	out "vr%#04d";
+	out "vr\$1";
 	in "vr%*04d %d";
 }
