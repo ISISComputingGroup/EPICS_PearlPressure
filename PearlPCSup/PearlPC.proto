@@ -3,9 +3,13 @@ InTerminator = "\r\n";
 
 ReplyTimeout = 2000;
 
+## read into waveform as device returns 16 integers
 get_st_array {
 	out "st";
+	in "Status Report";
+	in "%*/Inputs$/";
 	in "%d";
+	in "OK";
 }
 
 set_ra{
@@ -40,6 +44,35 @@ set_sloop{
 	out "sloop%#01d"
 }
 
+get_id {
+	ExtraInput = Ignore;
+	out "id";
+	in "%/[0-9]{4} [0-9]{4}/";
+}
+
+reset {
+	out "reset"
+}
+
+run {
+	out "run"
+}
+
+stop {
+	out "stop"
+}
+
+## $1 argument zero padded 4 digits
+get_memory{
+	ExtraInput = Ignore;
+	out "vr\$1";
+	in "vr%*04d %d";
+}
+
+#### currently used by ioc tests, but not real device commands
+#### should be removed from here and any required access for testing
+#### be via a lewis backdoor 
+
 set_by{
 	out "By%#01d"
 }
@@ -70,19 +103,4 @@ set_AM{
 
 set_GO{
 	out "GO%d"
-}
-
-get_id {
-	ExtraInput = Ignore;
-	out "id";
-	in "%/[0-9]{4} [0-9]{4}/";
-}
-
-set_reset_pistons {
-	out "reset%#01d"
-}
-
-get_piston_status {
-	out "reset";
-	in "%/[0-1]{1}";
 }

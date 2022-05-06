@@ -30,7 +30,7 @@ class PEARLPCTests(unittest.TestCase):
     """
 
     def setUp(self):
-        self.pressure_value = 1000
+        self.pressure_value = 35
         self.set_loop_status = 1
         self.default_initial_value = 0
         self.default_id_prefix = 1111
@@ -48,12 +48,11 @@ class PEARLPCTests(unittest.TestCase):
         ("GO_PRESSURE", "GO_PRESSURE",  5, "TRUE", 1),
         ("AM_PRESSURE", "AM_PRESSURE",  6, "Auto", 1),
         ("SL_PRESSURE", "SL_PRESSURE",  7, "Closed Loop", 1),
-        ("SF_PRESSURE", "SF_PRESSURE",  8, 1, 1),
         ("ER_PRESSURE", "ER_PRESSURE",  9, 1, 1),
-        ("PRESSURE",    "PRESSURE",    10, 1000, 1000),
-        ("MN_PRESSURE", "MN_PRESSURE", 11, 1000, 1000),
-        ("SP_PRESSURE", "SP_PRESSURE", 12, 1000, 1000),
-        ("MX_PRESSURE", "MX_PRESSURE", 13, 1000, 1000)
+        ("PRESSURE",    "PRESSURE",    10, 35, 35),
+        ("MN_PRESSURE", "MN_PRESSURE", 11, 35, 35),
+        ("SP_PRESSURE", "SP_PRESSURE", 12, 35, 35),
+        ("MX_PRESSURE", "MX_PRESSURE", 13, 35, 35)
     ])
     def test_WHEN_pv_set_THEN_pv_and_buffer_readback_correctly(self, _, pv_record, buffer_location, setpoint_value, buffer_value):
         self.ca.set_pv_value("{}:SP".format(pv_record), setpoint_value)
@@ -74,7 +73,7 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_id_prefixes_set_THEN_id_prefixes_read_back_correctly(self):
         self.ca.set_pv_value("SI_PRESSURE:SP", self.pressure_value)
         self.ca.set_pv_value("SD_PRESSURE:SP", self.pressure_value)
-        self.ca.assert_that_pv_is("ID_PRESSURE", f"{self.pressure_value} {self.pressure_value}")
+        self.ca.assert_that_pv_is("ID_PRESSURE", f"{self.pressure_value:04d} {self.pressure_value:04d}")
 
     def test_WHEN_pressure_set_lower_than_drvl_field_THEN_read_back_correctly(self):
         self.ca.set_pv_value("MN_PRESSURE:SP", 10)
@@ -84,7 +83,7 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_reset_bit_value_set_THEN_reset_bit_value_read_back_correctly_HIGH_PRESSURE(self):
         self.ca.set_pv_value("RESET_PRESSURE:SP", 0)
         self.ca.set_pv_value("MN_PRESSURE:SP", 10)
-        self.ca.assert_setting_setpoint_sets_readback(500, "PRESSURE")
+        self.ca.assert_setting_setpoint_sets_readback(35, "PRESSURE")
         self.ca.set_pv_value("RESET_PRESSURE:SP", 1)
         self.ca.assert_that_pv_is("RESET_PRESSURE", "RESET")
 
@@ -94,11 +93,12 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("GENERAL_ERROR", "ON")
 
     def test_WHEN_value_set_THEN_status_readback_correctly(self):
-        self.ca.set_pv_value("PRESSURE:SP", 500)
-        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0, 0, 0])
+        self.ca.set_pv_value("PRESSURE:SP", 35)
+#        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 35, 0, 0, 0, 0, -31119])
+        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 35, 0, 0, 0, 0, 0])
 
     def test_WHEN_np_pv_set_THEN_intitial_buffer_value_readback_correctly(self):
-        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, -31119])
 
     def test_WHEN_correct_conditions_met_THEN_device_ready_state_readback_correctly(self):
         self.ca.assert_that_pv_is("READY_STATE", "READY")
