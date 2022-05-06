@@ -36,7 +36,7 @@ class PearlPCStreamInterface(StreamInterface):
         CmdBuilder("get_memory").escape("vr").arg("[0-9]{4}", argument_mapping=int).eos().build(),
         
 ## these are not real device commands and ideally
-## should be accessed via lewis backdoor
+## should be accessed via lewis backdoor and not command interface
         CmdBuilder("set_em_stop_status").escape("Em").arg("[0-1]").eos().build(),
         CmdBuilder("set_ru").escape("Ru").arg("[0-1]{1}").eos().build(),
         CmdBuilder("set_re").escape("Re").arg("[0-4]{1}").eos().build(),

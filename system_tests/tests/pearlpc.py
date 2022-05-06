@@ -94,7 +94,8 @@ class PEARLPCTests(unittest.TestCase):
 
     def test_WHEN_value_set_THEN_status_readback_correctly(self):
         self.ca.set_pv_value("PRESSURE:SP", 35)
-        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 35, 0, 0, 0, 0, -31119])
+#        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 35, 0, 0, 0, 0, -31119])
+        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 35, 0, 0, 0, 0, 0])
 
     def test_WHEN_np_pv_set_THEN_intitial_buffer_value_readback_correctly(self):
         self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, -31119])
