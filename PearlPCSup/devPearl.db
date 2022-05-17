@@ -258,6 +258,7 @@ record(ai, "$(P)$(IOC_NAME)PRESSURE"){
     field(DESC, "Get Pressure")
     field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[14] CP MS")
     field(DTYP, "Soft Channel")
+    field(FLNK, "$(P)$(IOC_NAME)PRESSURE_COMPARISON")
 }
 
 record(ai, "$(P)$(IOC_NAME)PRESSURE_CELL"){
@@ -302,9 +303,9 @@ record(ao, "$(P)$(IOC_NAME)USER_LIMIT:SP"){
 record(calc, "$(P)$(IOC_NAME)PRESSURE_COMPARISON"){
     field(DESC, "Compare pressure against previous val")
     field(CALC, "A - B; B := A")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE CP")
+    field(INPA, "$(P)$(IOC_NAME)PRESSURE")
     field(FLNK, "$(P)$(IOC_NAME)PRESSURE_FANOUT")
-    field(SCAN, "1 second")
+    field(SCAN, "Passive")
 }
 
 record(fanout, "$(P)$(IOC_NAME)PRESSURE_FANOUT") {
@@ -457,15 +458,16 @@ record(mbbi, "$(P)$(IOC_NAME)PRESSURE_RESTART_STAGES") {
 
 record(calcout, "$(P)$(IOC_NAME)READY_STATE_CHECKS") {
     field(DESC, "Ready state check validation")
+    field(SCAN, "Passive")
+    field(VAL, "0")
     field(CALC, "(!A && !B && !C && !D && !E && !F)? 1:0")
-    field(INPA, "$(P)$(IOC_NAME)RESET_PRESSURE") # Not restarting must be 0
-    field(INPB, "$(P)$(IOC_NAME)SF_MODE_PRESSURE") # Not in Seal fail must be 0/RVAl OFF
-    field(INPC, "$(P)$(IOC_NAME)ER_PRESSURE") # General error must be 0
-    field(INPE, "$(P)$(IOC_NAME)INCREASING_PRESSURE") # Must be 0 - no increase
-    field(INPF,  "$(P)$(IOC_NAME)DECREASING_PRESSURE") # Must be 0 - no decrease
+    field(INPA, "$(P)$(IOC_NAME)RESET_PRESSURE CP") # Not restarting must be 0
+    field(INPB, "$(P)$(IOC_NAME)SF_MODE_PRESSURE CP") # Not in Seal fail must be 0/RVAl OFF
+    field(INPC, "$(P)$(IOC_NAME)ER_PRESSURE CP") # General error must be 0
+    field(INPE, "$(P)$(IOC_NAME)INCREASING_PRESSURE CP") # Must be 0 - no increase
+    field(INPF,  "$(P)$(IOC_NAME)DECREASING_PRESSURE CP") # Must be 0 - no decrease
     field(FLNK, "$(P)$(IOC_NAME)READY_STATE")
     field(SDIS, "$(P)$(IOC_NAME)DISABLE")
-    field(SCAN, "1 second")
 }
 
 record(bi, "$(P)$(IOC_NAME)READY_STATE") {
