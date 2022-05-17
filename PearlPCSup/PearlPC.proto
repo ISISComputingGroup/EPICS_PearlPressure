@@ -44,6 +44,10 @@ set_sloop{
 	out "sloop%#01d"
 }
 
+set_user_limit{
+    out "ul%d"
+}
+
 get_id {
 	ExtraInput = Ignore;
 	out "id";

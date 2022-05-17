@@ -70,6 +70,7 @@ class PearlPCStreamInterface(StreamInterface):
         Get the device status on request
         @return: (str) A formatted string containing all set device parameters describing current device status.
         """
+        self._device.poller()
         return f"Status Report{self.out_terminator}" \
                f"Em Ru Re St By Go AM sl sf Er   ra    mn    sp    mx  Press    Inputs{self.out_terminator}" \
                f"{self._device.em_stop_status} " \

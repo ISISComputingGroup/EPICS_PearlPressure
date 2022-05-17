@@ -15,8 +15,6 @@ class SimulatedPearlPC(StateMachineDevice):
         self.is_giving_errors = False
         self.out_error = "}{<7f>w"
         self.out_terminator_in_error = ""
-        t = threading.Thread(target=self.poller)
-        t.start()
 
     def _get_state_handlers(self):
         return {
@@ -93,41 +91,38 @@ class SimulatedPearlPC(StateMachineDevice):
         self.run_requested = 1
     
     def poller(self):
-        while(True):
-            self.inputs = int("011110000") + int("000000001") * self.am_mode
-            if self.reset_requested:
-                if self.reset_value == 0:
-                    self.reset_value = 2
-                elif self.reset_value == 2:
-                    self.reset_value = 4
-                elif self.reset_value == 4:
-                    self.reset_value = 3
-                elif self.reset_value == 3:
-                    self.reset_value = 1
-                else:
-                    self.reset_requested = 0
-            if self.stop_requested:
-                self.stop_bit = 1
-                self.run_bit = 0
-                self.busy_bit = 0
-                self.ramping = 0
-                self.stop_requested = 0
-            if self.run_requested:
-                self.stop_bit = 0
-                self.run_bit = 1
-                self.busy_bit = 1
-                self.ramping = 1
-                self.run_requested = 0
-            if self.run_bit == 1:
-                self.running()
-            pressure = self.get_pressure()
-            if pressure > self.user_stop_limit:
-                self.last_error_code = 12
-                self.stop_requested = 1
-                
-            time.sleep(1)
+        self.inputs = int("011110000") + int("000000001") * self.am_mode
+        if self.reset_requested:
+            if self.reset_value == 0:
+                self.reset_value = 2
+            elif self.reset_value == 2:
+                self.reset_value = 4
+            elif self.reset_value == 4:
+                self.reset_value = 3
+            elif self.reset_value == 3:
+                self.reset_value = 1
+            else:
+                self.reset_requested = 0
+        if self.stop_requested:
+            self.stop_bit = 1
+            self.run_bit = 0
+            self.busy_bit = 0
+            self.ramping = 0
+            self.stop_requested = 0
+        if self.run_requested:
+            self.stop_bit = 0
+            self.run_bit = 1
+            self.busy_bit = 1
+            self.ramping = 1
+            self.run_requested = 0
+        if self.run_bit == 1:
+            self.running()
+        pressure = self.get_pressure()
+        if pressure > self.user_stop_limit:
+            self.last_error_code = 12
+            self.stop_requested = 1
 
-# need to do closed lop better
+# need to do closed loop better
     def running(self):
         pressure = self.get_pressure()
         if self.ramping == 1:

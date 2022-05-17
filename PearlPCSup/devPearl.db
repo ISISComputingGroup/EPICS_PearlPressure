@@ -237,8 +237,8 @@ record(bi, "$(P)$(IOC_NAME)GENERAL_ERROR") {
     field(ONAM, "ON")
 }
 
-# isn't this pressure rate rather than pressure?
-record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
+# isn't this pressure rate rather than pressure? FIXED
+record(ao, "$(P)$(IOC_NAME)PRESSURE_RATE:SP"){
     field(DESC, "Set Pressure")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_ra $(PORT)")
@@ -246,12 +246,57 @@ record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
     field(DRVL, "10")
 }
 
-# as above, isn't this pressure rate rather than pressure ? perssure is [14] i believe
-record(ai, "$(P)$(IOC_NAME)PRESSURE"){
+# as above, isn't this pressure rate rather than pressure ? perssure is [14] i believe FIXED
+record(ai, "$(P)$(IOC_NAME)PRESSURE_RATE"){
     field(DESC, "Get Pressure")
     field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[10] CP MS")
     field(DTYP, "Soft Channel")
     field(FLNK, "$(P)$(IOC_NAME)HIGH_PRESSURE_RESET_CHECK")
+}
+
+record(ai, "$(P)$(IOC_NAME)PRESSURE"){
+    field(DESC, "Get Pressure")
+    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[14] CP MS")
+    field(DTYP, "Soft Channel")
+}
+
+record(ai, "$(P)$(IOC_NAME)PRESSURE_CELL"){
+    field(SCAN, "1 second")
+    field(DTYP, "stream")
+    field(DESC, "Get Cell Pressure")
+    field(INP, "@PearlPC.proto get_memory(0087) $(PORT)")
+}
+
+record(ai, "$(P)$(IOC_NAME)PRESSURE_PUMP"){
+    field(SCAN, "1 second")
+    field(DTYP, "stream")
+    field(DESC, "Get Cell Pressure")
+    field(INP, "@PearlPC.proto get_memory(0088) $(PORT)")
+}
+
+record(bo, "$(P)$(IOC_NAME)RUN"){
+    field(SCAN, "Passive")
+    field(DTYP, "stream")
+    field(DESC, "Start The Device")
+    field(OUT, "@PearlPC.proto run $(PORT)")
+}
+
+record(bo, "$(P)$(IOC_NAME)STOP"){
+    field(SCAN, "Passive")
+    field(DTYP, "stream")
+    field(DESC, "Stop The Device")
+    field(OUT, "@PearlPC.proto stop $(PORT)")
+}
+
+record(ao, "$(P)$(IOC_NAME)USER_LIMIT:SP"){
+    field(DESC, "Set User Pressure Limit")
+    field(SCAN, "Passive")
+    field(VAL, "1000")
+    field(PINI, "YES")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto set_user_limit $(PORT)")
+    field(DRVH, "9999")
+    field(DRVL, "0")
 }
 
 record(calc, "$(P)$(IOC_NAME)PRESSURE_COMPARISON"){
