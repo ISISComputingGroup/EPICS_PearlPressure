@@ -61,6 +61,7 @@ class PEARLPCTests(unittest.TestCase):
             self.lewis.backdoor_run_function_on_device(target, [setpoint_value])
         else:
             self.ca.set_pv_value("{}:SP".format(target), setpoint_value)
+            self.ca.process_pv("SEND_PARAMETERS")
             self.ca.assert_that_pv_is(target, setpoint_value)
         self.ca.assert_that_pv_is("STATUS_ARRAY.[{}]".format(buffer_location), buffer_value)
 
@@ -83,11 +84,13 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_pressure_set_lower_than_drvl_field_THEN_read_back_correctly(self):
         self.ca.set_pv_value("MN_PRESSURE:SP", 10)
         self.ca.set_pv_value("SP_PRESSURE:SP", 5)
+        self.ca.process_pv("SEND_PARAMETERS")
         self.ca.assert_that_pv_is("SP_PRESSURE:SP", 10)
 
     def test_WHEN_reset_bit_value_set_THEN_reset_bit_value_read_back_correctly_HIGH_PRESSURE(self):
         self.ca.set_pv_value("RESET_PRESSURE:SP", 0)
         self.ca.set_pv_value("MN_PRESSURE:SP", 10)
+        self.ca.process_pv("SEND_PARAMETERS")
         self.ca.assert_setting_setpoint_sets_readback(35, "SP_PRESSURE")
         self.ca.set_pv_value("RESET_PRESSURE:SP", 1)
         self.ca.assert_that_pv_is("RESET_PRESSURE_STATUS", 1)
@@ -99,10 +102,8 @@ class PEARLPCTests(unittest.TestCase):
 
     def test_WHEN_value_set_THEN_status_readback_correctly(self):
         self.ca.set_pv_value("PRESSURE_RATE:SP", 35)
-        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 35, 0, 0, 0, 0, -31119])
-
-    def test_WHEN_np_pv_set_THEN_intitial_buffer_value_readback_correctly(self):
-        self.ca.assert_that_pv_is("STATUS_ARRAY", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, -31119])
+        self.ca.process_pv("SEND_PARAMETERS")
+        self.ca.assert_that_pv_is("PRESSURE_RATE", 35)
 
     def test_WHEN_correct_conditions_met_THEN_device_ready_state_readback_correctly(self):
         self.ca.assert_that_pv_is("READY_STATE", "READY")
@@ -117,13 +118,13 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.set_pv_value("SP_PRESSURE:SP", nominal_pres)
         self.ca.set_pv_value("PRESSURE_RATE:SP", pres_rate)
         self.ca.set_pv_value("RUN", 1)
+        self.ca.process_pv("SEND_PARAMETERS")
 
     @parameterized.expand([
         (50, 25),
         (50, 75),
     ])
-    def test_WHEN_device_started_THEN_pressure_increasing_decreasing_set_correctly(self, target_pressure,
-                                                                                   test_pressure):
+    def test_WHEN_device_started_THEN_pressure_increasing_decreasing_set_correctly(self, target_pressure, test_pressure):
         self.start_device_with_parameters(0, target_pressure + 50, target_pressure, 50)
         self.ca.assert_that_pv_is("INCREASING_PRESSURE", "Increasing")
         self.ca.assert_that_pv_is("DECREASING_PRESSURE", "Nominal")
@@ -146,4 +147,3 @@ class PEARLPCTests(unittest.TestCase):
         self.start_device_with_parameters(0, 50, 25, 10)
         self.ca.assert_that_pv_is_not("PRESSURE_CELL", 0)
         self.ca.assert_that_pv_is_not("PRESSURE_PUMP", 0)
-
