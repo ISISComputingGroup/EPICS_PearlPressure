@@ -8,13 +8,24 @@ from collections import OrderedDict
 
 class SimulatedPearlPC(StateMachineDevice):
 
-    def _initialize_data(self):
+    def _initialize_data(self, status_dictionary=None):
+        if status_dictionary is None:
+            status_dictionary = {}
+        self.status_dictionary = status_dictionary
         self.re_initialise()
 
         # When the device is in an error state it can respond with junk
         self.is_giving_errors = False
         self.out_error = "}{<7f>w"
         self.out_terminator_in_error = ""
+
+    def add_to_dict(self, value_id: str, unvalidated_value: object):
+        """
+        Add device state parameters to a dictionary.
+        @param value_id: (str) dictionary key for each device parameter
+        @param unvalidated_value: (object) device parameter set to describe system status
+        """
+        self.status_dictionary[value_id] = unvalidated_value
 
     def _get_state_handlers(self):
         return {
@@ -146,5 +157,83 @@ class SimulatedPearlPC(StateMachineDevice):
         if abs(self.cell_pressure - self.pump_pressure) > self.transducer_threashold:
             self.last_error_code = 10
             self.stop_requested = 1
-            
-            
+
+    def set_em_stop_status(self, em_stop_status: int):
+        """
+        Set emergency stop circuit status.
+        1 denotes that the system has stopped. 0 denotes the system is running
+        @param em_stop_status: (int) Device status value for requesting emergency stop circuit - range [0-1]
+        """
+        print(f"Received EM stop circuit status: {em_stop_status}")
+        self.em_stop_status = em_stop_status
+        self.add_to_dict(value_id="EM", unvalidated_value=self.em_stop_status)
+
+    def set_ru(self, run_bit: int):
+        """
+        Set Run Bit which denotes is mechanically active
+        @param run_bit: (int) Value to start servo loop execution,
+        pumping to achieve the setpoint pressure - range [0-1]
+        """
+        print(f"Received run bit: {run_bit}")
+        self.run_bit = run_bit
+        self.add_to_dict(value_id="ru", unvalidated_value=self.run_bit)
+
+    def set_re(self, piston_reset_phase: int):
+        """
+        Set the reset value to represent the 4 stages of resetting the pistons
+        @param reset_value: (int) value representing each stage during piston reset - range [0-4]
+        """
+        print(f"Received reset phase value: {piston_reset_phase}")
+        self.reset_value = piston_reset_phase
+        self.add_to_dict(value_id="re", unvalidated_value=self.piston_reset_phase)
+
+    def set_stop_bit(self, stop_bit: int):
+        """
+        Set the stop bit to 1 or 0 where 1 requests the system to stop. This value is
+        set automatically at the end of a move or set to stop system manually
+        @param stop_bit: (int) status value to stop system at the end of a move or by request - range [0-1]
+        """
+        print(f"Received stop bit command: {stop_bit}")
+        self.stop_bit = stop_bit
+        self.add_to_dict(value_id="St", unvalidated_value=self.stop_bit)
+
+    def set_by(self, busy_bit: int):
+        """
+        Set the busy bit status
+        1 denotes that the device is busy and 0 not busy
+        @type busy_bit: (int) integer representing if device is mechanically active - range [0-1]
+        """
+        print(f"Received busy bit {busy_bit}")
+        self.busy_bit = busy_bit
+        self.add_to_dict(value_id="by", unvalidated_value=self.busy_bit)
+
+    def set_go(self, go_status: int):
+        """
+        Set GO status to to 1 if system was initiated by host.
+        1 - set by host
+        0 - not set by host
+        @param go_status (int) set if command initiated by host - range [0-1]
+        """
+        print(f"Received GO status: {go_status}")
+        self.go_status = go_status
+        self.add_to_dict(value_id="GO", unvalidated_value=self.go_status)
+
+    def set_am(self, am_mode: int):
+        """
+        Set AM auto/manual switch position mode
+        @param am_mode: (int) Set Auto/manual switch position - range [0-1]
+        """
+        print(f"Received last AM modeL: {am_mode}")
+        self.am_mode = am_mode
+        self.add_to_dict(value_id="AM", unvalidated_value=self.am_mode)
+
+    def set_er(self, last_error_code: int):
+        """
+        Set the last error code
+        @param last_error_code: (int) Last error status received by device - range [0-19]
+        """
+        print(f"Received last error code: {last_error_code}")
+        self.last_error_code = last_error_code
+        self.add_to_dict(value_id="ER", unvalidated_value=self.last_error_code)
+
+
