@@ -146,10 +146,10 @@ class SimulatedPearlPC(StateMachineDevice):
             if incr > self.pressure_rate:
                 incr = self.pressure_rate
             if pressure < self.setpoint_value:
-                self.pump_pressure =  pressure + incr
+                self.pump_pressure = pressure + incr
                 self.cell_pressure = pressure + incr
             else:
-                self.pump_pressure =  pressure - incr
+                self.pump_pressure = pressure - incr
                 self.cell_pressure = pressure - incr
         
         # if self.loop_mode == 1:    maintain between min_value_pre_servoing and max_value_pre_servoing             
@@ -236,4 +236,6 @@ class SimulatedPearlPC(StateMachineDevice):
         self.last_error_code = last_error_code
         self.add_to_dict(value_id="ER", unvalidated_value=self.last_error_code)
 
-
+    def set_pressures(self, pump_pressure, cell_pressure):
+        self.pump_pressure = pump_pressure
+        self.cell_pressure = cell_pressure
