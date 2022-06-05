@@ -63,7 +63,7 @@ class SimulatedPearlPC(StateMachineDevice):
         self.transducer_threashold = 2
         self.algorithm = "a"
         self.transducer = "0"
-        self.user_stop_limit = 0
+        self.user_stop_limit = 1000
         self.offset_plus = 0
         self.offset_minus = 0
         self.dir_plus = 0
@@ -146,11 +146,11 @@ class SimulatedPearlPC(StateMachineDevice):
             if incr > self.pressure_rate:
                 incr = self.pressure_rate
             if pressure < self.setpoint_value:
-                self.pump_pressure = pressure + incr
-                self.cell_pressure = pressure + incr
+                self.pump_pressure = self.pump_pressure + incr
+                self.cell_pressure = self.pump_pressure # for simplicity
             else:
-                self.pump_pressure = pressure - incr
-                self.cell_pressure = pressure - incr
+                self.pump_pressure = self.pump_pressure - incr
+                self.cell_pressure = self.pump_pressure # for simplicity
         
         # if self.loop_mode == 1:    maintain between min_value_pre_servoing and max_value_pre_servoing             
 
@@ -207,6 +207,16 @@ class SimulatedPearlPC(StateMachineDevice):
         self.busy_bit = busy_bit
         self.add_to_dict(value_id="by", unvalidated_value=self.busy_bit)
 
+    def set_sf_status(self, sf_status: int):
+        """
+        Set the seal fail bit status
+        1 denotes that it has failed, 0 not
+        @type sf_bit: (int) integer representing if seal has failed - range [0-1]
+        """
+        print(f"Received seal fail bit {sf_status}")
+        self.seal_fail_status = sf_status
+        self.add_to_dict(value_id="sf_status", unvalidated_value=self.seal_fail_status)
+    
     def set_go(self, go_status: int):
         """
         Set GO status to to 1 if system was initiated by host.

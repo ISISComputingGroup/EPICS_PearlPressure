@@ -45,7 +45,7 @@ set_sloop{
 }
 
 set_user_limit{
-    out "ul%d"
+    out "ul%#04d"
 }
 
 get_id {
@@ -71,4 +71,8 @@ get_memory{
 	ExtraInput = Ignore;
 	out "vr\$1";
 	in "vr%*04d %d";
+}
+
+reset_error {
+    out "er"
 }
