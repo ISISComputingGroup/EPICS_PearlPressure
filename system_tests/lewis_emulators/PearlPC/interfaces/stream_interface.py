@@ -34,42 +34,20 @@ class PearlPCStreamInterface(StreamInterface):
         CmdBuilder("set_user_stop_limit").escape("ul").arg("[0-9]{4}", argument_mapping=int).eos().build(),
         CmdBuilder("show_limits").escape("ls").eos().build(),
         CmdBuilder("get_memory").escape("vr").arg("[0-9]{4}", argument_mapping=int).eos().build(),
-        
-## these are not real device commands and ideally
-## should be accessed via lewis backdoor and not command interface
-        CmdBuilder("set_em_stop_status").escape("Em").arg("[0-1]").eos().build(),
-        CmdBuilder("set_ru").escape("Ru").arg("[0-1]{1}").eos().build(),
-        CmdBuilder("set_re").escape("Re").arg("[0-4]{1}").eos().build(),
-        CmdBuilder("set_stop_bit").escape("St").arg("[0-1]{1}").eos().build(),
-        CmdBuilder("set_by").escape("By").arg("[0-1]{1}").eos().build(),
-        CmdBuilder("set_go").escape("GO").arg("[0-1]{1}").eos().build(),
-        CmdBuilder("set_am").escape("AM").arg("[0-1]{1}").eos().build(),
-        CmdBuilder("set_er").escape("Er").arg("[0-9]{1,2}").eos().build(),
-
     }
 
     in_terminator = "\r"
     out_terminator = "\r\n"
 
-    def __init__(self, status_dictionary=None):
+    def __init__(self):
         super().__init__()
-        if status_dictionary is None:
-            status_dictionary = {}
-        self.status_dictionary = status_dictionary
-
-    def add_to_dict(self, value_id: str, unvalidated_value: object):
-        """
-        Add device state parameters to a dictionary.
-        @param value_id: (str) dictionary key for each device parameter
-        @param unvalidated_value: (object) device parameter set to describe system status
-        """
-        self.status_dictionary[value_id] = unvalidated_value
 
     def get_st(self):
         """
         Get the device status on request
         @return: (str) A formatted string containing all set device parameters describing current device status.
         """
+        self._device.poller()
         return f"Status Report{self.out_terminator}" \
                f"Em Ru Re St By Go AM sl sf Er   ra    mn    sp    mx  Press    Inputs{self.out_terminator}" \
                f"{self._device.em_stop_status} " \
@@ -109,7 +87,7 @@ class PearlPCStreamInterface(StreamInterface):
             print("ERROR: invalid si value")
 
         self._device.initial_id_prefix = id_prefix
-        self.add_to_dict(value_id="si", unvalidated_value=self._device.initial_id_prefix)
+        self._device.add_to_dict(value_id="si", unvalidated_value=self._device.initial_id_prefix)
         return ""
     
     def set_sd(self, secondary_id_prefix: int):
@@ -123,37 +101,8 @@ class PearlPCStreamInterface(StreamInterface):
         if (secondary_id_prefix < 0 or secondary_id_prefix > 9999):
             print("ERROR: invalid sd value")
         self._device.secondary_id_prefix = secondary_id_prefix
-        self.add_to_dict(value_id="sd", unvalidated_value=self._device.secondary_id_prefix)
+        self._device.add_to_dict(value_id="sd", unvalidated_value=self._device.secondary_id_prefix)
         return ""
-
-    def set_em_stop_status(self, em_stop_status: int):
-        """
-        Set emergency stop circuit status.
-        1 denotes that the system has stopped. 0 denotes the system is running
-        @param em_stop_status: (int) Device status value for requesting emergency stop circuit - range [0-1]
-        """
-        print(f"Received EM stop circuit status: {em_stop_status}")
-        self._device.em_stop_status = em_stop_status
-        self.add_to_dict(value_id="EM", unvalidated_value=self._device.em_stop_status)
-
-    def set_ru(self, run_bit: int):
-        """
-        Set Run Bit which denotes is mechanically active
-        @param run_bit: (int) Value to start servo loop execution,
-        pumping to achieve the setpoint pressure - range [0-1]
-        """
-        print(f"Received run bit: {run_bit}")
-        self._device.run_bit = run_bit
-        self.add_to_dict(value_id="ru", unvalidated_value=self._device.run_bit)
-
-    def set_re(self, piston_reset_phase: int):
-        """
-        Set the reset value to represent the 4 stages of resetting the pistons
-        @param reset_value: (int) value representing each stage during piston reset - range [0-4]
-        """
-        print(f"Received reset phase value: {piston_reset_phase}")
-        self._device.reset_value = piston_reset_phase
-        self.add_to_dict(value_id="re", unvalidated_value=self._device.piston_reset_phase)
 
     def reset(self):
         """
@@ -166,46 +115,6 @@ class PearlPCStreamInterface(StreamInterface):
             print("ERROR: cannot reset as pressure too high")
             self._device.last_error_code = 1
         return ""
-    
-    def set_stop_bit(self, stop_bit: int):
-        """
-        Set the stop bit to 1 or 0 where 1 requests the system to stop. This value is 
-        set automatically at the end of a move or set to stop system manually
-        @param stop_bit: (int) status value to stop system at the end of a move or by request - range [0-1]
-        """
-        print(f"Received stop bit command: {stop_bit}")
-        self._device.stop_bit = stop_bit
-        self.add_to_dict(value_id="St", unvalidated_value=self._device.stop_bit)
-
-    def set_by(self, busy_bit: int):
-        """
-        Set the busy bit status
-        1 denotes that the device is busy and 0 not busy
-        @type busy_bit: (int) integer representing if device is mechanically active - range [0-1]
-        """
-        print(f"Received busy bit {busy_bit}")
-        self._device.busy_bit = busy_bit
-        self.add_to_dict(value_id="by", unvalidated_value=self._device.busy_bit)
-
-    def set_go(self, go_status: int):
-        """
-        Set GO status to to 1 if system was initiated by host.
-        1 - set by host
-        0 - not set by host
-        @param go_status (int) set if command initiated by host - range [0-1]
-        """
-        print(f"Received GO status: {go_status}")
-        self._device.go_status = go_status
-        self.add_to_dict(value_id="GO", unvalidated_value=self._device.go_status)
-
-    def set_am(self, am_mode: int):
-        """
-        Set AM auto/manual switch position mode
-        @param am_mode: (int) Set Auto/manual switch position - range [0-1]
-        """
-        print(f"Received last AM modeL: {am_mode}")
-        self._device.am_mode = am_mode
-        self.add_to_dict(value_id="AM", unvalidated_value=self._device.am_mode)
 
     def set_sloop(self, sloop: int):
         """
@@ -221,7 +130,7 @@ class PearlPCStreamInterface(StreamInterface):
         if (sloop < 0 or sloop > 1):
             print("ERROR: invalid sloop")
         self._device.loop_mode = sloop
-        self.add_to_dict(value_id="sloop", unvalidated_value=self._device.loop_mode)
+        self._device.add_to_dict(value_id="sloop", unvalidated_value=self._device.loop_mode)
         return ""
 
     def set_sf(self, seal_fail_value: int):
@@ -234,17 +143,8 @@ class PearlPCStreamInterface(StreamInterface):
         if (seal_fail_value < 1 or seal_fail_value > 999):
            print("ERROR: invalid seal fail value")
         self._device.seal_fail_value = seal_fail_value
-        self.add_to_dict(value_id="sf", unvalidated_value=self._device.seal_fail_value)
+        self._device.add_to_dict(value_id="sf", unvalidated_value=self._device.seal_fail_value)
         return ""
-
-    def set_er(self, last_error_code: int):
-        """
-        Set the last error code
-        @param last_error_code: (int) Last error status received by device - range [0-19]
-        """
-        print(f"Received last error code: {last_error_code}")
-        self._device.last_error_code = last_error_code
-        self.add_to_dict(value_id="ER", unvalidated_value=self._device.last_error_code)
 
     def error_reset(self):
         """
@@ -271,7 +171,7 @@ class PearlPCStreamInterface(StreamInterface):
             self._device.pressure_rate = 10 # maximum slew rate of the motor?
         else:            
             self._device.pressure_rate = pressure_rate
-        self.add_to_dict(value_id="ra", unvalidated_value=self._device.pressure_rate)
+        self._device.add_to_dict(value_id="ra", unvalidated_value=self._device.pressure_rate)
         return ""
 
     def set_mn(self, min_measured: int):
@@ -284,7 +184,7 @@ class PearlPCStreamInterface(StreamInterface):
             print("ERROR: invalid min measured")
         print(f"Minimum value before re-servoing received: {min_measured}")
         self._device.min_value_pre_servoing = min_measured
-        self.add_to_dict(value_id="mn", unvalidated_value=self._device.min_value_pre_servoing)
+        self._device.add_to_dict(value_id="mn", unvalidated_value=self._device.min_value_pre_servoing)
         return ""
 
     def set_sp(self, setpoint: int):
@@ -298,7 +198,7 @@ class PearlPCStreamInterface(StreamInterface):
         if (setpoint < 1 or setpoint > 1000):
             print("ERROR: invalid setpoint")
         self._device.setpoint_value = setpoint
-        self.add_to_dict(value_id="sp", unvalidated_value=self._device.setpoint_value)
+        self._device.add_to_dict(value_id="sp", unvalidated_value=self._device.setpoint_value)
         return ""
 
     def set_mx(self, max_measured: int):
@@ -310,7 +210,7 @@ class PearlPCStreamInterface(StreamInterface):
             print("ERROR: invalid max measured")
         print(f"Maximum measured value before re-servoing received: {max_measured}")
         self._device.max_value_pre_servoing = max_measured
-        self.add_to_dict(value_id="mx", unvalidated_value=self._device.max_value_pre_servoing)
+        self._device.add_to_dict(value_id="mx", unvalidated_value=self._device.max_value_pre_servoing)
         return ""
 
     def handle_error(self, request:object, error:object):
@@ -414,5 +314,3 @@ class PearlPCStreamInterface(StreamInterface):
         else:
             print(f"ERROR: read memory error address {address}")
         return f"vr{address:04d} {value}"
-
-    
