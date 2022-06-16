@@ -291,25 +291,25 @@ class PearlPCStreamInterface(StreamInterface):
         
     def get_memory(self, address: int):
         value = 0
-        if (address < 0 or address > 1023):
+        if address < 0 or address > 1023:
             print("ERROR: show memory address")
-        elif (address == 2): # error number
+        elif address == 2:  # error number
             value = self._device.last_error_code
-        elif (address == 81): # pressure difference set by th command
+        elif address == 81:  # pressure difference set by th command
             value = self._device.transducer_threashold
-        elif (address == 82): # pressure difference between transducers
+        elif address == 82:  # pressure difference between transducers
             value = self._device.cell_pressure - self._device.pump_pressure
-        elif (address == 83): # cell status, 0 = working
+        elif address == 83:  # cell status, 0 = working
             value = 0
-        elif (address == 84): # pump status, 0 = working
+        elif address == 84:  # pump status, 0 = working
             value = 0
-        elif (address == 85): # pressure algorithm
+        elif address == 85:  # pressure algorithm
             value = ord(self._device.algorithm[0])
-        elif (address == 87): # Sensor 1 (cell) measured pressure
+        elif address == 87:  # Sensor 1 (cell) measured pressure
             value = self._device.cell_pressure
-        elif (address == 88): # Sensor 2 (pump) measured pressure
+        elif address == 88:  # Sensor 2 (pump) measured pressure
             value = self._device.pump_pressure
-        elif (address == 126): # seal fail limit 
+        elif address == 126:  # seal fail limit
             value = self._device.seal_fail_value
         else:
             print(f"ERROR: read memory error address {address}")

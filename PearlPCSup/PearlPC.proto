@@ -48,6 +48,10 @@ set_user_limit{
     out "ul%#04d"
 }
 
+set_th {
+    out "th%#04d";
+}
+
 get_id {
 	ExtraInput = Ignore;
 	out "id";
