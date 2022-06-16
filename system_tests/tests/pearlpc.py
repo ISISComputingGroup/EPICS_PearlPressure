@@ -178,7 +178,7 @@ class PEARLPCTests(unittest.TestCase):
         self.lewis.backdoor_run_function_on_device("set_pressures", [pump_pressure, cell_pressure])
         self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", cell_pressure - pump_pressure)
 
-    @parameterized.expand(parameterized_list([1, 9999]))
+    @parameterized.expand(parameterized_list([1, 999]))
     def test_WHEN_difference_threshold_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, val):
         self.ca.set_pv_value("PRESSURE_DIFFERENCE_THRESHOLD:SP", val)
         self.ca.process_pv("SEND_PARAMETERS")

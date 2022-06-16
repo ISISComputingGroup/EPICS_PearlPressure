@@ -237,9 +237,9 @@ class PearlPCStreamInterface(StreamInterface):
 
     def set_th(self, value: int):
         print(f"set_transducer threshold {value}")
-        if (value < 1 or value > 999):
+        if value < 1 or value > 999:
             print("ERROR: invalid th value")
-        self._device.transducer_threashold = value
+        self._device.transducer_difference_threshold = value
         return ""
 
     def transducer_reset(self):
@@ -296,7 +296,7 @@ class PearlPCStreamInterface(StreamInterface):
         elif address == 2:  # error number
             value = self._device.last_error_code
         elif address == 81:  # pressure difference set by th command
-            value = self._device.transducer_threashold
+            value = self._device.transducer_difference_threshold
         elif address == 82:  # pressure difference between transducers
             value = self._device.cell_pressure - self._device.pump_pressure
         elif address == 83:  # cell status, 0 = working
