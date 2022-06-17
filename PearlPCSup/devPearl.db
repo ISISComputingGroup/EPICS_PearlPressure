@@ -1,4 +1,4 @@
-record(bo, "$(P)$(IOC_NAME)DISABLE"){
+record(bo, "$(P)DISABLE"){
     field(DESC, "Disable comms")
     field(PINI, "YES")
     field(VAL, "$(DISABLE=0)")
@@ -7,171 +7,171 @@ record(bo, "$(P)$(IOC_NAME)DISABLE"){
     field(ONAM, "COMMS DISABLED")
 }
 
-record(longout, "$(P)$(IOC_NAME)ID_I:SP"){
+record(longout, "$(P)ID_I:SP"){
     field(DESC, "Set initial ID prefix")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_si $(PORT)")
     field(DRVH, "9999")
-    field(FLNK, "$(P)$(IOC_NAME)ID")
+    field(FLNK, "$(P)ID")
 }
 
-record(longout, "$(P)$(IOC_NAME)ID_D:SP"){
+record(longout, "$(P)ID_D:SP"){
     field(DESC, "Set secondary ID prefix")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_sd $(PORT)")
     field(DRVH, "9999")
-    field(FLNK, "$(P)$(IOC_NAME)ID")
+    field(FLNK, "$(P)ID")
 }
 
-record(stringin, "$(P)$(IOC_NAME)ID") {
+record(stringin, "$(P)ID") {
     field(DESC, "Get ID prefix")
     field(DTYP, "stream")
     field(INP, "@PearlPC.proto get_id $(PORT)")
     field(PINI, "YES")
-    field(SDIS, "$(P)$(IOC_NAME)DISABLE")
+    field(SDIS, "$(P)DISABLE")
 }
 
-record(waveform, "$(P)$(IOC_NAME)STATUS_ARRAY") {
+record(waveform, "$(P)STATUS_ARRAY") {
     field(DESC, "Return status")
     field(DTYP, "stream")
     field(INP, "@PearlPC.proto get_st_array $(PORT)")
     field(NELM, "16")
     field(SCAN, "1 second")
-    field(SDIS, "$(P)$(IOC_NAME)DISABLE")
+    field(SDIS, "$(P)DISABLE")
     field(FTVL, "SHORT")
 }
 
-record(bi, "$(P)$(IOC_NAME)EMSTOP"){
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[0] CP MS")
+record(bi, "$(P)EMSTOP"){
+    field(INP, "$(P)STATUS_ARRAY.[0] CP MS")
     field(DESC,  "EM stop circuit status")
     field(DTYP, "Soft Channel")
     field(ZNAM, "Inactive")
     field(ONAM, "Active")
 }
 
-record(bi, "$(P)$(IOC_NAME)RUN"){
+record(bi, "$(P)RUN"){
     field(DESC, "Get Mechanically active status")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[1] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[1] CP MS")
     field(DTYP, "Soft Channel")
     field(ZNAM, "Inactive")
     field(ONAM, "Active")
 }
 
-record(mbbi, "$(P)$(IOC_NAME)RESET"){
+record(mbbi, "$(P)RESET"){
     field(DESC, "Reset stage for each piston")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[2] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[2] CP MS")
     field(DTYP, "Soft Channel")
     field(ZRST, "Not Resetting/Purging")
     field(ONST, "Reset complete")
     field(TWST, "Resetting")
     field(THST, "Purge done")
     field(FRST, "Purging")
-    field(FLNK, "$(P)$(IOC_NAME)RESET_STATUS")
+    field(FLNK, "$(P)RESET_STATUS")
     # do not need ZRVL etc as soft channel and consecutive integers
 }
 
-record(bi, "$(P)$(IOC_NAME)STOP"){
+record(bi, "$(P)STOP"){
     field(DESC, "Stop bit after each move/manually")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[3] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[3] CP MS")
     field(DTYP, "Soft Channel")
     field(ZNAM, "Running")
     field(ONAM, "Stopped")
 }
 
-record(bi, "$(P)$(IOC_NAME)BUSY"){
+record(bi, "$(P)BUSY"){
     field(DESC, "Get Busy bit if busy or not")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[4] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[4] CP MS")
     field(DTYP, "Soft Channel")
     field(ZNAM, "Inactive")
     field(ONAM, "Active")
 }
 
-record(bi, "$(P)$(IOC_NAME)HOSTCMD"){
+record(bi, "$(P)HOSTCMD"){
     field(DESC, "Get system init by host status")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[5] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[5] CP MS")
     field(DTYP, "Soft Channel")
     field(ZNAM, "FALSE")
     field(ONAM, "TRUE")
 }
 
-record(bi, "$(P)$(IOC_NAME)MODE"){
+record(bi, "$(P)MODE"){
     field(DESC, "Gets auto/manual switch position")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[6] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[6] CP MS")
     field(DTYP, "Soft Channel")
     field(ZNAM, "Manual")
     field(ONAM, "Auto")
 }
 
-record(bi, "$(P)$(IOC_NAME)SERVO"){
+record(bi, "$(P)SERVO"){
     field(DESC, "Get loop pressure mode")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[7] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[7] CP MS")
     field(DTYP, "Soft Channel")
     field(ZNAM, "Open Loop")
     field(ONAM, "Closed Loop")
 }
 
-record(bi, "$(P)$(IOC_NAME)SF"){
+record(bi, "$(P)SF"){
     field(DESC, "Get Seal Fail Status")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[8] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[8] CP MS")
     field(DTYP, "Soft Channel")
     field(ZNAM, "OK")
     field(ONAM, "Failed")
 }
 
-record(longin, "$(P)$(IOC_NAME)ERRCODE"){
+record(longin, "$(P)ERRCODE"){
     field(DESC, "Last Error Code returned")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[9] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[9] CP MS")
     field(DTYP, "Soft Channel")
-    field(FLNK, "$(P)$(IOC_NAME)GENERAL_ERROR_CHECK")
+    field(FLNK, "$(P)GENERAL_ERROR_CHECK")
 }
 
-record(longin, "$(P)$(IOC_NAME)PRESSURE_RATE"){
+record(longin, "$(P)PRESSURE_RATE"){
     field(DESC, "Get Pressure Rate")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[10] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[10] CP MS")
     field(DTYP, "Soft Channel")
     field(EGU, "bar/min")
 }
 
-record(calc, "$(P)$(IOC_NAME)PRESSURE:TIME_TO_TGT"){
+record(calc, "$(P)PRESSURE:TIME_TO_TGT"){
     field(DESC, "Time to target pressure")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE:SP:RBV")
-    field(INPB, "$(P)$(IOC_NAME)PRESSURE")
-    field(INPC, "$(P)$(IOC_NAME)PRESSURE_RATE")
+    field(INPA, "$(P)PRESSURE:SP:RBV")
+    field(INPB, "$(P)PRESSURE")
+    field(INPC, "$(P)PRESSURE_RATE")
     field(CALC, "C!=0?ABS(A-B)/C:0")
     field(SCAN, "1 second")
     field(EGU, "min")
 }
 
-record(longin, "$(P)$(IOC_NAME)MN_PRESSURE"){
+record(longin, "$(P)MN_PRESSURE"){
     field(DESC, "Get Min Pressure")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[11] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[11] CP MS")
     field(DTYP, "Soft Channel")
     field(EGU, "bar")
 }
 
-record(longin, "$(P)$(IOC_NAME)PRESSURE:SP:RBV"){
+record(longin, "$(P)PRESSURE:SP:RBV"){
     field(DESC, "Get Setpoint (Nominal) Pressure")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[12] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[12] CP MS")
     field(DTYP, "Soft Channel")
     field(EGU, "bar")
 }
 
-record(longin, "$(P)$(IOC_NAME)MX_PRESSURE"){
+record(longin, "$(P)MX_PRESSURE"){
     field(DESC, "Get Max Pressure")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[13] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[13] CP MS")
     field(DTYP, "Soft Channel")
     field(EGU, "bar")
 }
 
-record(longin, "$(P)$(IOC_NAME)PRESSURE"){
+record(longin, "$(P)PRESSURE"){
     field(DESC, "Get Pressure")
-    field(INP, "$(P)$(IOC_NAME)STATUS_ARRAY.[14] CP MS")
+    field(INP, "$(P)STATUS_ARRAY.[14] CP MS")
     field(DTYP, "Soft Channel")
-    field(FLNK, "$(P)$(IOC_NAME)PRESSURE_COMPARISON")
+    field(FLNK, "$(P)PRESSURE_COMPARISON")
     field(EGU, "bar")
 }
 
-record(longin, "$(P)$(IOC_NAME)PRESSURE_CELL"){
+record(longin, "$(P)PRESSURE_CELL"){
     field(SCAN, "1 second")
     field(DTYP, "stream")
     field(DESC, "Get Cell Pressure")
@@ -179,7 +179,7 @@ record(longin, "$(P)$(IOC_NAME)PRESSURE_CELL"){
     field(EGU, "bar")
 }
 
-record(longin, "$(P)$(IOC_NAME)PRESSURE_PUMP"){
+record(longin, "$(P)PRESSURE_PUMP"){
     field(SCAN, "1 second")
     field(DTYP, "stream")
     field(DESC, "Get Pump Pressure")
@@ -187,21 +187,21 @@ record(longin, "$(P)$(IOC_NAME)PRESSURE_PUMP"){
     field(EGU, "bar")
 }
 
-record(bo, "$(P)$(IOC_NAME)RUN:SP"){
+record(bo, "$(P)RUN:SP"){
     field(SCAN, "Passive")
     field(DTYP, "stream")
     field(DESC, "Start The Device")
     field(OUT, "@PearlPC.proto run $(PORT)")
 }
 
-record(bo, "$(P)$(IOC_NAME)STOP:SP"){
+record(bo, "$(P)STOP:SP"){
     field(SCAN, "Passive")
     field(DTYP, "stream")
     field(DESC, "Stop The Device")
     field(OUT, "@PearlPC.proto stop $(PORT)")
 }
 
-record(longout, "$(P)$(IOC_NAME)USER_LIMIT:SP"){
+record(longout, "$(P)USER_LIMIT:SP"){
     field(DESC, "Set User Pressure Limit")
     field(SCAN, "Passive")
     field(VAL, "1000")
@@ -211,24 +211,24 @@ record(longout, "$(P)$(IOC_NAME)USER_LIMIT:SP"){
     field(DRVH, "9999")
     field(DRVL, "0")
     field(EGU, "bar")
-    field(FLNK, "$(P)$(IOC_NAME)PRESSURE:SP:OUTOFRANGE")
+    field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
 }
 
-record(bo, "$(P)$(IOC_NAME)SERVO:SP"){
+record(bo, "$(P)SERVO:SP"){
     field(DESC, "Set toggle for loop pressure mode")
     field(ZNAM, "Open Loop")
     field(ONAM, "Closed Loop")
 }
 
-record(longout, "$(P)$(IOC_NAME)SERVO:SP:OUT"){
+record(longout, "$(P)SERVO:SP:OUT"){
     field(SCAN, "Passive")
     field(DTYP, "stream")
     field(OMSL, "closed_loop")
-    field(DOL, "$(P)$(IOC_NAME)SERVO:SP")
+    field(DOL, "$(P)SERVO:SP")
     field(OUT, "@PearlPC.proto set_sloop $(PORT)")
 }
 
-record(longout, "$(P)$(IOC_NAME)SF_PRESSURE:SP"){
+record(longout, "$(P)SF_PRESSURE:SP"){
     field(DESC, "Set Seal Fail Pressure Value")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_sf $(PORT)")
@@ -238,7 +238,7 @@ record(longout, "$(P)$(IOC_NAME)SF_PRESSURE:SP"){
     field(EGU, "bar")
 }
 
-record(longin, "$(P)$(IOC_NAME)SF_PRESSURE"){
+record(longin, "$(P)SF_PRESSURE"){
     field(DESC, "Get Seal Fail Pressure Value")
     field(SCAN, "1 second")
     field(DTYP, "stream")
@@ -246,7 +246,7 @@ record(longin, "$(P)$(IOC_NAME)SF_PRESSURE"){
     field(EGU, "bar")
 }
 
-record(longout, "$(P)$(IOC_NAME)PRESSURE_RATE:SP"){
+record(longout, "$(P)PRESSURE_RATE:SP"){
     field(DESC, "Pressure Application Rate")
     field(DRVH, "40")
     field(DRVL, "1")
@@ -254,208 +254,209 @@ record(longout, "$(P)$(IOC_NAME)PRESSURE_RATE:SP"){
     field(EGU, "bar/min")
 }
 
-record(longout, "$(P)$(IOC_NAME)PRESSURE_RATE:SP:OUT"){
+record(longout, "$(P)PRESSURE_RATE:SP:OUT"){
     field(DESC, "Set Pressure Application Rate")
     field(SCAN, "Passive")
     field(DTYP, "stream")
     field(OMSL, "closed_loop")
-    field(DOL, "$(P)$(IOC_NAME)PRESSURE_RATE:SP")
+    field(DOL, "$(P)PRESSURE_RATE:SP")
     field(OUT, "@PearlPC.proto set_ra $(PORT)")
 }
 
 # min pressure before re-servoing if in closed loop mode
-record(longout, "$(P)$(IOC_NAME)MN_PRESSURE:SP"){
+record(longout, "$(P)MN_PRESSURE:SP"){
     field(DESC, "Min Pressure Value")
     field(DRVH, "9999")
     field(DRVL, "1")
     field(EGU, "bar")
-    field(FLNK, "$(P)$(IOC_NAME)PRESSURE:SP:OUTOFRANGE")
+    field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
 }
 
-record(longout, "$(P)$(IOC_NAME)MN_PRESSURE:SP:OUT"){
+record(longout, "$(P)MN_PRESSURE:SP:OUT"){
     field(DESC, "Set Min Pressure Value")
     field(SCAN, "Passive")
     field(DTYP, "stream")
     field(OMSL, "closed_loop")
-    field(DOL, "$(P)$(IOC_NAME)MN_PRESSURE:SP")
+    field(DOL, "$(P)MN_PRESSURE:SP")
     field(OUT, "@PearlPC.proto set_mn $(PORT)")
 }
 
 # max pressure before re-servoing if in closed loop mode
-record(longout, "$(P)$(IOC_NAME)MX_PRESSURE:SP"){
+record(longout, "$(P)MX_PRESSURE:SP"){
     field(DESC, "Max Pressure Value")
     field(DRVH, "9999")
     field(DRVL, "1")
     field(EGU, "bar")
-    field(FLNK, "$(P)$(IOC_NAME)PRESSURE:SP:OUTOFRANGE")
+    field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
 }
 
-record(longout, "$(P)$(IOC_NAME)MX_PRESSURE:SP:OUT"){
+record(longout, "$(P)MX_PRESSURE:SP:OUT"){
     field(DESC, "Set Max Pressure Value")
     field(SCAN, "Passive")
     field(DTYP, "stream")
     field(OMSL, "closed_loop")
-    field(DOL, "$(P)$(IOC_NAME)MX_PRESSURE:SP")
+    field(DOL, "$(P)MX_PRESSURE:SP")
     field(OUT, "@PearlPC.proto set_mx $(PORT)")
 }
 
-record(ao, "$(P)$(IOC_NAME)PRESSURE:SP"){
+record(ao, "$(P)PRESSURE:SP"){
     field(DESC, "Nominal (Setpoint) Pressure Value")
     field(DRVH, "1000")
     field(DRVL, "1")
     field(EGU, "bar")
-    field(FLNK, "$(P)$(IOC_NAME)PRESSURE:SP:OUTOFRANGE")
+    field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
 }
 
-record(ao, "$(P)$(IOC_NAME)PRESSURE:SP:OUT"){
+record(ao, "$(P)PRESSURE:SP:OUT"){
     field(DESC, "Set Nominal (Setpoint) Pressure Value")
     field(SCAN, "Passive")
     field(DTYP, "stream")
     field(OMSL, "closed_loop")
-    field(DOL, "$(P)$(IOC_NAME)PRESSURE:SP")
+    field(DOL, "$(P)PRESSURE:SP")
     field(OUT, "@PearlPC.proto set_sp $(PORT)")
 }
 
-record(fanout, "$(P)$(IOC_NAME)SEND_PARAMETERS"){
+record(fanout, "$(P)SEND_PARAMETERS"){
     field(DESC, "Send Parameters button")
     field(SCAN, "Passive")
-    field(LNK1, "$(P)$(IOC_NAME)PRESSURE_RATE:SP:OUT")
-    field(LNK2, "$(P)$(IOC_NAME)MX_PRESSURE:SP:OUT")
-    field(LNK3, "$(P)$(IOC_NAME)MN_PRESSURE:SP:OUT")
-    field(LNK4, "$(P)$(IOC_NAME)PRESSURE:SP:OUT")
-    field(LNK5, "$(P)$(IOC_NAME)SERVO:SP:OUT")
-    field(SDIS, "$(P)$(IOC_NAME)PRESSURE:SP:OUTOFRANGE")
+    field(LNK1, "$(P)PRESSURE_RATE:SP:OUT")
+    field(LNK2, "$(P)MX_PRESSURE:SP:OUT")
+    field(LNK3, "$(P)MN_PRESSURE:SP:OUT")
+    field(LNK4, "$(P)PRESSURE:SP:OUT")
+    field(LNK5, "$(P)SERVO:SP:OUT")
+	field(LNK6, "$(P)PRESSURE_DIFF_THOLD:SP:OUT")
+    field(SDIS, "$(P)PRESSURE:SP:OUTOFRANGE")
 }
 
-record(calcout, "$(P)$(IOC_NAME)PRESSURE:SP:OUTOFRANGE"){
+record(calcout, "$(P)PRESSURE:SP:OUTOFRANGE"){
     field(SCAN, "Passive")
     field(DESC, "Check if nominal pressure is in range")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE:SP")
-    field(INPB, "$(P)$(IOC_NAME)MN_PRESSURE:SP")
-    field(INPC, "$(P)$(IOC_NAME)MX_PRESSURE:SP")
-    field(INPD, "$(P)$(IOC_NAME)USER_LIMIT:SP")
+    field(INPA, "$(P)PRESSURE:SP")
+    field(INPB, "$(P)MN_PRESSURE:SP")
+    field(INPC, "$(P)MX_PRESSURE:SP")
+    field(INPD, "$(P)USER_LIMIT:SP")
     field(PINI, "YES")
     field(CALC, "((A >= B) && (A <= C) && (A <= D)) ? 0 : 1")
-    field(OUT, "$(P)$(IOC_NAME)SEND_PARAMETERS.DISP")
+    field(OUT, "$(P)SEND_PARAMETERS.DISP")
 }
 
-record(calc, "$(P)$(IOC_NAME)PRESSURE:OUTOFRANGE"){
+record(calc, "$(P)PRESSURE:OUTOFRANGE"){
     field(SCAN, "Passive")
     field(DESC, "Check if current pressure is in range")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE CP")
-    field(INPB, "$(P)$(IOC_NAME)MN_PRESSURE CP")
-    field(INPC, "$(P)$(IOC_NAME)MX_PRESSURE CP")
-    field(INPD, "$(P)$(IOC_NAME)USER_LIMIT:SP CP")
+    field(INPA, "$(P)PRESSURE CP")
+    field(INPB, "$(P)MN_PRESSURE CP")
+    field(INPC, "$(P)MX_PRESSURE CP")
+    field(INPD, "$(P)USER_LIMIT:SP CP")
     field(CALC, "((A >= B) && (A <= C) && (A <= D)) ? 0 : 1")
 }
 
-record(calc, "$(P)$(IOC_NAME)PRESSURE_COMPARISON"){
+record(calc, "$(P)PRESSURE_COMPARISON"){
     field(DESC, "Compare pressure against previous val")
     field(CALC, "A - B; B := A")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE CP")
-    field(FLNK, "$(P)$(IOC_NAME)PRESSURE_FANOUT")
+    field(INPA, "$(P)PRESSURE CP")
+    field(FLNK, "$(P)PRESSURE_FANOUT")
     field(SCAN, "Passive")
 }
 
-record(fanout, "$(P)$(IOC_NAME)PRESSURE_FANOUT") {
+record(fanout, "$(P)PRESSURE_FANOUT") {
     field(DESC, "Fanout to decrease and increase calcs")
-    field(LNK1, "$(P)$(IOC_NAME)DECREASING_PRESSURE_CHECK")
-    field(LNK2, "$(P)$(IOC_NAME)INCREASING_PRESSURE_CHECK")
-    field(LNK3, "$(P)$(IOC_NAME)HIGH_PRESSURE_RESET_CHECK")
+    field(LNK1, "$(P)DECREASING_PRESSURE_CHECK")
+    field(LNK2, "$(P)INCREASING_PRESSURE_CHECK")
+    field(LNK3, "$(P)HIGH_PRESSURE_RESET_CHECK")
 }
 
-record(calcout, "$(P)$(IOC_NAME)DECREASING_PRESSURE_CHECK") {
+record(calcout, "$(P)DECREASING_PRESSURE_CHECK") {
     field(DESC, "Check if pressure is decreasing")
     field(CALC, "A < 0 ? 1 : 0")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE_COMPARISON")
-    field(FLNK, "$(P)$(IOC_NAME)DECREASING_PRESSURE")
+    field(INPA, "$(P)PRESSURE_COMPARISON")
+    field(FLNK, "$(P)DECREASING_PRESSURE")
 }
 
-record(bi, "$(P)$(IOC_NAME)DECREASING_PRESSURE") {
+record(bi, "$(P)DECREASING_PRESSURE") {
     field(DESC, "Pressure decreasing")
     field(ZNAM, "Nominal")
     field(ONAM, "Decreasing")
-    field(INP,  "$(P)$(IOC_NAME)DECREASING_PRESSURE_CHECK")
+    field(INP,  "$(P)DECREASING_PRESSURE_CHECK")
 }
 
-record(calcout, "$(P)$(IOC_NAME)INCREASING_PRESSURE_CHECK") {
+record(calcout, "$(P)INCREASING_PRESSURE_CHECK") {
     field(DESC, "Check if pressure is increasing")
     field(CALC, "A > 0 ? 1 : 0")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE_COMPARISON")
-    field(FLNK, "$(P)$(IOC_NAME)INCREASING_PRESSURE")
+    field(INPA, "$(P)PRESSURE_COMPARISON")
+    field(FLNK, "$(P)INCREASING_PRESSURE")
 }
 
-record(bi, "$(P)$(IOC_NAME)INCREASING_PRESSURE") {
+record(bi, "$(P)INCREASING_PRESSURE") {
     field(DESC, "Pressure increasing")
     field(ZNAM, "Nominal")    
     field(ONAM, "Increasing")  
-    field(INP,  "$(P)$(IOC_NAME)INCREASING_PRESSURE_CHECK")
+    field(INP,  "$(P)INCREASING_PRESSURE_CHECK")
 }
 
-record(calcout, "$(P)$(IOC_NAME)HIGH_PRESSURE_RESET_CHECK") {
+record(calcout, "$(P)HIGH_PRESSURE_RESET_CHECK") {
     field(DESC, "Check if pressure is < 100 bar to reset")
     field(CALC, "(A < 100) ? 0 : 1")
-    field(INPA, "$(P)$(IOC_NAME)PRESSURE")
-    field(OUT, "$(P)$(IOC_NAME)RESET_PRESSURE_TOO_HIGH PP")
+    field(INPA, "$(P)PRESSURE")
+    field(OUT, "$(P)RESET_PRESSURE_TOO_HIGH PP")
 }
 
-record(bi, "$(P)$(IOC_NAME)RESET_PRESSURE_TOO_HIGH") {
+record(bi, "$(P)RESET_PRESSURE_TOO_HIGH") {
     field(DESC, "Pressure too high to reset")    
     field(ZNAM, "NO")
     field(ONAM, "YES")
 }
 
-record(bo, "$(P)$(IOC_NAME)RESET:SP") {
+record(bo, "$(P)RESET:SP") {
     field(DESC, "Return pistons to open position")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto reset $(PORT)")
 }
 
-record(calcout, "$(P)$(IOC_NAME)RESET_STATUS") {
+record(calcout, "$(P)RESET_STATUS") {
     field(DESC, "Check if resetting is complete")
     field(CALC, "(A = 1) ? 1 : 0")
-    field(INPA, "$(P)$(IOC_NAME)RESET")
+    field(INPA, "$(P)RESET")
 }
 
-record(calcout, "$(P)$(IOC_NAME)READY_STATE_CHECKS") {
+record(calcout, "$(P)READY_STATE_CHECKS") {
     field(DESC, "Ready state check validation")
     field(SCAN, "Passive")
     field(VAL, "0")
     field(CALC, "(!A && !B && !C && !D && !E && !F)? 1:0")
-    field(INPA, "$(P)$(IOC_NAME)RESET CP") # Not restarting must be 0
-    field(INPB, "$(P)$(IOC_NAME)SF CP") # Not in Seal fail must be 0/RVAl OFF
-    field(INPC, "$(P)$(IOC_NAME)ERRCODE CP") # General error must be 0
-    field(INPE, "$(P)$(IOC_NAME)INCREASING_PRESSURE CP") # Must be 0 - no increase
-    field(INPF, "$(P)$(IOC_NAME)DECREASING_PRESSURE CP") # Must be 0 - no decrease
-    field(FLNK, "$(P)$(IOC_NAME)READY_STATE")
-    field(SDIS, "$(P)$(IOC_NAME)DISABLE")
+    field(INPA, "$(P)RESET CP") # Not restarting must be 0
+    field(INPB, "$(P)SF CP") # Not in Seal fail must be 0/RVAl OFF
+    field(INPC, "$(P)ERRCODE CP") # General error must be 0
+    field(INPE, "$(P)INCREASING_PRESSURE CP") # Must be 0 - no increase
+    field(INPF, "$(P)DECREASING_PRESSURE CP") # Must be 0 - no decrease
+    field(FLNK, "$(P)READY_STATE")
+    field(SDIS, "$(P)DISABLE")
 }
 
-record(bi, "$(P)$(IOC_NAME)READY_STATE") {
+record(bi, "$(P)READY_STATE") {
     field(DESC, "Ready for operation in man/auto")
-    field(INP, "$(P)$(IOC_NAME)READY_STATE_CHECKS")
+    field(INP, "$(P)READY_STATE_CHECKS")
     field(ZNAM, "NOT READY")
     field(ONAM, "READY")
 }
 
-record(calcout, "$(P)$(IOC_NAME)GENERAL_ERROR_CHECK") {
+record(calcout, "$(P)GENERAL_ERROR_CHECK") {
     field(DESC, "Check error code != 0 present")
     field(CALC, "A != 0? 1 : 0")
-    field(INPA, "$(P)$(IOC_NAME)ERRCODE")
-    field(FLNK, "$(P)$(IOC_NAME)GENERAL_ERROR")
+    field(INPA, "$(P)ERRCODE")
+    field(FLNK, "$(P)GENERAL_ERROR")
 }
 
-record(bi, "$(P)$(IOC_NAME)GENERAL_ERROR") {
+record(bi, "$(P)GENERAL_ERROR") {
     field(DESC, "Has error has occured")
     field(DTYP, "Soft Channel")
-    field(INP, "$(P)$(IOC_NAME)GENERAL_ERROR_CHECK")
+    field(INP, "$(P)GENERAL_ERROR_CHECK")
     field(ZNAM, "NO")
     field(ONAM, "YES")
-    field(FLNK, "$(P)$(IOC_NAME)_ERROR_MSG_LU")
+    field(FLNK, "$(P)_ERROR_MSG_LU")
 }
 
 ## error message must be max 40 characters
-record(waveform, "$(P)$(IOC_NAME)ERROR_MSGS")
+record(waveform, "$(P)ERROR_MSGS")
 {
     field(DESC, "error message list")
     field(FTVL, "STRING")
@@ -481,38 +482,78 @@ record(waveform, "$(P)$(IOC_NAME)ERROR_MSGS")
                 "MONITOR process has stopped"])
 }
 
-record(longout, "$(P)$(IOC_NAME)_ERROR_MSG_LU")
+record(longout, "$(P)_ERROR_MSG_LU")
 {
-    field(DOL, "$(P)$(IOC_NAME)ERRCODE")
+    field(DOL, "$(P)ERRCODE")
     field(OMSL, "closed_loop")
-    field(OUT, "$(P)$(IOC_NAME)_ERROR_MSG_SA.INDX PP")
+    field(OUT, "$(P)_ERROR_MSG_SA.INDX PP")
 }
 
 # INDX set by _ERROR_MSG_LU PV
-record(subArray, "$(P)$(IOC_NAME)_ERROR_MSG_SA")
+record(subArray, "$(P)_ERROR_MSG_SA")
 {
-    field(INP, "$(P)$(IOC_NAME)ERROR_MSGS")
+    field(INP, "$(P)ERROR_MSGS")
     field(FTVL, "STRING")
-    field(FLNK, "$(P)$(IOC_NAME)LAST_ERR")
+    field(FLNK, "$(P)LAST_ERR")
 }
 
-record(stringin, "$(P)$(IOC_NAME)LAST_ERR")
+record(stringin, "$(P)LAST_ERR")
 {
-    field(INP, "$(P)$(IOC_NAME)_ERROR_MSG_SA")
+    field(INP, "$(P)_ERROR_MSG_SA")
 }
 
 # log error to ioc error log
-record(stringout, "$(P)$(IOC_NAME)LAST_ERR_LOG")
+record(stringout, "$(P)LAST_ERR_LOG")
 {
-    field(DOL, "$(P)$(IOC_NAME)LAST_ERR CP")
+    field(DOL, "$(P)LAST_ERR CP")
     field(OMSL, "closed_loop")
     field(DTYP, "stdio")
     field(OUT, "@errlog")
 }
 
-record(bo, "$(P)$(IOC_NAME)ERRCODE:RESET"){
+record(bo, "$(P)ERRCODE:RESET"){
     field(DESC, "reset last error code")
     field(SCAN, "Passive")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto reset_error $(PORT)")
+}
+
+record(ai, "$(P)PRESSURE_DIFFERENCE") {
+    field(DESC, "Pressure diff between transducers")
+	field(EGU, "bar")
+	field(HHSV, "MAJOR")
+	field(LLSV, "MAJOR")
+	field(LOLO, "-1")
+	field(HIHI, "1000") # Updated dynamically by $(P)_PRESSURE_DIFFERENCE_SET_HIHI
+	field(SCAN, "1 second")
+	field(DTYP, "stream")
+	field(INP, "@PearlPC.proto get_memory(0082) $(PORT)")
+}
+
+record(longin, "$(P)PRESSURE_DIFF_THOLD") {
+    field(DESC, "Threshold for pressure difference")
+	field(SCAN, "1 second")
+	field(DTYP, "stream")
+	field(INP, "@PearlPC.proto get_memory(0081) $(PORT)")
+	field(EGU, "bar")
+}
+
+record(calcout, "$(P)_PRESSURE_DIFFERENCE_SET_HIHI") {
+    field(INPA, "$(P)PRESSURE_DIFF_THOLD CP")
+	field(CALC, "A")
+    field(OUT, "$(P)PRESSURE_DIFFERENCE.HIHI")
+}
+
+record(longout, "$(P)PRESSURE_DIFF_THOLD:SP") {
+    field(DESC, "Setpoint threshold for pressure diff.")
+	field(EGU, "bar")
+	# Sent to hardware by $(P)SEND_PARAMETERS
+}
+
+record(longout, "$(P)PRESSURE_DIFF_THOLD:SP:OUT"){
+    field(DTYP, "stream")
+    field(OMSL, "closed_loop")
+    field(DOL, "$(P)PRESSURE_DIFF_THOLD:SP")
+    field(OUT, "@PearlPC.proto set_th $(PORT)")
+	field(EGU, "bar")
 }

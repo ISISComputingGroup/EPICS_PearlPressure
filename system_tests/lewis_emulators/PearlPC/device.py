@@ -60,7 +60,7 @@ class SimulatedPearlPC(StateMachineDevice):
         self.inputs = 0 # a 9 digit number like 111111001 showing input status
         self.cell_pressure = 0
         self.pump_pressure = 0
-        self.transducer_threashold = 2
+        self.transducer_difference_threshold = 2
         self.algorithm = "a"
         self.transducer = "0"
         self.user_stop_limit = 1000
@@ -154,7 +154,7 @@ class SimulatedPearlPC(StateMachineDevice):
         
         # if self.loop_mode == 1:    maintain between min_value_pre_servoing and max_value_pre_servoing             
 
-        if abs(self.cell_pressure - self.pump_pressure) > self.transducer_threashold:
+        if abs(self.cell_pressure - self.pump_pressure) > self.transducer_difference_threshold:
             self.last_error_code = 10
             self.stop_requested = 1
 

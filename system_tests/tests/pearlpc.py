@@ -1,10 +1,10 @@
+import itertools
 import unittest
-from time import sleep
 
 from utils.test_modes import TestModes
 from utils.channel_access import ChannelAccess
 from utils.ioc_launcher import get_default_ioc_dir
-from utils.testing import get_running_lewis_and_ioc, assert_log_messages, skip_if_recsim, unstable_test
+from utils.testing import get_running_lewis_and_ioc, assert_log_messages, skip_if_recsim, parameterized_list
 from parameterized import parameterized
 
 # Device prefix
@@ -172,3 +172,36 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("PRESSURE", 25)
         self.ca.assert_that_pv_is("PRESSURE_CELL", 25)
         self.ca.assert_that_pv_is("PRESSURE_PUMP", 25)
+
+    @parameterized.expand(parameterized_list(itertools.product([99, 88], [44, 55])))
+    def test_WHEN_difference_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, cell_pressure, pump_pressure):
+        self.lewis.backdoor_run_function_on_device("set_pressures", [pump_pressure, cell_pressure])
+        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", cell_pressure - pump_pressure)
+
+    @parameterized.expand(parameterized_list([1, 999]))
+    def test_WHEN_difference_threshold_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, val):
+        self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", val)
+        self.ca.process_pv("SEND_PARAMETERS")
+        self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", val)
+
+    def test_WHEN_difference_is_greater_than_threshold_THEN_difference_is_in_alarm(self):
+        pump_pressure = 100
+        cell_pressure = 200
+
+        self.lewis.backdoor_run_function_on_device("set_pressures", [pump_pressure, cell_pressure])
+
+        diff = cell_pressure - pump_pressure
+
+        self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", diff-1)
+        self.ca.process_pv("SEND_PARAMETERS")
+        self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", diff-1)
+
+        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", diff)
+        self.ca.assert_that_pv_alarm_is("PRESSURE_DIFFERENCE", self.ca.Alarms.MAJOR)
+
+        self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", diff + 1)
+        self.ca.process_pv("SEND_PARAMETERS")
+        self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", diff + 1)
+
+        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", diff)
+        self.ca.assert_that_pv_alarm_is("PRESSURE_DIFFERENCE", self.ca.Alarms.NONE)
