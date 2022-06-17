@@ -324,7 +324,7 @@ record(fanout, "$(P)SEND_PARAMETERS"){
     field(LNK3, "$(P)MN_PRESSURE:SP:OUT")
     field(LNK4, "$(P)PRESSURE:SP:OUT")
     field(LNK5, "$(P)SERVO:SP:OUT")
-	field(LNK6, "$(P)PRESSURE_DIFFERENCE_THRESHOLD:SP:OUT")
+	field(LNK6, "$(P)PRESSURE_DIFF_THOLD:SP:OUT")
     field(SDIS, "$(P)PRESSURE:SP:OUTOFRANGE")
 }
 
@@ -530,7 +530,7 @@ record(ai, "$(P)PRESSURE_DIFFERENCE") {
 	field(INP, "@PearlPC.proto get_memory(0082) $(PORT)")
 }
 
-record(longin, "$(P)PRESSURE_DIFFERENCE_THRESHOLD") {
+record(longin, "$(P)PRESSURE_DIFF_THOLD") {
     field(DESC, "Threshold for pressure difference")
 	field(SCAN, "1 second")
 	field(DTYP, "stream")
@@ -539,21 +539,21 @@ record(longin, "$(P)PRESSURE_DIFFERENCE_THRESHOLD") {
 }
 
 record(calcout, "$(P)_PRESSURE_DIFFERENCE_SET_HIHI") {
-    field(INPA, "$(P)PRESSURE_DIFFERENCE_THRESHOLD CP")
+    field(INPA, "$(P)PRESSURE_DIFF_THOLD CP")
 	field(CALC, "A")
     field(OUT, "$(P)PRESSURE_DIFFERENCE.HIHI")
 }
 
-record(longout, "$(P)PRESSURE_DIFFERENCE_THRESHOLD:SP") {
+record(longout, "$(P)PRESSURE_DIFF_THOLD:SP") {
     field(DESC, "Setpoint threshold for pressure diff.")
 	field(EGU, "bar")
 	# Sent to hardware by $(P)SEND_PARAMETERS
 }
 
-record(longout, "$(P)PRESSURE_DIFFERENCE_THRESHOLD:SP:OUT"){
+record(longout, "$(P)PRESSURE_DIFF_THOLD:SP:OUT"){
     field(DTYP, "stream")
     field(OMSL, "closed_loop")
-    field(DOL, "$(P)PRESSURE_DIFFERENCE_THRESHOLD:SP")
+    field(DOL, "$(P)PRESSURE_DIFF_THOLD:SP")
     field(OUT, "@PearlPC.proto set_th $(PORT)")
 	field(EGU, "bar")
 }

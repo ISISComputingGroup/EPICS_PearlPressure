@@ -180,9 +180,9 @@ class PEARLPCTests(unittest.TestCase):
 
     @parameterized.expand(parameterized_list([1, 999]))
     def test_WHEN_difference_threshold_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, val):
-        self.ca.set_pv_value("PRESSURE_DIFFERENCE_THRESHOLD:SP", val)
+        self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", val)
         self.ca.process_pv("SEND_PARAMETERS")
-        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE_THRESHOLD", val)
+        self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", val)
 
     def test_WHEN_difference_is_greater_than_threshold_THEN_difference_is_in_alarm(self):
         pump_pressure = 100
@@ -192,16 +192,16 @@ class PEARLPCTests(unittest.TestCase):
 
         diff = cell_pressure - pump_pressure
 
-        self.ca.set_pv_value("PRESSURE_DIFFERENCE_THRESHOLD:SP", diff-1)
+        self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", diff-1)
         self.ca.process_pv("SEND_PARAMETERS")
-        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE_THRESHOLD", diff-1)
+        self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", diff-1)
 
         self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", diff)
         self.ca.assert_that_pv_alarm_is("PRESSURE_DIFFERENCE", self.ca.Alarms.MAJOR)
 
-        self.ca.set_pv_value("PRESSURE_DIFFERENCE_THRESHOLD:SP", diff + 1)
+        self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", diff + 1)
         self.ca.process_pv("SEND_PARAMETERS")
-        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE_THRESHOLD", diff + 1)
+        self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", diff + 1)
 
         self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", diff)
         self.ca.assert_that_pv_alarm_is("PRESSURE_DIFFERENCE", self.ca.Alarms.NONE)
