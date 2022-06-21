@@ -215,32 +215,32 @@ record(bi, "$(P)INPUTS:EM_STOP_RELEASED") {
 record(bi, "$(P)INPUTS:CYL_B_LOWLIM") {
     field(DESC, "Cylinder B away from lower limit")
 	field(INP, "$(P)INPUTS.B7 CP MS")
-	field(ZNAM, "Inactive")
-	field(ONAM, "Active")
+	field(ZNAM, "Active")
+	field(ONAM, "Inactive")
 	info(archive, "VAL")
 }
 
 record(bi, "$(P)INPUTS:CYL_B_UPLIM") {
     field(DESC, "Cylinder B away from upper limit")
 	field(INP, "$(P)INPUTS.B6 CP MS")
-	field(ZNAM, "Inactive")
-	field(ONAM, "Active")
+	field(ZNAM, "Active")
+	field(ONAM, "Inactive")
 	info(archive, "VAL")
 }
 
 record(bi, "$(P)INPUTS:CYL_A_LOWLIM") {
     field(DESC, "Cylinder Aaway from lower limit")
 	field(INP, "$(P)INPUTS.B5 CP MS")
-	field(ZNAM, "Inactive")
-	field(ONAM, "Active")
+	field(ZNAM, "Active")
+	field(ONAM, "Inactive")
 	info(archive, "VAL")
 }
 
 record(bi, "$(P)INPUTS:CYL_A_UPLIM") {
     field(DESC, "Cylinder A away from upper limit")
 	field(INP, "$(P)INPUTS.B4 CP MS")
-	field(ZNAM, "Inactive")
-	field(ONAM, "Active")
+	field(ZNAM, "Active")
+	field(ONAM, "Inactive")
 	info(archive, "VAL")
 }
 
