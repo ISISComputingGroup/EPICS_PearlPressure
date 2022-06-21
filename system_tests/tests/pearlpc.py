@@ -177,7 +177,7 @@ class PEARLPCTests(unittest.TestCase):
     @parameterized.expand(parameterized_list(itertools.product([99, 88], [44, 55])))
     def test_WHEN_difference_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, cell_pressure, pump_pressure):
         self.lewis.backdoor_run_function_on_device("set_pressures", [pump_pressure, cell_pressure])
-        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", cell_pressure - pump_pressure)
+        self.ca.assert_that_pv_is("PRESSURE_DIFF", cell_pressure - pump_pressure)
 
     @parameterized.expand(parameterized_list([1, 999]))
     def test_WHEN_difference_threshold_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, val):
@@ -194,12 +194,12 @@ class PEARLPCTests(unittest.TestCase):
         diff = cell_pressure - pump_pressure
 
         self.ca.assert_setting_setpoint_sets_readback(diff - 1, "PRESSURE_DIFF_THOLD")
-        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", diff)
-        self.ca.assert_that_pv_alarm_is("PRESSURE_DIFFERENCE", self.ca.Alarms.MAJOR)
+        self.ca.assert_that_pv_is("PRESSURE_DIFF", diff)
+        self.ca.assert_that_pv_alarm_is("PRESSURE_DIFF", self.ca.Alarms.MAJOR)
 
         self.ca.assert_setting_setpoint_sets_readback(diff + 1, "PRESSURE_DIFF_THOLD")
-        self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", diff)
-        self.ca.assert_that_pv_alarm_is("PRESSURE_DIFFERENCE", self.ca.Alarms.NONE)
+        self.ca.assert_that_pv_is("PRESSURE_DIFF", diff)
+        self.ca.assert_that_pv_alarm_is("PRESSURE_DIFF", self.ca.Alarms.NONE)
 
     def test_WHEN_auto_mode_is_set_THEN_auto_mode_can_be_read_back(self):
         self.lewis.backdoor_set_on_device("am_mode", 0)

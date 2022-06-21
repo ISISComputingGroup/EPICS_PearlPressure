@@ -591,13 +591,13 @@ record(bo, "$(P)ERRCODE:RESET"){
     field(OUT, "@PearlPC.proto reset_error $(PORT)")
 }
 
-record(ai, "$(P)PRESSURE_DIFFERENCE") {
+record(ai, "$(P)PRESSURE_DIFF") {
     field(DESC, "Pressure diff between transducers")
 	field(EGU, "bar")
 	field(HHSV, "MAJOR")
 	field(LLSV, "MAJOR")
 	field(LOLO, "-1")
-	field(HIHI, "1000") # Updated dynamically by $(P)_PRESSURE_DIFFERENCE_SET_HIHI
+	field(HIHI, "1000") # Updated dynamically by $(P)_PRESSURE_DIFF_SET_HIHI
 	field(SCAN, "1 second")
 	field(DTYP, "stream")
 	field(INP, "@PearlPC.proto get_memory(0082) $(PORT)")
@@ -613,10 +613,10 @@ record(longin, "$(P)PRESSURE_DIFF_THOLD") {
 	info(archive, "VAL")
 }
 
-record(calcout, "$(P)_PRESSURE_DIFFERENCE_SET_HIHI") {
+record(calcout, "$(P)_PRESSURE_DIFF_SET_HIHI") {
     field(INPA, "$(P)PRESSURE_DIFF_THOLD CP")
 	field(CALC, "A")
-    field(OUT, "$(P)PRESSURE_DIFFERENCE.HIHI")
+    field(OUT, "$(P)PRESSURE_DIFF.HIHI")
 }
 
 record(longout, "$(P)PRESSURE_DIFF_THOLD:SP") {
