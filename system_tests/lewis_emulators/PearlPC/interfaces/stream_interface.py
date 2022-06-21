@@ -29,15 +29,13 @@ class PearlPCStreamInterface(StreamInterface):
         CmdBuilder("transducer_reset").escape("tr").eos().build(), 
         CmdBuilder("set_algorithm").escape("a").arg("[a12hlw][0-9]{0,2}").eos().build(),
         CmdBuilder("get_dt").escape("dt").eos().build(),
-        CmdBuilder("set_dir_error").escape("d").arg("[+-]").arg("[0-9]{4}", argument_mapping=int).eos().build(),
-        CmdBuilder("set_hist_offset").escape("o").arg("[+-]").arg("[0-9]", argument_mapping=int).eos().build(),
         CmdBuilder("set_user_stop_limit").escape("ul").arg("[0-9]{4}", argument_mapping=int).eos().build(),
         CmdBuilder("show_limits").escape("ls").eos().build(),
         CmdBuilder("get_memory").escape("vr").arg("[0-9]{4}", argument_mapping=int).eos().build(),
         CmdBuilder("set_pos_lim").escape("d+").arg("[0-9]{4}", argument_mapping=int).eos().build(),
         CmdBuilder("set_neg_lim").escape("d-").arg("[0-9]{4}", argument_mapping=int).eos().build(),
-        CmdBuilder("set_pos_offset").escape("o+").arg("[0-9]{4}", argument_mapping=int).eos().build(),
-        CmdBuilder("set_neg_offset").escape("o-").arg("[0-9]{4}", argument_mapping=int).eos().build(),
+        CmdBuilder("set_pos_offset").escape("o+").arg("[0-9]{1}", argument_mapping=int).eos().build(),
+        CmdBuilder("set_neg_offset").escape("o-").arg("[0-9]{1}", argument_mapping=int).eos().build(),
     }
 
     in_terminator = "\r"
@@ -277,29 +275,6 @@ class PearlPCStreamInterface(StreamInterface):
     def get_dt(self):
         print("get_dt")
         return "Transducer settings"
-
-    @conditional_reply("connected")
-    def set_dir_error(self, dir, value : int):
-        print(f"set_dir_error {dir}{value}")
-        if dir == "+":
-            self._device.dir_plus = value
-        elif dir == "-":
-            self._device.dir_minus = value
-        else:
-            print(f"ERROR: set_dir_error {dir}{value}")
-        
-        return ""
-
-    @conditional_reply("connected")
-    def set_hist_offset(self, dir, value : int):
-        print(f"set_hist_offset {dir}{value}")
-        if dir == "+":
-            self._device.offset_plus = value
-        elif dir == "-":
-            self._device.offset_minus = value
-        else:
-            print(f"ERROR: set_hist_offset {dir}{value}")
-        return ""
 
     @conditional_reply("connected")
     def set_user_stop_limit(self, value: int):
