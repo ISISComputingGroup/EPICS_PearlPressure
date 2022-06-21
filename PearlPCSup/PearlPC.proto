@@ -116,11 +116,11 @@ set_neg_lim {
 }
 
 set_pos_offset {
-    out "o+%#04d";
+    out "o+%#01d";
 	wait 100;
 }
 
 set_neg_offset {
-    out "o-%#04d";
+    out "o-%#01d";
 	wait 100;
 }

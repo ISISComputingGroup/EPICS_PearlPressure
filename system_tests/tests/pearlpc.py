@@ -227,7 +227,7 @@ class PEARLPCTests(unittest.TestCase):
 
     @parameterized.expand(parameterized_list(LIMIT_PVS))
     def test_WHEN_limits_are_set_THEN_limits_update(self, _, pv):
-        self.ca.assert_setting_setpoint_sets_readback(42, pv)
+        self.ca.assert_setting_setpoint_sets_readback(5, pv)
 
     @parameterized.expand(parameterized_list(LIMIT_PVS))
     def test_WHEN_device_disconnected_THEN_limits_go_into_alarm(self, _, pv):
