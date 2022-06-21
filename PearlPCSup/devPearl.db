@@ -186,7 +186,7 @@ record(longin, "$(P)PRESSURE"){
 }
 
 record(calc, "$(P)INPUTS:_RAW") {
-    # .A written to from protocol
+    # .A written to from protocol, do not use B but it propagates connection state
     field(INPB, "$(P)STATUS_ARRAY CP MS")
 	field(CALC, "A")
 }
@@ -296,6 +296,13 @@ record(longin, "$(P)PRESSURE_PUMP"){
 
 record(bo, "$(P)RUN:SP"){
     field(SCAN, "Passive")
+    field(DESC, "Start The Device")
+    field(OUT, "$(P)SEND_LIMITS.PROC PP")
+	field(FLNK, "$(P)_RUN:SP")
+}
+
+record(bo, "$(P)_RUN:SP"){
+    field(SCAN, "Passive")
     field(DTYP, "stream")
     field(DESC, "Start The Device")
     field(OUT, "@PearlPC.proto run $(PORT)")
@@ -311,20 +318,21 @@ record(bo, "$(P)STOP:SP"){
 record(longout, "$(P)USER_LIMIT:SP"){
     field(DESC, "Set User Pressure Limit")
     field(SCAN, "Passive")
-    field(VAL, "1000")
-    field(PINI, "YES")
+	field(VAL, "$(USER_LIMIT=1000)")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_user_limit $(PORT)")
-    field(DRVH, "9999")
+    field(DRVH, "1000")
     field(DRVL, "0")
     field(EGU, "bar")
     field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
+    # uses macro not autosave
 }
 
 record(bo, "$(P)SERVO:SP"){
     field(DESC, "Set toggle for loop pressure mode")
     field(ZNAM, "Open Loop")
     field(ONAM, "Closed Loop")
+	info(autosaveFields, "VAL")
 }
 
 record(longout, "$(P)SERVO:SP:OUT"){
@@ -343,6 +351,7 @@ record(longout, "$(P)SF_PRESSURE:SP"){
     field(DRVL, "1")
     field(VAL, "10")
     field(EGU, "bar")
+	info(autosaveFields, "VAL")
 }
 
 record(longin, "$(P)SF_PRESSURE"){
@@ -360,6 +369,7 @@ record(longout, "$(P)PRESSURE_RATE:SP"){
     field(DRVL, "1")
     field(VAL, "10")
     field(EGU, "bar/min")
+	info(autosaveFields, "VAL")
 }
 
 record(longout, "$(P)PRESSURE_RATE:SP:OUT"){
@@ -378,6 +388,7 @@ record(longout, "$(P)MN_PRESSURE:SP"){
     field(DRVL, "1")
     field(EGU, "bar")
     field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
+	info(autosaveFields, "VAL")
 }
 
 record(longout, "$(P)MN_PRESSURE:SP:OUT"){
@@ -396,6 +407,7 @@ record(longout, "$(P)MX_PRESSURE:SP"){
     field(DRVL, "1")
     field(EGU, "bar")
     field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
+	info(autosaveFields, "VAL")
 }
 
 record(longout, "$(P)MX_PRESSURE:SP:OUT"){
@@ -413,6 +425,7 @@ record(ao, "$(P)PRESSURE:SP"){
     field(DRVL, "1")
     field(EGU, "bar")
     field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
+	info(autosaveFields, "VAL")
 }
 
 record(ao, "$(P)PRESSURE:SP:OUT"){
@@ -624,6 +637,7 @@ record(longout, "$(P)PRESSURE_DIFF_THOLD:SP") {
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_th $(PORT)")
 	field(EGU, "bar")
+	info(autosaveFields, "VAL")
 }
 
 record(waveform, "$(P)LS_ARRAY") {
@@ -655,12 +669,15 @@ record(longout, "$(P)LIMITS:POS_CHANGE:SP") {
 	field(OUT, "@PearlPC.proto set_pos_lim $(PORT)")
 	field(DTYP, "stream")
 	field(EGU, "bar")
+    field(DRVH, "9999")
+    field(DRVL, "0")
+	field(VAL, "$(LIMITS_POS_CHANGE=20)")
+	# uses macro not autosave
 }
 
 record(longin, "$(P)LIMITS:POS_OFFSET") {
     field(DESC, "Positive offset")
     field(INP, "$(P)LS_ARRAY.[2] CP MS")
-	field(EGU, "bar")
 	info(archive, "VAL")
 }
 
@@ -668,7 +685,10 @@ record(longout, "$(P)LIMITS:POS_OFFSET:SP") {
     field(DESC, "Positive change offset SP")
 	field(OUT, "@PearlPC.proto set_pos_offset $(PORT)")
 	field(DTYP, "stream")
-	field(EGU, "bar")
+	field(VAL, "$(LIMITS_POS_OFFSET=0)")
+    field(DRVH, "9")
+    field(DRVL, "0")
+	# uses macro not autosave
 }
 
 record(longin, "$(P)LIMITS:NEG_CHANGE") {
@@ -683,12 +703,15 @@ record(longout, "$(P)LIMITS:NEG_CHANGE:SP") {
 	field(OUT, "@PearlPC.proto set_neg_lim $(PORT)")
 	field(DTYP, "stream")
 	field(EGU, "bar")
+    field(DRVH, "9999")
+    field(DRVL, "0")
+	field(VAL, "$(LIMITS_NEG_CHANGE=20)")
+	# uses macro not autosave
 }
 
 record(longin, "$(P)LIMITS:NEG_OFFSET") {
     field(DESC, "Negative offset")
     field(INP, "$(P)LS_ARRAY.[4] CP MS")
-	field(EGU, "bar")
 	info(archive, "VAL")
 }
 
@@ -696,5 +719,18 @@ record(longout, "$(P)LIMITS:NEG_OFFSET:SP") {
     field(DESC, "Negative change offset SP")
 	field(OUT, "@PearlPC.proto set_neg_offset $(PORT)")
 	field(DTYP, "stream")
-	field(EGU, "bar")
+	field(VAL, "$(LIMITS_NEG_OFFSET=0)")
+    field(DRVH, "9")
+    field(DRVL, "0")
+	# uses macro not autosave
+}
+
+record(fanout, "$(P)SEND_LIMITS"){
+    field(DESC, "Send Limits")
+    field(SCAN, "Passive")
+    field(LNK1, "$(P)USER_LIMIT:SP")
+    field(LNK2, "$(P)LIMITS:NEG_OFFSET:SP")
+    field(LNK3, "$(P)LIMITS:NEG_CHANGE:SP")
+    field(LNK4, "$(P)LIMITS:POS_OFFSET:SP")
+    field(LNK5, "$(P)LIMITS:POS_CHANGE:SP")
 }
