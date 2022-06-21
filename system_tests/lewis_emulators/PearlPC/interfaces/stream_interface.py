@@ -320,12 +320,16 @@ class PearlPCStreamInterface(StreamInterface):
 
     def set_pos_lim(self, value):
         self._device.dir_plus = value
+        return ""
 
     def set_neg_lim(self, value):
         self._device.dir_minus = value
+        return ""
 
     def set_pos_offset(self, value):
         self._device.offset_plus = value
+        return ""
 
     def set_neg_offset(self, value):
         self._device.offset_minus = value
+        return ""

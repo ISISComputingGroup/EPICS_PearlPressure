@@ -182,7 +182,6 @@ class PEARLPCTests(unittest.TestCase):
     @parameterized.expand(parameterized_list([1, 999]))
     def test_WHEN_difference_threshold_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, val):
         self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", val)
-        self.ca.process_pv("SEND_PARAMETERS")
         self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", val)
 
     def test_WHEN_difference_is_greater_than_threshold_THEN_difference_is_in_alarm(self):
