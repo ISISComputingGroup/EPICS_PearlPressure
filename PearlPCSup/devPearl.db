@@ -675,14 +675,16 @@ record(longout, "$(P)LIMITS:POS_CHANGE:SP") {
 	# uses macro not autosave
 }
 
+# positive direction error
 record(longin, "$(P)LIMITS:POS_OFFSET") {
-    field(DESC, "Positive offset")
+    field(DESC, "Positive history offset")
     field(INP, "$(P)LS_ARRAY.[2] CP MS")
 	info(archive, "VAL")
 }
 
+# positive direction error
 record(longout, "$(P)LIMITS:POS_OFFSET:SP") {
-    field(DESC, "Positive change offset SP")
+    field(DESC, "Positive history offset SP")
 	field(OUT, "@PearlPC.proto set_pos_offset $(PORT)")
 	field(DTYP, "stream")
 	field(VAL, "$(LIMITS_POS_OFFSET=0)")
@@ -691,6 +693,7 @@ record(longout, "$(P)LIMITS:POS_OFFSET:SP") {
 	# uses macro not autosave
 }
 
+# negative direction error
 record(longin, "$(P)LIMITS:NEG_CHANGE") {
     field(DESC, "Negative change limit")
     field(INP, "$(P)LS_ARRAY.[3] CP MS")
@@ -698,6 +701,7 @@ record(longin, "$(P)LIMITS:NEG_CHANGE") {
 	info(archive, "VAL")
 }
 
+# negative direction error
 record(longout, "$(P)LIMITS:NEG_CHANGE:SP") {
     field(DESC, "Negative change limit SP")
 	field(OUT, "@PearlPC.proto set_neg_lim $(PORT)")
@@ -710,13 +714,13 @@ record(longout, "$(P)LIMITS:NEG_CHANGE:SP") {
 }
 
 record(longin, "$(P)LIMITS:NEG_OFFSET") {
-    field(DESC, "Negative offset")
+    field(DESC, "Negative history offset")
     field(INP, "$(P)LS_ARRAY.[4] CP MS")
 	info(archive, "VAL")
 }
 
 record(longout, "$(P)LIMITS:NEG_OFFSET:SP") {
-    field(DESC, "Negative change offset SP")
+    field(DESC, "Negative history offset SP")
 	field(OUT, "@PearlPC.proto set_neg_offset $(PORT)")
 	field(DTYP, "stream")
 	field(VAL, "$(LIMITS_NEG_OFFSET=0)")
