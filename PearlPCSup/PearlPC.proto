@@ -14,7 +14,7 @@ get_st_array {
 	in "OK";
 }
 
-## read into waveform as device returns 16 integers
+## read into waveform as device returns 5 integers
 get_ls_array {
 	out "ls";
 	in "%*/Offset$/";
