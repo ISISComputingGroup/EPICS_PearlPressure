@@ -39,6 +39,8 @@ class SimulatedPearlPC(StateMachineDevice):
         return OrderedDict([])
 
     def re_initialise(self):
+        self.connected = True
+
         self.initial_id_prefix = 1111 # 4 digits
         self.secondary_id_prefix = 1111 # 4 digits
         self.em_stop_status = 0  # Bool [0-1]

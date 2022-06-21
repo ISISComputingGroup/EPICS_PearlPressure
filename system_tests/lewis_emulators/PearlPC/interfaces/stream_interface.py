@@ -29,11 +29,13 @@ class PearlPCStreamInterface(StreamInterface):
         CmdBuilder("transducer_reset").escape("tr").eos().build(), 
         CmdBuilder("set_algorithm").escape("a").arg("[a12hlw][0-9]{0,2}").eos().build(),
         CmdBuilder("get_dt").escape("dt").eos().build(),
-        CmdBuilder("set_dir_error").escape("d").arg("[+-]").arg("[0-9]{4}", argument_mapping=int).eos().build(),
-        CmdBuilder("set_hist_offset").escape("o").arg("[+-]").arg("[0-9]", argument_mapping=int).eos().build(),
         CmdBuilder("set_user_stop_limit").escape("ul").arg("[0-9]{4}", argument_mapping=int).eos().build(),
         CmdBuilder("show_limits").escape("ls").eos().build(),
         CmdBuilder("get_memory").escape("vr").arg("[0-9]{4}", argument_mapping=int).eos().build(),
+        CmdBuilder("set_pos_lim").escape("d+").arg("[0-9]{4}", argument_mapping=int).eos().build(),
+        CmdBuilder("set_neg_lim").escape("d-").arg("[0-9]{4}", argument_mapping=int).eos().build(),
+        CmdBuilder("set_pos_offset").escape("o+").arg("[0-9]{1}", argument_mapping=int).eos().build(),
+        CmdBuilder("set_neg_offset").escape("o-").arg("[0-9]{1}", argument_mapping=int).eos().build(),
     }
 
     in_terminator = "\r"
@@ -42,6 +44,7 @@ class PearlPCStreamInterface(StreamInterface):
     def __init__(self):
         super().__init__()
 
+    @conditional_reply("connected")
     def get_st(self):
         """
         Get the device status on request
@@ -66,8 +69,9 @@ class PearlPCStreamInterface(StreamInterface):
                f"{self._device.max_value_pre_servoing} " \
                f"{self._device.get_pressure()} " \
                f"{self._device.inputs:09d}{self.out_terminator}" \
-               f"OK"               
+               f"OK"
 
+    @conditional_reply("connected")
     def get_id_prefix(self):
         """
         Returns ID prefixes (first 2 numbers selectable by the user formatted as: "<IDP_1> <IDP_2>")
@@ -76,6 +80,7 @@ class PearlPCStreamInterface(StreamInterface):
         print(f"ID prefix set to: {self._device.initial_id_prefix} {self._device.secondary_id_prefix}")
         return f"{self._device.initial_id_prefix:04d} {self._device.secondary_id_prefix:04d} ISIS PEARL pressure intensifier V2.3"
 
+    @conditional_reply("connected")
     def set_si(self, id_prefix: int):
         """
         Set initial ID Prefix. ID should form a unique number for each unit.
@@ -89,7 +94,8 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.initial_id_prefix = id_prefix
         self._device.add_to_dict(value_id="si", unvalidated_value=self._device.initial_id_prefix)
         return ""
-    
+
+    @conditional_reply("connected")
     def set_sd(self, secondary_id_prefix: int):
         """
         Set Secondary ID Prefix. ID should form a unique number for each unit.
@@ -104,6 +110,7 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.add_to_dict(value_id="sd", unvalidated_value=self._device.secondary_id_prefix)
         return ""
 
+    @conditional_reply("connected")
     def reset(self):
         """
         Reset to fully open pistons
@@ -116,6 +123,7 @@ class PearlPCStreamInterface(StreamInterface):
             self._device.last_error_code = 1
         return ""
 
+    @conditional_reply("connected")
     def set_sloop(self, sloop: int):
         """
         Represents binary bit to set loop mode
@@ -133,6 +141,7 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.add_to_dict(value_id="sloop", unvalidated_value=self._device.loop_mode)
         return ""
 
+    @conditional_reply("connected")
     def set_sf(self, seal_fail_value: int):
         """
         Set Seal Fail drop value.
@@ -146,6 +155,7 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.add_to_dict(value_id="sf", unvalidated_value=self._device.seal_fail_value)
         return ""
 
+    @conditional_reply("connected")
     def error_reset(self):
         """
         reset the last error code execpt for code 8 (seal fail)
@@ -157,6 +167,7 @@ class PearlPCStreamInterface(StreamInterface):
             print("ERROR: Cannot reset seal fail")
         return f"Resetting error {self._device.last_error_code}"
 
+    @conditional_reply("connected")
     def set_ra(self, pressure_rate: int):
         """
         Set rate of pressure application in Bar/min
@@ -174,6 +185,7 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.add_to_dict(value_id="ra", unvalidated_value=self._device.pressure_rate)
         return ""
 
+    @conditional_reply("connected")
     def set_mn(self, min_measured: int):
         """
         Set the minimum value before re-servoing.
@@ -187,6 +199,7 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.add_to_dict(value_id="mn", unvalidated_value=self._device.min_value_pre_servoing)
         return ""
 
+    @conditional_reply("connected")
     def set_sp(self, setpoint: int):
         """
         Set a setpoint to be initially reached if the measured pressure exceeds maximum value (mx)
@@ -201,6 +214,7 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.add_to_dict(value_id="sp", unvalidated_value=self._device.setpoint_value)
         return ""
 
+    @conditional_reply("connected")
     def set_mx(self, max_measured: int):
         """
         set the maximum measured value before re-servoing
@@ -220,21 +234,25 @@ class PearlPCStreamInterface(StreamInterface):
         """
         print(f"An error occurred at request {repr(request)} : {repr(error)}")
 
+    @conditional_reply("connected")
     def run(self):
         print("run")
         self._device.run()
         return ""
-    
+
+    @conditional_reply("connected")
     def stop(self):
         print("stop")
         self._device.stop()
         return ""
 
+    @conditional_reply("connected")
     def set_t(self, value):
         print(f"set_transducer  {value}")
         self._device.transducer = value
         return ""
 
+    @conditional_reply("connected")
     def set_th(self, value: int):
         print(f"set_transducer threshold {value}")
         if value < 1 or value > 999:
@@ -242,40 +260,23 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.transducer_difference_threshold = value
         return ""
 
+    @conditional_reply("connected")
     def transducer_reset(self):
         print("transducer_reset")
         return ""
 
+    @conditional_reply("connected")
     def set_algorithm(self, value):
         print(f"set_algorithm {value}")
         self._device.algorithm = value
         return ""
 
+    @conditional_reply("connected")
     def get_dt(self):
         print("get_dt")
         return "Transducer settings"
 
-    def set_dir_error(self, dir, value : int):
-        print(f"set_dir_error {dir}{value}")
-        if dir == "+":
-            self._device.dir_plus = value
-        elif dir == "-":
-            self._device.dir_minus = value
-        else:
-            print(f"ERROR: set_dir_error {dir}{value}")
-        
-        return ""
-
-    def set_hist_offset(self, dir, value : int):
-        print(f"set_hist_offset {dir}{value}")
-        if dir == "+":
-            self._device.offset_plus = value
-        elif dir == "-":
-            self._device.offset_minus = value
-        else:
-            print(f"ERROR: set_hist_offset {dir}{value}")
-        return ""
-
+    @conditional_reply("connected")
     def set_user_stop_limit(self, value: int):
         print(f"set_user_stop_limit {value}")
         if value < 0 or value > 9999:
@@ -283,12 +284,14 @@ class PearlPCStreamInterface(StreamInterface):
         self._device.user_stop_limit = value
         return ""
 
+    @conditional_reply("connected")
     def show_limits(self):
         print("show_limits")
         return f"User +Change +Offset -Change -Offset{self.out_terminator}" \
                f"{self._device.user_stop_limit} {self._device.dir_plus} {self._device.offset_plus} {self._device.dir_minus} {self._device.offset_minus}{self.out_terminator}" \
                f"OK"
-        
+
+    @conditional_reply("connected")
     def get_memory(self, address: int):
         value = 0
         if address < 0 or address > 1023:
@@ -314,3 +317,15 @@ class PearlPCStreamInterface(StreamInterface):
         else:
             print(f"ERROR: read memory error address {address}")
         return f"vr{address:04d} {value}"
+
+    def set_pos_lim(self, value):
+        self._device.dir_plus = value
+
+    def set_neg_lim(self, value):
+        self._device.dir_minus = value
+
+    def set_pos_offset(self, value):
+        self._device.offset_plus = value
+
+    def set_neg_offset(self, value):
+        self._device.offset_minus = value
