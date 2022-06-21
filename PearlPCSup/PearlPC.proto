@@ -4,52 +4,72 @@ InTerminator = "\r\n";
 ReplyTimeout = 2000;
 
 ## read into waveform as device returns 16 integers
+## Waveform reads first 15 elements
+## Last element is read by a redirected %b converter.
 get_st_array {
 	out "st";
 	in "Status Report";
 	in "%*/Inputs$/";
+	in "%d %(\$1INPUTS:_RAW.A)b";
+	in "OK";
+}
+
+## read into waveform as device returns 16 integers
+get_ls_array {
+	out "ls";
+	in "%*/Offset$/";
 	in "%d";
 	in "OK";
 }
 
 set_ra{
-	out "ra%#04d"
+	out "ra%#04d";
+	wait 100;
 }
 
 set_mx{
-	out "mx%#04d"
+	out "mx%#04d";
+	wait 100;
 }
 
 set_mn{
-	out "mn%#04d"
+	out "mn%#04d";
+	wait 100;
 }
 
 set_sp{
-	out "sp%#04d"
+	out "sp%#04d";
+	wait 100;
 }
 
 set_sf{
-	out "sf%#04d"
+	out "sf%#04d";
+	wait 100;
 }
 
 set_si{
-	out "si%#04d"
+	out "si%#04d";
+	wait 100;
 }
 
 set_sd{
-	out "sd%#04d"
+	out "sd%#04d";
+	wait 100;
 }
 
 set_sloop{
-	out "sloop%#01d"
+	out "sloop%#01d";
+	wait 100;
 }
 
 set_user_limit{
-    out "ul%#04d"
+    out "ul%#04d";
+	wait 100;
 }
 
 set_th {
     out "th%#04d";
+	wait 100;
 }
 
 get_id {
@@ -59,15 +79,18 @@ get_id {
 }
 
 reset {
-	out "reset"
+	out "reset";
+	wait 100;
 }
 
 run {
-	out "run"
+	out "run";
+	wait 100;
 }
 
 stop {
-	out "stop"
+	out "stop";
+	wait 100;
 }
 
 ## $1 argument zero padded 4 digits
@@ -78,5 +101,26 @@ get_memory{
 }
 
 reset_error {
-    out "er"
+    out "er";
+	wait 100;
+}
+
+set_pos_lim {
+    out "d+%#04d";
+	wait 100;
+}
+
+set_neg_lim {
+    out "d-%#04d";
+	wait 100;
+}
+
+set_pos_offset {
+    out "o+%#04d";
+	wait 100;
+}
+
+set_neg_offset {
+    out "o-%#04d";
+	wait 100;
 }

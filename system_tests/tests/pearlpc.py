@@ -1,3 +1,4 @@
+import contextlib
 import itertools
 import unittest
 
@@ -22,6 +23,27 @@ IOCS = [
 ]
 
 TEST_MODES = [TestModes.DEVSIM]
+
+
+INPUT_PVS = [
+    "INPUTS:EM_STOP_RELEASED",
+    "INPUTS:CYL_B_LOWLIM",
+    "INPUTS:CYL_B_UPLIM",
+    "INPUTS:CYL_A_LOWLIM",
+    "INPUTS:CYL_A_UPLIM",
+    "INPUTS:PUMP_B_SEL",
+    "INPUTS:INC_PRESSED",
+    "INPUTS:DEC_PRESSED",
+    "INPUTS:AUTO",
+]
+
+LIMIT_PVS = [
+    "USER_LIMIT",
+    "LIMITS:POS_CHANGE",
+    "LIMITS:POS_OFFSET",
+    "LIMITS:NEG_CHANGE",
+    "LIMITS:NEG_OFFSET",
+]
 
 
 class PEARLPCTests(unittest.TestCase):
@@ -126,6 +148,7 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("READY_STATE", "NOT READY")
 
     def start_device_with_parameters(self, min_pres, max_pres, nominal_pres, pres_rate):
+        self.ca.set_pv_value("USER_LIMIT:SP", max_pres)
         self.ca.set_pv_value("MN_PRESSURE:SP", min_pres)
         self.ca.set_pv_value("MX_PRESSURE:SP", max_pres)
         self.ca.set_pv_value("PRESSURE:SP", nominal_pres)
@@ -139,28 +162,6 @@ class PEARLPCTests(unittest.TestCase):
         # now start pumping
         self.ca.set_pv_value("RUN:SP", 1)
         self.ca.assert_that_pv_is("RUN", "Active")
-
-    @parameterized.expand([
-        (50, 25),
-        (50, 75),
-    ])
-    def test_WHEN_device_started_THEN_pressure_increasing_decreasing_set_correctly(self, target_pressure, test_pressure):
-        self.start_device_with_parameters(1, target_pressure + 50, target_pressure, 30)
-        self.ca.assert_that_pv_is("INCREASING_PRESSURE", "Increasing")
-        self.ca.assert_that_pv_is("DECREASING_PRESSURE", "Nominal")
-        # Wait for desired pressure to be achieved. Rate is high so it shouldn't exceed timeout
-        self.ca.assert_that_pv_is("PRESSURE", target_pressure)
-        self.ca.assert_that_pv_is("INCREASING_PRESSURE", "Nominal")
-        self.ca.assert_that_pv_is("DECREASING_PRESSURE", "Nominal")
-        self.start_device_with_parameters(1, test_pressure + 50, test_pressure, 30)
-        test_increase = "Increasing" if test_pressure > target_pressure else "Nominal"
-        test_decrease = "Decreasing" if test_pressure < target_pressure else "Nominal"
-        self.ca.assert_that_pv_is("INCREASING_PRESSURE", test_increase)
-        self.ca.assert_that_pv_is("DECREASING_PRESSURE", test_decrease)
-        # Wait for desired pressure to be achieved. Rate is high so it shouldn't exceed timeout
-        self.ca.assert_that_pv_is("PRESSURE", test_pressure)
-        self.ca.assert_that_pv_is("INCREASING_PRESSURE", "Nominal")
-        self.ca.assert_that_pv_is("DECREASING_PRESSURE", "Nominal")
 
     def test_WHEN_device_started_THEN_pump_and_cell_pressures_change_correctly(self):
         self.lewis.backdoor_run_function_on_device("set_pressures", [1, 3])
@@ -192,16 +193,58 @@ class PEARLPCTests(unittest.TestCase):
 
         diff = cell_pressure - pump_pressure
 
-        self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", diff-1)
-        self.ca.process_pv("SEND_PARAMETERS")
-        self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", diff-1)
-
+        self.ca.assert_setting_setpoint_sets_readback(diff - 1, "PRESSURE_DIFF_THOLD")
         self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", diff)
         self.ca.assert_that_pv_alarm_is("PRESSURE_DIFFERENCE", self.ca.Alarms.MAJOR)
 
-        self.ca.set_pv_value("PRESSURE_DIFF_THOLD:SP", diff + 1)
-        self.ca.process_pv("SEND_PARAMETERS")
-        self.ca.assert_that_pv_is("PRESSURE_DIFF_THOLD", diff + 1)
-
+        self.ca.assert_setting_setpoint_sets_readback(diff + 1, "PRESSURE_DIFF_THOLD")
         self.ca.assert_that_pv_is("PRESSURE_DIFFERENCE", diff)
         self.ca.assert_that_pv_alarm_is("PRESSURE_DIFFERENCE", self.ca.Alarms.NONE)
+
+    def test_WHEN_auto_mode_is_set_THEN_auto_mode_can_be_read_back(self):
+        self.lewis.backdoor_set_on_device("am_mode", 0)
+        self.ca.assert_that_pv_is("INPUTS:AUTO", "Inactive")
+
+        self.lewis.backdoor_set_on_device("am_mode", 1)
+        self.ca.assert_that_pv_is("INPUTS:AUTO", "Active")
+
+    @contextlib.contextmanager
+    def _disconnect_device(self):
+        self.lewis.backdoor_set_on_device("connected", False)
+        try:
+            yield
+        finally:
+            self.lewis.backdoor_set_on_device("connected", True)
+
+    @parameterized.expand(parameterized_list(INPUT_PVS))
+    def test_WHEN_device_disconnected_THEN_inputs_go_into_alarm(self, _, pv):
+        self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
+
+        with self._disconnect_device():
+            self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.INVALID)
+
+        self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
+
+    @parameterized.expand(parameterized_list(LIMIT_PVS))
+    def test_WHEN_limits_are_set_THEN_limits_update(self, _, pv):
+        self.ca.assert_setting_setpoint_sets_readback(42, pv)
+
+    @parameterized.expand(parameterized_list(LIMIT_PVS))
+    def test_WHEN_device_disconnected_THEN_limits_go_into_alarm(self, _, pv):
+        self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
+
+        with self._disconnect_device():
+            self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.INVALID)
+
+        self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
+
+    def test_WHEN_pressure_is_too_high_THEN_reset_is_disabled(self):
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
+        self.ca.assert_that_pv_is("PRESSURE", 99)
+        self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "NO")
+        self.ca.assert_that_pv_is("RESET:SP.DISP", "0")
+
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=101, pres_rate=10)
+        self.ca.assert_that_pv_is("PRESSURE", 101)
+        self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "YES")
+        self.ca.assert_that_pv_is("RESET:SP.DISP", "1")

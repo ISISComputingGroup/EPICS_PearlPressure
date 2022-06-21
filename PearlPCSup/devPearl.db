@@ -34,11 +34,11 @@ record(stringin, "$(P)ID") {
 record(waveform, "$(P)STATUS_ARRAY") {
     field(DESC, "Return status")
     field(DTYP, "stream")
-    field(INP, "@PearlPC.proto get_st_array $(PORT)")
-    field(NELM, "16")
+    field(INP, "@PearlPC.proto get_st_array($(P)) $(PORT)")
+    field(NELM, "15")
     field(SCAN, "1 second")
     field(SDIS, "$(P)DISABLE")
-    field(FTVL, "SHORT")
+    field(FTVL, "LONG")
 }
 
 record(bi, "$(P)EMSTOP"){
@@ -47,6 +47,7 @@ record(bi, "$(P)EMSTOP"){
     field(DTYP, "Soft Channel")
     field(ZNAM, "Inactive")
     field(ONAM, "Active")
+	info(archive, "VAL")
 }
 
 record(bi, "$(P)RUN"){
@@ -55,6 +56,7 @@ record(bi, "$(P)RUN"){
     field(DTYP, "Soft Channel")
     field(ZNAM, "Inactive")
     field(ONAM, "Active")
+	info(archive, "VAL")
 }
 
 record(mbbi, "$(P)RESET"){
@@ -76,6 +78,7 @@ record(bi, "$(P)STOP"){
     field(DTYP, "Soft Channel")
     field(ZNAM, "Running")
     field(ONAM, "Stopped")
+	info(archive, "VAL")
 }
 
 record(bi, "$(P)BUSY"){
@@ -84,6 +87,7 @@ record(bi, "$(P)BUSY"){
     field(DTYP, "Soft Channel")
     field(ZNAM, "Inactive")
     field(ONAM, "Active")
+	info(archive, "VAL")
 }
 
 record(bi, "$(P)HOSTCMD"){
@@ -92,6 +96,7 @@ record(bi, "$(P)HOSTCMD"){
     field(DTYP, "Soft Channel")
     field(ZNAM, "FALSE")
     field(ONAM, "TRUE")
+	info(archive, "VAL")
 }
 
 record(bi, "$(P)MODE"){
@@ -100,6 +105,7 @@ record(bi, "$(P)MODE"){
     field(DTYP, "Soft Channel")
     field(ZNAM, "Manual")
     field(ONAM, "Auto")
+	info(archive, "VAL")
 }
 
 record(bi, "$(P)SERVO"){
@@ -108,6 +114,7 @@ record(bi, "$(P)SERVO"){
     field(DTYP, "Soft Channel")
     field(ZNAM, "Open Loop")
     field(ONAM, "Closed Loop")
+	info(archive, "VAL")
 }
 
 record(bi, "$(P)SF"){
@@ -116,6 +123,7 @@ record(bi, "$(P)SF"){
     field(DTYP, "Soft Channel")
     field(ZNAM, "OK")
     field(ONAM, "Failed")
+	info(archive, "VAL")
 }
 
 record(longin, "$(P)ERRCODE"){
@@ -123,6 +131,7 @@ record(longin, "$(P)ERRCODE"){
     field(INP, "$(P)STATUS_ARRAY.[9] CP MS")
     field(DTYP, "Soft Channel")
     field(FLNK, "$(P)GENERAL_ERROR_CHECK")
+	info(archive, "VAL")
 }
 
 record(longin, "$(P)PRESSURE_RATE"){
@@ -130,6 +139,7 @@ record(longin, "$(P)PRESSURE_RATE"){
     field(INP, "$(P)STATUS_ARRAY.[10] CP MS")
     field(DTYP, "Soft Channel")
     field(EGU, "bar/min")
+	info(archive, "VAL")
 }
 
 record(calc, "$(P)PRESSURE:TIME_TO_TGT"){
@@ -147,6 +157,7 @@ record(longin, "$(P)MN_PRESSURE"){
     field(INP, "$(P)STATUS_ARRAY.[11] CP MS")
     field(DTYP, "Soft Channel")
     field(EGU, "bar")
+	info(archive, "VAL")
 }
 
 record(longin, "$(P)PRESSURE:SP:RBV"){
@@ -154,6 +165,7 @@ record(longin, "$(P)PRESSURE:SP:RBV"){
     field(INP, "$(P)STATUS_ARRAY.[12] CP MS")
     field(DTYP, "Soft Channel")
     field(EGU, "bar")
+	info(archive, "VAL")
 }
 
 record(longin, "$(P)MX_PRESSURE"){
@@ -161,14 +173,107 @@ record(longin, "$(P)MX_PRESSURE"){
     field(INP, "$(P)STATUS_ARRAY.[13] CP MS")
     field(DTYP, "Soft Channel")
     field(EGU, "bar")
+	info(archive, "VAL")
 }
 
 record(longin, "$(P)PRESSURE"){
     field(DESC, "Get Pressure")
     field(INP, "$(P)STATUS_ARRAY.[14] CP MS")
     field(DTYP, "Soft Channel")
-    field(FLNK, "$(P)PRESSURE_COMPARISON")
+    field(FLNK, "$(P)HIGH_PRESSURE_RESET_CHECK")
     field(EGU, "bar")
+	info(archive, "VAL")
+}
+
+record(calc, "$(P)INPUTS:_RAW") {
+    # .A written to from protocol
+    field(INPB, "$(P)STATUS_ARRAY CP MS")
+	field(CALC, "A")
+}
+
+record(mbbiDirect, "$(P)INPUTS") {
+    field(INP, "$(P)INPUTS:_RAW CP MS")
+	# B8 = Emergency Stopped released
+	# B7 = Cylinder B away from lower limit
+	# B6 = Cylinder B away from upper limit
+	# B5 = Cylinder A away from upper limit
+	# B4 = Cylinder A away from lower limit
+	# B3 = Pump B selected
+	# B2 = Decrease Button pressed
+	# B1 = Increase Button pressed
+	# B0 = Auto Mode selected
+}
+
+record(bi, "$(P)INPUTS:EM_STOP_RELEASED") {
+    field(DESC, "Emergency stop released")
+	field(INP, "$(P)INPUTS.B8 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
+}
+
+record(bi, "$(P)INPUTS:CYL_B_LOWLIM") {
+    field(DESC, "Cylinder B away from lower limit")
+	field(INP, "$(P)INPUTS.B7 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
+}
+
+record(bi, "$(P)INPUTS:CYL_B_UPLIM") {
+    field(DESC, "Cylinder B away from upper limit")
+	field(INP, "$(P)INPUTS.B6 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
+}
+
+record(bi, "$(P)INPUTS:CYL_A_LOWLIM") {
+    field(DESC, "Cylinder Aaway from lower limit")
+	field(INP, "$(P)INPUTS.B5 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
+}
+
+record(bi, "$(P)INPUTS:CYL_A_UPLIM") {
+    field(DESC, "Cylinder A away from upper limit")
+	field(INP, "$(P)INPUTS.B4 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
+}
+
+record(bi, "$(P)INPUTS:PUMP_B_SEL") {
+    field(DESC, "Pump B selected")
+	field(INP, "$(P)INPUTS.B3 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
+}
+
+record(bi, "$(P)INPUTS:INC_PRESSED") {
+    field(DESC, "Increase button pressed")
+	field(INP, "$(P)INPUTS.B2 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
+}
+
+record(bi, "$(P)INPUTS:DEC_PRESSED") {
+    field(DESC, "Decrease button pressed")
+	field(INP, "$(P)INPUTS.B1 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
+}
+
+record(bi, "$(P)INPUTS:AUTO") {
+    field(DESC, "Auto mode active")
+	field(INP, "$(P)INPUTS.B0 CP MS")
+	field(ZNAM, "Inactive")
+	field(ONAM, "Active")
+	info(archive, "VAL")
 }
 
 record(longin, "$(P)PRESSURE_CELL"){
@@ -177,6 +282,7 @@ record(longin, "$(P)PRESSURE_CELL"){
     field(DESC, "Get Cell Pressure")
     field(INP, "@PearlPC.proto get_memory(0087) $(PORT)")
     field(EGU, "bar")
+	info(archive, "VAL")
 }
 
 record(longin, "$(P)PRESSURE_PUMP"){
@@ -185,6 +291,7 @@ record(longin, "$(P)PRESSURE_PUMP"){
     field(DESC, "Get Pump Pressure")
     field(INP, "@PearlPC.proto get_memory(0088) $(PORT)")
     field(EGU, "bar")
+	info(archive, "VAL")
 }
 
 record(bo, "$(P)RUN:SP"){
@@ -244,6 +351,7 @@ record(longin, "$(P)SF_PRESSURE"){
     field(DTYP, "stream")
     field(INP, "@PearlPC.proto get_memory(0126) $(PORT)")
     field(EGU, "bar")
+	info(archive, "VAL")
 }
 
 record(longout, "$(P)PRESSURE_RATE:SP"){
@@ -324,7 +432,6 @@ record(fanout, "$(P)SEND_PARAMETERS"){
     field(LNK3, "$(P)MN_PRESSURE:SP:OUT")
     field(LNK4, "$(P)PRESSURE:SP:OUT")
     field(LNK5, "$(P)SERVO:SP:OUT")
-	field(LNK6, "$(P)PRESSURE_DIFF_THOLD:SP:OUT")
     field(SDIS, "$(P)PRESSURE:SP:OUTOFRANGE")
 }
 
@@ -350,49 +457,6 @@ record(calc, "$(P)PRESSURE:OUTOFRANGE"){
     field(CALC, "((A >= B) && (A <= C) && (A <= D)) ? 0 : 1")
 }
 
-record(calc, "$(P)PRESSURE_COMPARISON"){
-    field(DESC, "Compare pressure against previous val")
-    field(CALC, "A - B; B := A")
-    field(INPA, "$(P)PRESSURE CP")
-    field(FLNK, "$(P)PRESSURE_FANOUT")
-    field(SCAN, "Passive")
-}
-
-record(fanout, "$(P)PRESSURE_FANOUT") {
-    field(DESC, "Fanout to decrease and increase calcs")
-    field(LNK1, "$(P)DECREASING_PRESSURE_CHECK")
-    field(LNK2, "$(P)INCREASING_PRESSURE_CHECK")
-    field(LNK3, "$(P)HIGH_PRESSURE_RESET_CHECK")
-}
-
-record(calcout, "$(P)DECREASING_PRESSURE_CHECK") {
-    field(DESC, "Check if pressure is decreasing")
-    field(CALC, "A < 0 ? 1 : 0")
-    field(INPA, "$(P)PRESSURE_COMPARISON")
-    field(FLNK, "$(P)DECREASING_PRESSURE")
-}
-
-record(bi, "$(P)DECREASING_PRESSURE") {
-    field(DESC, "Pressure decreasing")
-    field(ZNAM, "Nominal")
-    field(ONAM, "Decreasing")
-    field(INP,  "$(P)DECREASING_PRESSURE_CHECK")
-}
-
-record(calcout, "$(P)INCREASING_PRESSURE_CHECK") {
-    field(DESC, "Check if pressure is increasing")
-    field(CALC, "A > 0 ? 1 : 0")
-    field(INPA, "$(P)PRESSURE_COMPARISON")
-    field(FLNK, "$(P)INCREASING_PRESSURE")
-}
-
-record(bi, "$(P)INCREASING_PRESSURE") {
-    field(DESC, "Pressure increasing")
-    field(ZNAM, "Nominal")    
-    field(ONAM, "Increasing")  
-    field(INP,  "$(P)INCREASING_PRESSURE_CHECK")
-}
-
 record(calcout, "$(P)HIGH_PRESSURE_RESET_CHECK") {
     field(DESC, "Check if pressure is < 100 bar to reset")
     field(CALC, "(A < 100) ? 0 : 1")
@@ -404,12 +468,20 @@ record(bi, "$(P)RESET_PRESSURE_TOO_HIGH") {
     field(DESC, "Pressure too high to reset")    
     field(ZNAM, "NO")
     field(ONAM, "YES")
+	field(FLNK, "$(P)RESET_PRESSURE_TOO_HIGH:DISP")
+}
+
+record(calcout, "$(P)RESET_PRESSURE_TOO_HIGH:DISP") {
+    field(INPA, "$(P)RESET_PRESSURE_TOO_HIGH")
+	field(CALC, "A")
+	field(OUT, "$(P)RESET:SP.DISP")
 }
 
 record(bo, "$(P)RESET:SP") {
     field(DESC, "Return pistons to open position")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto reset $(PORT)")
+	# .DISP written to by $(P)RESET_PRESSURE_TOO_HIGH:DISP
 }
 
 record(calcout, "$(P)RESET_STATUS") {
@@ -426,8 +498,8 @@ record(calcout, "$(P)READY_STATE_CHECKS") {
     field(INPA, "$(P)RESET CP") # Not restarting must be 0
     field(INPB, "$(P)SF CP") # Not in Seal fail must be 0/RVAl OFF
     field(INPC, "$(P)ERRCODE CP") # General error must be 0
-    field(INPE, "$(P)INCREASING_PRESSURE CP") # Must be 0 - no increase
-    field(INPF, "$(P)DECREASING_PRESSURE CP") # Must be 0 - no decrease
+    field(INPE, "$(P)INPUTS:INC_PRESSED CP") # Must be 0 - not increasing
+    field(INPF, "$(P)INPUTS:DEC_PRESSED CP") # Must be 0 - not decreasing
     field(FLNK, "$(P)READY_STATE")
     field(SDIS, "$(P)DISABLE")
 }
@@ -437,6 +509,7 @@ record(bi, "$(P)READY_STATE") {
     field(INP, "$(P)READY_STATE_CHECKS")
     field(ZNAM, "NOT READY")
     field(ONAM, "READY")
+	info(archive, "VAL")
 }
 
 record(calcout, "$(P)GENERAL_ERROR_CHECK") {
@@ -528,6 +601,7 @@ record(ai, "$(P)PRESSURE_DIFFERENCE") {
 	field(SCAN, "1 second")
 	field(DTYP, "stream")
 	field(INP, "@PearlPC.proto get_memory(0082) $(PORT)")
+	info(archive, "VAL")
 }
 
 record(longin, "$(P)PRESSURE_DIFF_THOLD") {
@@ -536,6 +610,7 @@ record(longin, "$(P)PRESSURE_DIFF_THOLD") {
 	field(DTYP, "stream")
 	field(INP, "@PearlPC.proto get_memory(0081) $(PORT)")
 	field(EGU, "bar")
+	info(archive, "VAL")
 }
 
 record(calcout, "$(P)_PRESSURE_DIFFERENCE_SET_HIHI") {
@@ -546,14 +621,80 @@ record(calcout, "$(P)_PRESSURE_DIFFERENCE_SET_HIHI") {
 
 record(longout, "$(P)PRESSURE_DIFF_THOLD:SP") {
     field(DESC, "Setpoint threshold for pressure diff.")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto set_th $(PORT)")
 	field(EGU, "bar")
-	# Sent to hardware by $(P)SEND_PARAMETERS
 }
 
-record(longout, "$(P)PRESSURE_DIFF_THOLD:SP:OUT"){
+record(waveform, "$(P)LS_ARRAY") {
+    field(DESC, "Limit statuses")
     field(DTYP, "stream")
-    field(OMSL, "closed_loop")
-    field(DOL, "$(P)PRESSURE_DIFF_THOLD:SP")
-    field(OUT, "@PearlPC.proto set_th $(PORT)")
+    field(INP, "@PearlPC.proto get_ls_array $(PORT)")
+    field(NELM, "5")
+    field(SCAN, "1 second")
+    field(SDIS, "$(P)DISABLE")
+    field(FTVL, "LONG")
+}
+
+record(longin, "$(P)USER_LIMIT") {
+    field(DESC, "User limit")
+    field(INP, "$(P)LS_ARRAY.[0] CP MS")
+	field(EGU, "bar")
+	info(archive, "VAL")
+}
+
+record(longin, "$(P)LIMITS:POS_CHANGE") {
+    field(DESC, "Positive change limit")
+    field(INP, "$(P)LS_ARRAY.[1] CP MS")
+	field(EGU, "bar")
+	info(archive, "VAL")
+}
+
+record(longout, "$(P)LIMITS:POS_CHANGE:SP") {
+    field(DESC, "Positive change limit SP")
+	field(OUT, "@PearlPC.proto set_pos_lim $(PORT)")
+	field(DTYP, "stream")
+	field(EGU, "bar")
+}
+
+record(longin, "$(P)LIMITS:POS_OFFSET") {
+    field(DESC, "Positive offset")
+    field(INP, "$(P)LS_ARRAY.[2] CP MS")
+	field(EGU, "bar")
+	info(archive, "VAL")
+}
+
+record(longout, "$(P)LIMITS:POS_OFFSET:SP") {
+    field(DESC, "Positive change offset SP")
+	field(OUT, "@PearlPC.proto set_pos_offset $(PORT)")
+	field(DTYP, "stream")
+	field(EGU, "bar")
+}
+
+record(longin, "$(P)LIMITS:NEG_CHANGE") {
+    field(DESC, "Negative change limit")
+    field(INP, "$(P)LS_ARRAY.[3] CP MS")
+	field(EGU, "bar")
+	info(archive, "VAL")
+}
+
+record(longout, "$(P)LIMITS:NEG_CHANGE:SP") {
+    field(DESC, "Negative change limit SP")
+	field(OUT, "@PearlPC.proto set_neg_lim $(PORT)")
+	field(DTYP, "stream")
+	field(EGU, "bar")
+}
+
+record(longin, "$(P)LIMITS:NEG_OFFSET") {
+    field(DESC, "Negative offset")
+    field(INP, "$(P)LS_ARRAY.[4] CP MS")
+	field(EGU, "bar")
+	info(archive, "VAL")
+}
+
+record(longout, "$(P)LIMITS:NEG_OFFSET:SP") {
+    field(DESC, "Negative change offset SP")
+	field(OUT, "@PearlPC.proto set_neg_offset $(PORT)")
+	field(DTYP, "stream")
 	field(EGU, "bar")
 }
