@@ -318,10 +318,10 @@ record(bo, "$(P)STOP:SP"){
 record(longout, "$(P)USER_LIMIT:SP"){
     field(DESC, "Set User Pressure Limit")
     field(SCAN, "Passive")
-	field(VAL, "$(USER_LIMIT=1000)")
+	field(VAL, "$(USER_LIMIT=1020)")
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_user_limit $(PORT)")
-    field(DRVH, "1000")
+    field(DRVH, "9999")
     field(DRVL, "0")
     field(EGU, "bar")
     field(FLNK, "$(P)PRESSURE:SP:OUTOFRANGE")
@@ -637,6 +637,7 @@ record(longout, "$(P)PRESSURE_DIFF_THOLD:SP") {
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_th $(PORT)")
 	field(EGU, "bar")
+	field(VAL, "1000")
 	info(autosaveFields, "VAL")
 }
 
