@@ -637,7 +637,9 @@ record(longout, "$(P)PRESSURE_DIFF_THOLD:SP") {
     field(DTYP, "stream")
     field(OUT, "@PearlPC.proto set_th $(PORT)")
 	field(EGU, "bar")
-	field(VAL, "1000")
+	field(VAL, "50")
+	field(DRVH, "999")
+	field(DRVL, "1")
 	info(autosaveFields, "VAL")
 }
 
