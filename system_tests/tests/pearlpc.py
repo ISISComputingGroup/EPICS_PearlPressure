@@ -45,6 +45,29 @@ LIMIT_PVS = [
     "LIMITS:NEG_OFFSET",
 ]
 
+ERRORS = [
+    (0, "no error"),
+    (1, "Pressure above safe reset level"),
+    (2, "\\"),
+    (3, ">"),
+    (4, "/"),
+    (5, "non numeric char from host PC"),
+    (6, "EMERGENCY STOPPED"),
+    (7, "Motors at limits"),
+    (8, "Seal Failure"),
+    (9, "Transducer Configuration Error"),
+    (10, "Transducers diff > threshold"),
+    (11, "Transducer problem"),
+    (12, "Pressure above user limit"),
+    (13, "Pressure incr should be decr"),
+    (14, "Pressure decr should be incr"),
+    (15, "READ_2_PRESSURE process stopped"),
+    (16, "MOTOR process has stopped"),
+    (17, "DISPLAY process has stopped"),
+    (18, "PEARL_FG process has stopped"),
+    (19, "MONITOR process has stopped"),
+]
+
 
 class PEARLPCTests(unittest.TestCase):
     """
@@ -134,6 +157,12 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("GENERAL_ERROR", "NO")
         self.lewis.backdoor_run_function_on_device("set_er", [1])
         self.ca.assert_that_pv_is("GENERAL_ERROR", "YES")
+
+    @parameterized.expand(parameterized_list(ERRORS))
+    def test_WHEN_error_occurs_THEN_error_translated_correctly(self, _, code, error):
+        self.lewis.backdoor_run_function_on_device("set_er", [code])
+        self.ca.assert_that_pv_is("ERRCODE", code)
+        self.ca.assert_that_pv_is("LAST_ERR", error, timeout=1)  # Shouldn't be significant delay after previous assert
 
     def test_WHEN_value_set_THEN_status_readback_correctly(self):
         self.ca.set_pv_value("PRESSURE_RATE:SP", 35)
