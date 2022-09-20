@@ -236,21 +236,13 @@ class PEARLPCTests(unittest.TestCase):
         self.lewis.backdoor_set_on_device("am_mode", 1)
         self.ca.assert_that_pv_is("INPUTS:AUTO", "Active")
 
-    @contextlib.contextmanager
-    def _disconnect_device(self):
-        self.lewis.backdoor_set_on_device("connected", False)
-        try:
-            yield
-        finally:
-            self.lewis.backdoor_set_on_device("connected", True)
-
     @parameterized.expand(parameterized_list(INPUT_PVS))
     def test_WHEN_device_disconnected_THEN_inputs_go_into_alarm(self, _, pv):
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
 
-        with self._disconnect_device():
+        with self.lewis.backdoor_simulate_disconnected_device():
             self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.INVALID)
-
+        # Assert alarms clear on reconnection
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
 
     @parameterized.expand(parameterized_list(LIMIT_PVS))
@@ -261,9 +253,9 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_device_disconnected_THEN_limits_go_into_alarm(self, _, pv):
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
 
-        with self._disconnect_device():
+        with self.lewis.backdoor_simulate_disconnected_device():
             self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.INVALID)
-
+        # Assert alarms clear on reconnection
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
 
     def test_WHEN_pressure_is_too_high_THEN_reset_is_disabled(self):
