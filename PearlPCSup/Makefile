@@ -6,6 +6,7 @@ include $(TOP)/configure/CONFIG
 DATA += PearlPC.proto
 
 DB += devPearl.db
+DB += test_pvs.db
 
 #=======================================
 include $(TOP)/configure/RULES

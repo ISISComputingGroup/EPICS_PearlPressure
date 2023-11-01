@@ -1,0 +1,41 @@
+record(bi, "$(INST)CS:MANAGER") {
+    field(DESC, "A substitute manager PV for testing")
+    field(VAL, "1") # By default have manager mode on
+    field(ZNAM, "OFF")
+    field(ONAM, "ON")
+}
+
+record(mbbi, "$(INST)DAE:RUNSTATE") {
+    field(DESC, "A substitute DAE runstate PV for testing")
+    field(VAL, "1") # By default be in setup state
+    field(ZRVL, 0)
+    field(ZRST, "PROCESSING")
+    field(ONVL, 1)
+    field(ONST, "SETUP")
+    field(TWVL, 2)
+    field(TWST, "RUNNING")
+    field(THVL, 3)
+    field(THST, "PAUSED")
+    field(FRVL, 4)
+    field(FRST, "WAITING")
+    field(FVVL, 5)
+    field(FVST, "VETOING")
+    field(SXVL, 6)
+    field(SXST, "ENDING")
+    field(SVVL, 7)
+    field(SVST, "SAVING")
+    field(EIVL, 8)
+    field(EIST, "RESUMING")
+    field(NIVL, 9)
+    field(NIST, "PAUSING")
+    field(TEVL, 10)
+    field(TEST, "BEGINNING")
+    field(ELVL, 11)
+    field(ELST, "ABORTING")
+    field(TVVL, 12)
+    field(TVST, "UPDATING")
+    field(TTVL, 13)
+    field(TTST, "STORING")
+    field(FTVL, 14)
+    field(FTST, "CHANGING")
+}
