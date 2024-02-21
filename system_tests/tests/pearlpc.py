@@ -105,9 +105,8 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.set_pv_value("PRESSURE:SP", 40)
 
     def reset_dae_run_state_and_manager_mode(self):
-        # set DAE state and manager mode to enable writes to potentially locked PVs
+        # set DAE state to enable writes to potentially locked PVs
         self.ca.set_pv_value("DAE:RUNSTATE", "SETUP", prefix=self.ca.host_prefix, wait=True)
-        self.ca.set_pv_value("CS:MANAGER", "ON", prefix=self.ca.host_prefix, wait=True)
 
     @parameterized.expand([
         (True, "set_em_stop_status", 0, 1, 1),
@@ -292,36 +291,31 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("RESET:SP.DISP", "1")
 
     @parameterized.expand(parameterized_list([
-        # DAE state, expect lock on manager mode ON, OFF
-        ("PROCESSING",  True,  True),
-        ("SETUP",      False,  True),
-        ("RUNNING",     True,  True),
-        ("PAUSED",      True,  True),
-        ("WAITING",     True,  True),
-        ("VETOING",     True,  True),
-        ("ENDING",      True,  True),
-        ("SAVING",      True,  True),
-        ("RESUMING",    True,  True),
-        ("PAUSING",     True,  True),
-        ("BEGINNING",   True,  True),
-        ("ABORTING",    True,  True),
-        ("UPDATING",    True,  True),
-        ("STORING",     True,  True),
-        ("CHANGING",    True,  True)
+        # DAE state, expect lock
+        ("PROCESSING",  True),
+        ("SETUP",      False),
+        ("RUNNING",     True),
+        ("PAUSED",      True),
+        ("WAITING",     True),
+        ("VETOING",     True),
+        ("ENDING",      True),
+        ("SAVING",      True),
+        ("RESUMING",    True),
+        ("PAUSING",     True),
+        ("BEGINNING",   True),
+        ("ABORTING",    True),
+        ("UPDATING",    True),
+        ("STORING",     True),
+        ("CHANGING",    True,)
     ]))
-    def test_WHEN_dae_and_manager_mode_in_certain_state_THEN_pvs_locked_accordingly(self, _, dae_state, manager_on_expect_lock, manager_off_expect_lock):
+    def test_WHEN_dae_and_manager_mode_in_certain_state_THEN_pvs_locked_accordingly(self, _, dae_state, expect_lock):
         self.ca.set_pv_value("DAE:RUNSTATE", dae_state, prefix=self.ca.host_prefix)
 
-        self.ca.set_pv_value("CS:MANAGER", "ON", prefix=self.ca.host_prefix)
         for pv in PVS_LOCKED:
-            self.ca.assert_that_pv_is(f"{pv}.DISP", "1" if manager_on_expect_lock else "0")
-
-        self.ca.set_pv_value("CS:MANAGER", "OFF", prefix=self.ca.host_prefix)
-        for pv in PVS_LOCKED:
-            self.ca.assert_that_pv_is(f"{pv}.DISP", "1" if manager_off_expect_lock else "0")
+            self.ca.assert_that_pv_is(f"{pv}.DISP", "1" if expect_lock else "0")
 
     def test_WHEN_pv_locked_THEN_lock_persists(self):
-        self.ca.set_pv_value("CS:MANAGER", "OFF", prefix=self.ca.host_prefix)
+        self.ca.set_pv_value("DAE:RUNSTATE", "RUNNING", prefix=self.ca.host_prefix, wait=True)
 
         for pv in PVS_LOCKED:
             self.ca.set_pv_value(f"{pv}.DISP", "0") # Trying to overwrite lock
