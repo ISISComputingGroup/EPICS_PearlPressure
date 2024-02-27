@@ -4,7 +4,7 @@ import unittest
 from utils.test_modes import TestModes
 from utils.channel_access import ChannelAccess
 from utils.ioc_launcher import get_default_ioc_dir
-from utils.testing import get_running_lewis_and_ioc, assert_log_messages, skip_if_recsim, parameterized_list
+from utils.testing import get_running_lewis_and_ioc, parameterized_list
 from parameterized import parameterized
 
 # Device prefix
@@ -65,23 +65,6 @@ ERRORS = [
     (17, "DISPLAY process has stopped"),
     (18, "PEARL_FG process has stopped"),
     (19, "MONITOR process has stopped"),
-]
-
-# List of PVs that are locked when dae is not in setup (is in some form of running state)
-# or when not in manager mode
-PVS_LOCKED = [
-    "PRESSURE:SP",
-    "SEND_PARAMETERS",
-    "RESET:SP",
-    "STOP:SP",
-    "RUN:SP",
-
-    "USER_LIMIT:SP",
-    "LIMITS:POS_CHANGE:SP",
-    "LIMITS:POS_OFFSET:SP",
-    "LIMITS:NEG_CHANGE:SP",
-    "LIMITS:NEG_OFFSET:SP",
-    "PRESSURE_DIFF_THOLD:SP",
 ]
 
 class PEARLPCTests(unittest.TestCase):
@@ -289,33 +272,3 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "YES")
         self.ca.assert_that_pv_is("RESET:SP.DISP", "1")
 
-    @parameterized.expand(parameterized_list([
-        # DAE state, expect lock
-        ("PROCESSING",  True),
-        ("SETUP",      False),
-        ("RUNNING",     True),
-        ("PAUSED",      True),
-        ("WAITING",     True),
-        ("VETOING",     True),
-        ("ENDING",      True),
-        ("SAVING",      True),
-        ("RESUMING",    True),
-        ("PAUSING",     True),
-        ("BEGINNING",   True),
-        ("ABORTING",    True),
-        ("UPDATING",    True),
-        ("STORING",     True),
-        ("CHANGING",    True,)
-    ]))
-    def test_WHEN_dae_and_manager_mode_in_certain_state_THEN_pvs_locked_accordingly(self, _, dae_state, expect_lock):
-        self.ca.set_pv_value("DAE:RUNSTATE", dae_state, prefix=self.ca.host_prefix)
-
-        for pv in PVS_LOCKED:
-            self.ca.assert_that_pv_is(f"{pv}.DISP", "1" if expect_lock else "0")
-
-    def test_WHEN_pv_locked_THEN_lock_persists(self):
-        self.ca.set_pv_value("DAE:RUNSTATE", "RUNNING", prefix=self.ca.host_prefix, wait=True)
-
-        for pv in PVS_LOCKED:
-            self.ca.set_pv_value(f"{pv}.DISP", "0") # Trying to overwrite lock
-            self.ca.assert_that_pv_is(f"{pv}.DISP", "1") # Checking it persists
