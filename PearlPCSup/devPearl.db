@@ -475,6 +475,7 @@ record(calcout, "$(P)HIGH_PRESSURE_RESET_CHECK") {
     field(CALC, "(A < 100) ? 0 : 1")
     field(INPA, "$(P)PRESSURE")
     field(OUT, "$(P)RESET_PRESSURE_TOO_HIGH PP")
+    field(OUT, "$(P)PURGE_PRESSURE_TOO_HIGH PP")
 }
 
 record(bi, "$(P)RESET_PRESSURE_TOO_HIGH") {
