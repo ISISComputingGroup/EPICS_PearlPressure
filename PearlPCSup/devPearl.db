@@ -507,6 +507,38 @@ record(calcout, "$(P)RESET_STATUS") {
     field(INPA, "$(P)RESET")
 }
 
+
+record(bi, "$(P)PURGE_PRESSURE_TOO_HIGH") {
+    field(DESC, "Pressure too high to purge")    
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+	field(FLNK, "$(P)PRUGE_PRESSURE_TOO_HIGH:DISP")
+}
+
+record(calcout, "$(P)PURGE_PRESSURE_TOO_HIGH:DISP") {
+    field(INPA, "$(P)PURGE_PRESSURE_TOO_HIGH")
+    field(INPB, "$(P)PURGE:SP.DISP")
+	field(CALC, "A#B")
+    field(OCAL, "A")
+    field(OOPT, "When Non-zero")
+    field(DOPT, "Use OCAL")
+	field(OUT, "$(P)PURGE.DISP")
+}
+
+record(bo, "$(P)PURGE") {
+    field(DESC, "Purge")
+    field(DTYP, "stream")
+    field(OUT, "@PearlPC.proto purge $(PORT)")
+    # .DISP written to by $(P)PURGE_PRESSURE_TOO_HIGH:DISP
+}
+
+record(calcout, "$(P)PURGE_STATUS") {
+    field(DESC, "Check if purging is complete")
+    field(CALC, "(A = 1) ? 1 : 0")
+    field(INPA, "$(P)PURGE")
+}
+
+
 record(calcout, "$(P)READY_STATE_CHECKS") {
     field(DESC, "Ready state check validation")
     field(SCAN, "Passive")
