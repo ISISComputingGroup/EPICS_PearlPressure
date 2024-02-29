@@ -81,14 +81,9 @@ class PEARLPCTests(unittest.TestCase):
         self.lewis, self.ioc = get_running_lewis_and_ioc(DEVICE_A_PREFIX, DEVICE_A_PREFIX)
         self.ca = ChannelAccess(default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_A_PREFIX)
         self.lewis.backdoor_run_function_on_device("re_initialise")
-        self.reset_dae_run_state_and_manager_mode()
         self.ca.set_pv_value("MN_PRESSURE:SP", 10)
         self.ca.set_pv_value("MX_PRESSURE:SP", 100)
         self.ca.set_pv_value("PRESSURE:SP", 40)
-
-    def reset_dae_run_state_and_manager_mode(self):
-        # set DAE state to enable writes to potentially locked PVs
-        self.ca.set_pv_value("DAE:RUNSTATE", "SETUP", prefix=self.ca.host_prefix, wait=True)
 
     @parameterized.expand([
         (True, "set_em_stop_status", 0, 1, 1),
