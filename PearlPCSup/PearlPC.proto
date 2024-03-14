@@ -83,8 +83,8 @@ reset {
 	wait 100;
 }
 
-purge {
-	out "pu"
+pu {
+	out "pu";
 	wait 100;
 }
 

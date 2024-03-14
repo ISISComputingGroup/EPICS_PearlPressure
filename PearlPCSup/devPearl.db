@@ -59,8 +59,8 @@ record(bi, "$(P)RUN"){
 	info(archive, "VAL")
 }
 
-record(mbbi, "$(P)RESET"){
-    field(DESC, "Reset stage for each piston")
+record(mbbi, "$(P)STATUS"){
+    field(DESC, "Stage for each piston")
     field(INP, "$(P)STATUS_ARRAY.[2] CP MS")
     field(DTYP, "Soft Channel")
     field(ZRST, "Not Resetting/Purging")
@@ -68,8 +68,28 @@ record(mbbi, "$(P)RESET"){
     field(TWST, "Resetting")
     field(THST, "Purge done")
     field(FRST, "Purging")
-    field(FLNK, "$(P)RESET_STATUS")
+    field(FLNK, "$(P)STATUS_FANOUT")
     # do not need ZRVL etc as soft channel and consecutive integers
+}
+
+record(dfanout, "$(P)STATUS_FANOUT"){
+    field(DESC, "Fanout to send status to")
+    field(SELL, "$(P)STATUS")
+    field(SELM, "All")
+    field(OUTA, "$(P)RESET_STATUS.PROC")
+    field(OUTB, "$(P)RESET.PROC")
+    field(OUTC, "$(P)PURGE_STATUS.PROC")
+}
+
+record(mbbi, "$(P)RESET") {
+    field(DESC, "Alias for RESET record that was renamed to Status")
+    field(INP, "$(P)STATUS")
+    field(DTYP, "Soft Channel")
+    field(ZRST, "Not Resetting/Purging")
+    field(ONST, "Reset complete")
+    field(TWST, "Resetting")
+    field(THST, "Purge done")
+    field(FRST, "Purging")
 }
 
 record(bi, "$(P)STOP"){
@@ -180,9 +200,17 @@ record(longin, "$(P)PRESSURE"){
     field(DESC, "Get Pressure")
     field(INP, "$(P)STATUS_ARRAY.[14] CP MS")
     field(DTYP, "Soft Channel")
-    field(FLNK, "$(P)HIGH_PRESSURE_RESET_CHECK")
+    field(FLNK, "$(P)HIGH_PRESSURE_CHECK_FANOUT")
     field(EGU, "bar")
 	info(archive, "VAL")
+}
+
+record(dfanout, "$(P)HIGH_PRESSURE_CHECK_FANOUT"){
+    field(DESC, "Fanout to forward pressure to pressure check PVs")
+    field(SELL, "$(P)PRESSURE")
+    field(SELM, "All")
+    field(OUTA, "$(P)HIGH_PRESSURE_RESET_CHECK.PROC")
+    field(OUTB, "$(P)HIGH_PRESSURE_PURGE_CHECK.PROC")
 }
 
 record(calc, "$(P)INPUTS:_RAW") {
@@ -475,7 +503,6 @@ record(calcout, "$(P)HIGH_PRESSURE_RESET_CHECK") {
     field(CALC, "(A < 100) ? 0 : 1")
     field(INPA, "$(P)PRESSURE")
     field(OUT, "$(P)RESET_PRESSURE_TOO_HIGH PP")
-    field(OUT, "$(P)PURGE_PRESSURE_TOO_HIGH PP")
 }
 
 record(bi, "$(P)RESET_PRESSURE_TOO_HIGH") {
@@ -505,15 +532,21 @@ record(bo, "$(P)RESET:SP") {
 record(calcout, "$(P)RESET_STATUS") {
     field(DESC, "Check if resetting is complete")
     field(CALC, "(A = 1) ? 1 : 0")
-    field(INPA, "$(P)RESET")
+    field(INPA, "$(P)STATUS")
 }
 
+record(calcout, "$(P)HIGH_PRESSURE_PURGE_CHECK") {
+    field(DESC, "Check if pressure is < 100 bar to reset")
+    field(CALC, "(A < 100) ? 0 : 1")
+    field(INPA, "$(P)PRESSURE")
+    field(OUT, "$(P)PURGE_PRESSURE_TOO_HIGH PP")
+}
 
 record(bi, "$(P)PURGE_PRESSURE_TOO_HIGH") {
     field(DESC, "Pressure too high to purge")    
     field(ZNAM, "NO")
     field(ONAM, "YES")
-	field(FLNK, "$(P)PRUGE_PRESSURE_TOO_HIGH:DISP")
+	field(FLNK, "$(P)PURGE_PRESSURE_TOO_HIGH:DISP")
 }
 
 record(calcout, "$(P)PURGE_PRESSURE_TOO_HIGH:DISP") {
@@ -526,17 +559,17 @@ record(calcout, "$(P)PURGE_PRESSURE_TOO_HIGH:DISP") {
 	field(OUT, "$(P)PURGE.DISP")
 }
 
-record(bo, "$(P)PURGE") {
+record(bo, "$(P)PURGE:SP") {
     field(DESC, "Purge")
     field(DTYP, "stream")
-    field(OUT, "@PearlPC.proto purge $(PORT)")
+    field(OUT, "@PearlPC.proto pu $(PORT)")
     # .DISP written to by $(P)PURGE_PRESSURE_TOO_HIGH:DISP
 }
 
 record(calcout, "$(P)PURGE_STATUS") {
     field(DESC, "Check if purging is complete")
-    field(CALC, "(A = 1) ? 1 : 0")
-    field(INPA, "$(P)PURGE")
+    field(CALC, "(A = 3) ? 1 : 0")
+    field(INPA, "$(P)STATUS")
 }
 
 
@@ -545,7 +578,7 @@ record(calcout, "$(P)READY_STATE_CHECKS") {
     field(SCAN, "Passive")
     field(VAL, "0")
     field(CALC, "(!A && !B && !C && !D && !E && !F)? 1:0")
-    field(INPA, "$(P)RESET CP") # Not restarting must be 0
+    field(INPA, "$(P)STATUS CP") # Not restarting must be 0
     field(INPB, "$(P)SF CP") # Not in Seal fail must be 0/RVAl OFF
     field(INPC, "$(P)ERRCODE CP") # General error must be 0
     field(INPE, "$(P)INPUTS:INC_PRESSED CP") # Must be 0 - not increasing
