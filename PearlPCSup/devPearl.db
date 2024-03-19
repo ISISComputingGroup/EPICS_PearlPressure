@@ -31,6 +31,14 @@ record(stringin, "$(P)ID") {
     field(SDIS, "$(P)DISABLE")
 }
 
+record(stringin, "$(P)FLUID_TYPE"){
+    field(DESC, "Get fluid type")
+    field(DTYP, "stream")
+    field(INP, "@PearlPC.proto get_fluid_type $(PORT)")
+    field(SCAN, "1 second")
+    field(SDIS, "$(P)DISABLE")
+}
+
 record(waveform, "$(P)STATUS_ARRAY") {
     field(DESC, "Return status")
     field(DTYP, "stream")
@@ -556,7 +564,7 @@ record(calcout, "$(P)PURGE_PRESSURE_TOO_HIGH:DISP") {
     field(OCAL, "A")
     field(OOPT, "When Non-zero")
     field(DOPT, "Use OCAL")
-	field(OUT, "$(P)PURGE.DISP")
+	field(OUT, "$(P)PURGE:SP.DISP")
 }
 
 record(bo, "$(P)PURGE:SP") {

@@ -72,10 +72,20 @@ set_th {
 	wait 100;
 }
 
+# get_id_full {
+# 	out "id";
+# 	in "%/[A-Za-z0-9 .]*/";
+# }
+
 get_id {
 	ExtraInput = Ignore;
 	out "id";
 	in "%/[0-9]{4} [0-9]{4}/";
+}
+
+get_fluid_type {
+    out "id";
+    in "%/\s(\w+)$/";
 }
 
 reset {

@@ -54,6 +54,8 @@ class SimulatedPearlPC(StateMachineDevice):
         self.connected = True
 
         self.initial_id_prefix = 1111  # 4 digits
+        # "Oil" or "Pentane", set manually by the inst scientist on the machine
+        self.fluid_type = "pentane"
         self.secondary_id_prefix = 1111  # 4 digits
         self.em_stop_status = 0  # Bool [0-1]
         self.run_bit = 0  # Bool [0-1]
@@ -114,6 +116,9 @@ class SimulatedPearlPC(StateMachineDevice):
 
     def reset(self):
         self.reset_requested = 1
+
+    def get_fluid_type(self):
+        return self.fluid_type
 
     def purge(self):
         self.purge_requested = 1
@@ -211,6 +216,8 @@ class SimulatedPearlPC(StateMachineDevice):
         """
         Set the reset value to represent the 4 stages of resetting the pistons
         @param reset_value: (int) value representing each stage during piston reset - range [0-4]
+
+        but this isnt what the device does, re represents reset reset complete purge purge complete and initial status
         """
         print(f"Received reset phase value: {piston_reset_phase}")
         self.reset_value = piston_reset_phase
@@ -223,8 +230,8 @@ class SimulatedPearlPC(StateMachineDevice):
         @param purge_value: (int) value representing each stage during system purge - range [0-4]
         """
         print(f"Received purge phase value: {purge_value}")
-        self.purge_value = purge_value
-        self.add_to_dict(value_id="pu", unvalidated_value=self.purge_value)
+        self.reset_value = purge_value
+        self.add_to_dict(value_id="re", unvalidated_value=self.reset_value)
 
     def set_stop_bit(self, stop_bit: int):
         """

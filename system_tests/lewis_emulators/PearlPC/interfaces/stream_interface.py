@@ -1,3 +1,4 @@
+import re
 from lewis.adapters.stream import StreamInterface, Cmd
 from lewis.utils.command_builder import CmdBuilder
 from lewis.core.logging import has_log
@@ -9,7 +10,11 @@ class PearlPCStreamInterface(StreamInterface):
     commands = {
         # Get status and id prefixes
         CmdBuilder("get_st").escape("st").eos().build(),
-        CmdBuilder("get_id_prefix").escape("id").eos().build(),
+
+        CmdBuilder("get_id").escape("id").eos().build(),
+        # CmdBuilder("get_id_prefix").escape("get_id").eos().build(),
+        # CmdBuilder("get_fluid_type").escape("get_fluid_type").eos().build(),
+
         # Set ID prefixes
         CmdBuilder("set_si").escape("si").arg(
             "[0-9]{4}", argument_mapping=int).eos().build(),
@@ -90,14 +95,25 @@ class PearlPCStreamInterface(StreamInterface):
                f"OK"
 
     @conditional_reply("connected")
-    def get_id_prefix(self):
+    def get_id(self):
         """
-        Returns ID prefixes (first 2 numbers selectable by the user formatted as: "<IDP_1> <IDP_2>")
+        Returns ID 
         @return: (str) formatted string returning ID prefixes set by default or by user.
         """
         print(
             f"ID prefix set to: {self._device.initial_id_prefix} {self._device.secondary_id_prefix}")
-        return f"{self._device.initial_id_prefix:04d} {self._device.secondary_id_prefix:04d} ISIS PEARL pressure intensifier V2.3"
+
+        return f"{self._device.initial_id_prefix:04d} {self._device.secondary_id_prefix:04d} ISIS PEARL pressure intensifier V2.3 {self._device.fluid_type}"
+
+    @conditional_reply("connected")
+    def set_fluid(self, fluid_type: int):
+        print(f"Fluid type set to: " + self._device.fluid_type)
+        if fluid_type == 1:
+            self._device.fluid_type = "pentane"
+        elif fluid_type == 2:
+            self._device.fluid_type = "oil"
+        else:
+            print("ERROR: invalid fluid type")
 
     @conditional_reply("connected")
     def set_si(self, id_prefix: int):
