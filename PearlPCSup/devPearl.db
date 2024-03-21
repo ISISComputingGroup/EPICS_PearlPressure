@@ -525,7 +525,11 @@ record(bi, "$(P)RESET_PRESSURE_TOO_HIGH") {
 
 record(calcout, "$(P)RESET_PRESSURE_TOO_HIGH:DISP") {
     field(INPA, "$(P)RESET_PRESSURE_TOO_HIGH")
-    field(CALC, "A")
+    field(INPB, "$(P)RESET:SP.DISP")
+	field(CALC, "A#B")
+    field(OCAL, "A")
+    field(OOPT, "When Non-zero")
+    field(DOPT, "Use OCAL")
 	field(OUT, "$(P)RESET:SP.DISP")
 }
 
