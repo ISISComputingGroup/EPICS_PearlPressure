@@ -85,7 +85,7 @@ get_id {
 
 get_fluid_type {
     out "id";
-    in "%/\s(\w+)$/";
+    in "%/(\w+)$/";
 }
 
 reset {

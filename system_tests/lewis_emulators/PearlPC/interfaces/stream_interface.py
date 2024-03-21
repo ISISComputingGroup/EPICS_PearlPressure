@@ -106,14 +106,10 @@ class PearlPCStreamInterface(StreamInterface):
         return f"{self._device.initial_id_prefix:04d} {self._device.secondary_id_prefix:04d} ISIS PEARL pressure intensifier V2.3 {self._device.fluid_type}"
 
     @conditional_reply("connected")
-    def set_fluid(self, fluid_type: int):
+    def set_fluid_type(self, fluid_type: int):
         print(f"Fluid type set to: " + self._device.fluid_type)
-        if fluid_type == 1:
-            self._device.fluid_type = "pentane"
-        elif fluid_type == 2:
-            self._device.fluid_type = "oil"
-        else:
-            print("ERROR: invalid fluid type")
+        self._device.set_fluid_type(fluid_type)
+        return ""
 
     @conditional_reply("connected")
     def set_si(self, id_prefix: int):

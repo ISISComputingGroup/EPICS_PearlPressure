@@ -54,13 +54,12 @@ class SimulatedPearlPC(StateMachineDevice):
         self.connected = True
 
         self.initial_id_prefix = 1111  # 4 digits
-        # "Oil" or "Pentane", set manually by the inst scientist on the machine
+        # "oil" or "pentane", set manually on the machine by the inst scientist
         self.fluid_type = "pentane"
         self.secondary_id_prefix = 1111  # 4 digits
         self.em_stop_status = 0  # Bool [0-1]
         self.run_bit = 0  # Bool [0-1]
         self.reset_value = 0  # [0-4]
-        # self.purge_value
         self.piston_reset_phase = 0
         self.stop_bit = 0  # Bool [0-1]
         self.busy_bit = 0  # Bool [0-1]
@@ -116,6 +115,12 @@ class SimulatedPearlPC(StateMachineDevice):
 
     def reset(self):
         self.reset_requested = 1
+
+    def set_fluid_type(self, fluid_type: int):
+        if fluid_type == 1:
+            self.fluid_type = "oil"
+        elif fluid_type == 2:
+            self.fluid_type = "pentane"
 
     def get_fluid_type(self):
         return self.fluid_type
