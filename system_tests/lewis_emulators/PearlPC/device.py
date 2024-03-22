@@ -221,8 +221,6 @@ class SimulatedPearlPC(StateMachineDevice):
         """
         Set the reset value to represent the 4 stages of resetting the pistons
         @param reset_value: (int) value representing each stage during piston reset - range [0-4]
-
-        but this isnt what the device does, re represents reset reset complete purge purge complete and initial status
         """
         print(f"Received reset phase value: {piston_reset_phase}")
         self.reset_value = piston_reset_phase
@@ -231,8 +229,8 @@ class SimulatedPearlPC(StateMachineDevice):
 
     def set_pu(self, purge_value: int):
         """
-        Set the purge value to represent the 4 stages of purging the system
-        @param purge_value: (int) value representing each stage during system purge - range [0-4]
+        Set the reset value to represent the 2 stages of purging the system
+        @param purge_value: (int) value representing each stage during system purge - [2,4]
         """
         print(f"Received purge phase value: {purge_value}")
         self.reset_value = purge_value

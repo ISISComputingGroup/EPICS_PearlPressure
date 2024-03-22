@@ -92,6 +92,7 @@ record(dfanout, "$(P)STATUS_FANOUT"){
     field(OUTC, "$(P)PURGE_STATUS.PROC")
 }
 
+# kept for backwards compatibility of any that used to use RESET instead of the new STATUS pv
 record(mbbi, "$(P)RESET") {
     field(DESC, "Alias for RESET record that was renamed to Status")
     field(INP, "$(P)STATUS")
@@ -590,7 +591,6 @@ record(calcout, "$(P)PURGE_STATUS") {
     field(CALC, "(A = 3) ? 1 : 0")
     field(INPA, "$(P)STATUS")
 }
-
 
 record(calcout, "$(P)READY_STATE_CHECKS") {
     field(DESC, "Ready state check validation")

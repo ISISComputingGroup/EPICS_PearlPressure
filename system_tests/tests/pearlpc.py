@@ -305,7 +305,6 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "NO")
         self.ca.assert_that_pv_is("RESET:SP.DISP", "0")
         self.ca.set_pv_value("RESET:SP", 1)
-        # self.ca.assert_that_pv_is("RESET:SP.DISP", "1")
         self.ca.assert_that_pv_is("RESET_STATUS", 1)
 
     def test_WHEN_pressure_is_too_high_THEN_purge_is_disabled(self):
@@ -339,5 +338,4 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("PURGE_PRESSURE_TOO_HIGH", "NO")
         self.ca.assert_that_pv_is("PURGE:SP.DISP", "0")
         self.ca.set_pv_value("PURGE:SP", 1)
-        # self.ca.assert_that_pv_is("PURGE:SP.DISP", "1")
         self.ca.assert_that_pv_is("PURGE_STATUS", 1)
