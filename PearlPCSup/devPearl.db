@@ -563,12 +563,16 @@ record(bi, "$(P)PURGE_PRESSURE_TOO_HIGH") {
 
 record(calcout, "$(P)PURGE_PRESSURE_TOO_HIGH:DISP") {
     field(INPA, "$(P)PURGE_PRESSURE_TOO_HIGH")
-    field(INPB, "$(P)PURGE:SP.DISP")
-	field(CALC, "A#B")
-    field(OCAL, "A")
-    field(OOPT, "When Non-zero")
-    field(DOPT, "Use OCAL")
-	field(OUT, "$(P)PURGE:SP.DISP")
+	field(CALC, "A")
+	field(OUT, "$(P)PURGE_CHECK PP")
+}
+
+record(calcout, "$(P)PURGE_CHECK") {
+    field(DESC, "Check if purging can occur")
+    field(INPA, "$(P)PURGE_PRESSURE_TOO_HIGH:DISP")
+    field(INPB, "$(P)PURGE_FLUID_TYPE_INCORRECT")
+    field(CALC, "A || B")
+    field(OUT, "$(P)PURGE:SP.DISP")
 }
 
 # fluid type should be 2 for pentane to allow purging
@@ -576,7 +580,7 @@ record (calcout, "$(P)PURGE_FLUID_TYPE_INCORRECT") {
     field(DESC, "Check if fluid type is incorrect")
     field(CALC, "A == 2 ? 0 : 1")
     field(INPA, "$(P)FLUID_TYPE")
-    field(OUT, "$(P)PURGE:SP.DISP")
+    field(OUT, "$(P)PURGE:CHECK PP")
 }
 
 record(bo, "$(P)PURGE:SP") {

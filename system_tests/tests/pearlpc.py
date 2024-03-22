@@ -160,6 +160,9 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("RESET_STATUS", 1)
 
     def test_WHEN_purge_bit_value_set_THEN_purge_bit_value_read_back_correctly_HIGH_PRESSURE(self):
+        self.lewis.backdoor_run_function_on_device(
+            "set_fluid_type", [2])
+        self.ca.set_pv_value("FLUID_TYPE", "pentane")
         self.ca.set_pv_value("PRESSURE:SP", 35)
         self.ca.process_pv("SEND_PARAMETERS")
         self.ca.assert_that_pv_is("PRESSURE:SP:RBV", 35)
