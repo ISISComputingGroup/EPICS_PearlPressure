@@ -78,8 +78,18 @@ get_id {
 	in "%/[0-9]{4} [0-9]{4}/";
 }
 
+get_fluid_type {
+    out "id";
+    in "%/(\w+)$/";
+}
+
 reset {
 	out "reset";
+	wait 100;
+}
+
+pu {
+	out "pu";
 	wait 100;
 }
 
