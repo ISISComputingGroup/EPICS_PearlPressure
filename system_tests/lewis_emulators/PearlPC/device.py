@@ -1,13 +1,11 @@
-import time
-import threading
-from lewis.devices import StateMachineDevice
-from lewis.core import approaches
-from .states import DefaultState
 from collections import OrderedDict
+
+from lewis.devices import StateMachineDevice
+
+from .states import DefaultState
 
 
 class SimulatedPearlPC(StateMachineDevice):
-
     def _initialize_data(self, status_dictionary=None):
         if status_dictionary is None:
             status_dictionary = {}
@@ -29,11 +27,11 @@ class SimulatedPearlPC(StateMachineDevice):
 
     def _get_state_handlers(self):
         return {
-            'default': DefaultState(),
+            "default": DefaultState(),
         }
 
     def _get_initial_state(self):
-        return 'default'
+        return "default"
 
     def _get_transition_handlers(self):
         return OrderedDict([])
@@ -41,25 +39,25 @@ class SimulatedPearlPC(StateMachineDevice):
     def re_initialise(self):
         self.connected = True
 
-        self.initial_id_prefix = 1111 # 4 digits
-        self.secondary_id_prefix = 1111 # 4 digits
+        self.initial_id_prefix = 1111  # 4 digits
+        self.secondary_id_prefix = 1111  # 4 digits
         self.em_stop_status = 0  # Bool [0-1]
         self.run_bit = 0  # Bool [0-1]
-        self.reset_value = 0 # [0-4]
+        self.reset_value = 0  # [0-4]
         self.piston_reset_phase = 0
         self.stop_bit = 0  # Bool [0-1]
         self.busy_bit = 0  # Bool [0-1]
         self.go_status = 0
-        self.am_mode = 1 # auto mode (run from host) rather than manual
+        self.am_mode = 1  # auto mode (run from host) rather than manual
         self.loop_mode = 0  # Bool [0-1]
         self.seal_fail_value = 0
-        self.seal_fail_status = 0 # set to 1 if sudden pressure drop more than seal_fail_value
+        self.seal_fail_status = 0  # set to 1 if sudden pressure drop more than seal_fail_value
         self.last_error_code = 0
         self.pressure_rate = 0
         self.min_value_pre_servoing = 0
         self.setpoint_value = 0
         self.max_value_pre_servoing = 0
-        self.inputs = 0 # a 9 digit number like 111111001 showing input status
+        self.inputs = 0  # a 9 digit number like 111111001 showing input status
         self.cell_pressure = 0
         self.pump_pressure = 0
         self.transducer_difference_threshold = 2
@@ -75,7 +73,7 @@ class SimulatedPearlPC(StateMachineDevice):
         self.run_requested = 0
         self.stop_requested = 0
         self.reset_requested = 0
-        self.ramping = 0 # ramping to setpoint as opposed to closed loop stabilisation?
+        self.ramping = 0  # ramping to setpoint as opposed to closed loop stabilisation?
 
     def get_pressure(self):
         value = 0.0
@@ -96,13 +94,13 @@ class SimulatedPearlPC(StateMachineDevice):
 
     def stop(self):
         self.stop_requested = 1
-    
+
     def reset(self):
         self.reset_requested = 1
-    
+
     def run(self):
         self.run_requested = 1
-    
+
     def poller(self):
         self.inputs = int("011110000") + int("000000001") * self.am_mode
         if self.reset_requested:
@@ -135,7 +133,7 @@ class SimulatedPearlPC(StateMachineDevice):
             self.last_error_code = 12
             self.stop_requested = 1
 
-# need to do closed loop better
+    # need to do closed loop better
     def running(self):
         pressure = self.get_pressure()
         if self.ramping == 1:
@@ -149,12 +147,12 @@ class SimulatedPearlPC(StateMachineDevice):
                 incr = self.pressure_rate
             if pressure < self.setpoint_value:
                 self.pump_pressure = self.pump_pressure + incr
-                self.cell_pressure = self.pump_pressure # for simplicity
+                self.cell_pressure = self.pump_pressure  # for simplicity
             else:
                 self.pump_pressure = self.pump_pressure - incr
-                self.cell_pressure = self.pump_pressure # for simplicity
-        
-        # if self.loop_mode == 1:    maintain between min_value_pre_servoing and max_value_pre_servoing             
+                self.cell_pressure = self.pump_pressure  # for simplicity
+
+        # if self.loop_mode == 1:    maintain between min_value_pre_servoing and max_value_pre_servoing
 
         if abs(self.cell_pressure - self.pump_pressure) > self.transducer_difference_threshold:
             self.last_error_code = 10
@@ -218,7 +216,7 @@ class SimulatedPearlPC(StateMachineDevice):
         print(f"Received seal fail bit {sf_status}")
         self.seal_fail_status = sf_status
         self.add_to_dict(value_id="sf_status", unvalidated_value=self.seal_fail_status)
-    
+
     def set_go(self, go_status: int):
         """
         Set GO status to to 1 if system was initiated by host.
