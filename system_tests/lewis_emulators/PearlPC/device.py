@@ -1,9 +1,8 @@
-import time
-import threading
-from lewis.devices import StateMachineDevice
-from lewis.core import approaches
-from .states import DefaultState
 from collections import OrderedDict
+
+from lewis.devices import StateMachineDevice
+
+from .states import DefaultState
 
 
 class SimulatedPearlPC(StateMachineDevice):
