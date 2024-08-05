@@ -67,6 +67,7 @@ ERRORS = [
     (19, "MONITOR process has stopped"),
 ]
 
+
 class PEARLPCTests(unittest.TestCase):
     """
     General Unit tests for the PEARLPC_01.
@@ -79,29 +80,34 @@ class PEARLPCTests(unittest.TestCase):
         self.default_id_prefix = 1111
         self.low_pressure = 50
         self.lewis, self.ioc = get_running_lewis_and_ioc(DEVICE_A_PREFIX, DEVICE_A_PREFIX)
-        self.ca = ChannelAccess(default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_A_PREFIX)
+        self.ca = ChannelAccess(
+            default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_A_PREFIX
+        )
         self.lewis.backdoor_run_function_on_device("re_initialise")
         self.ca.set_pv_value("MN_PRESSURE:SP", 10)
         self.ca.set_pv_value("MX_PRESSURE:SP", 100)
         self.ca.set_pv_value("PRESSURE:SP", 40)
 
-    @parameterized.expand([
-        (True, "set_em_stop_status", 0, 1, 1),
-        (True, "set_ru", 1, 1, 1),
-        (True, "set_re", 2, 1, 1),
-        (True, "set_stop_bit", 3, 1, 1),
-        (True, "set_by", 4, 1, 1),
-        (True, "set_go", 5, 1, 1),
-        (True, "set_am", 6, 1, 1),
-        (False, "SERVO", 7, "Closed Loop", 1),
-        (True, "set_sf_status", 8, 1, 1),        
-        (True, "set_er", 9, 1, 1),
-        (False, "PRESSURE_RATE", 10, 35, 35),
-        (False, "MN_PRESSURE", 11, 36, 36),
-        (False, "MX_PRESSURE", 13, 48, 48)
-    ])
-    def test_WHEN_pv_set_THEN_pv_and_buffer_readback_correctly(self, emulator_backdoor, target, buffer_location,
-                                                               setpoint_value, buffer_value):
+    @parameterized.expand(
+        [
+            (True, "set_em_stop_status", 0, 1, 1),
+            (True, "set_ru", 1, 1, 1),
+            (True, "set_re", 2, 1, 1),
+            (True, "set_stop_bit", 3, 1, 1),
+            (True, "set_by", 4, 1, 1),
+            (True, "set_go", 5, 1, 1),
+            (True, "set_am", 6, 1, 1),
+            (False, "SERVO", 7, "Closed Loop", 1),
+            (True, "set_sf_status", 8, 1, 1),
+            (True, "set_er", 9, 1, 1),
+            (False, "PRESSURE_RATE", 10, 35, 35),
+            (False, "MN_PRESSURE", 11, 36, 36),
+            (False, "MX_PRESSURE", 13, 48, 48),
+        ]
+    )
+    def test_WHEN_pv_set_THEN_pv_and_buffer_readback_correctly(
+        self, emulator_backdoor, target, buffer_location, setpoint_value, buffer_value
+    ):
         # If true, target is the backdoor function. If false its a pv record
         if emulator_backdoor:
             self.lewis.backdoor_run_function_on_device(target, [setpoint_value])
@@ -160,7 +166,9 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_error_occurs_THEN_error_translated_correctly(self, _, code, error):
         self.lewis.backdoor_run_function_on_device("set_er", [code])
         self.ca.assert_that_pv_is("ERRCODE", code)
-        self.ca.assert_that_pv_is("LAST_ERR", error, timeout=1)  # Shouldn't be significant delay after previous assert
+        self.ca.assert_that_pv_is(
+            "LAST_ERR", error, timeout=1
+        )  # Shouldn't be significant delay after previous assert
 
     def test_WHEN_value_set_THEN_status_readback_correctly(self):
         self.ca.set_pv_value("PRESSURE_RATE:SP", 35)
@@ -202,7 +210,9 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("PRESSURE_PUMP", 25)
 
     @parameterized.expand(parameterized_list(itertools.product([99, 88], [44, 55])))
-    def test_WHEN_difference_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, cell_pressure, pump_pressure):
+    def test_WHEN_difference_set_on_hardware_THEN_can_be_read_back_by_ioc(
+        self, _, cell_pressure, pump_pressure
+    ):
         self.lewis.backdoor_run_function_on_device("set_pressures", [pump_pressure, cell_pressure])
         self.ca.assert_that_pv_is("PRESSURE_DIFF", cell_pressure - pump_pressure)
 
@@ -266,4 +276,3 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("PRESSURE", 101)
         self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "YES")
         self.ca.assert_that_pv_is("RESET:SP.DISP", "1")
-
