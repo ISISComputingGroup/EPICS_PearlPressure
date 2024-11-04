@@ -55,19 +55,20 @@ class PearlPCStreamInterface(StreamInterface):
     in_terminator = "\r"
     out_terminator = "\r\n"
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     @conditional_reply("connected")
-    def get_st(self):
+    def get_st(self) -> str:
         """
         Get the device status on request
-        @return: (str) A formatted string containing all set device parameters describing current device status.
+        @return: (str) A formatted string containing all
+        set device parameters describing current device status.
         """
         self._device.poller()
         return (
             f"Status Report{self.out_terminator}"
-            f"Em Ru Re St By Go AM sl sf Er   ra    mn    sp    mx  Press    Inputs{self.out_terminator}"
+            f"Em Ru Re St By Go AM sl sf Er   ra    mn    sp    mx  Press    Inputs{self.out_terminator}"  # noqa: E501
             f"{self._device.em_stop_status} "
             f"{self._device.run_bit} "
             f"{self._device.reset_value} "
@@ -88,7 +89,7 @@ class PearlPCStreamInterface(StreamInterface):
         )
 
     @conditional_reply("connected")
-    def get_id(self):
+    def get_id(self) -> str:
         """
         Returns ID
         @return: (str) formatted string returning ID prefixes set by default or by user.
@@ -97,15 +98,15 @@ class PearlPCStreamInterface(StreamInterface):
             f"ID prefix set to: {self._device.initial_id_prefix} {self._device.secondary_id_prefix}"
         )
 
-        return f"\r\n{self._device.initial_id_prefix:04d} {self._device.secondary_id_prefix:04d} ISIS PEARL INTENSIFIER CONTROLLER V2.4 {self._device.fluid_type}\r\n\n"
+        return f"\r\n{self._device.initial_id_prefix:04d} {self._device.secondary_id_prefix:04d} ISIS PEARL INTENSIFIER CONTROLLER V2.4 {self._device.fluid_type}\r\n\n"  # noqa: E501
 
     @conditional_reply("connected")
-    def set_fluid_type(self, fluid_type: int):
+    def set_fluid_type(self, fluid_type: int) -> None:
         self._device.set_fluid_type(fluid_type)
-        print(f"Fluid type set to: " + self._device.fluid_type)
+        print("Fluid type set to: " + self._device.fluid_type)
 
     @conditional_reply("connected")
-    def set_si(self, id_prefix: int):
+    def set_si(self, id_prefix: int) -> str:
         """
         Set initial ID Prefix. ID should form a unique number for each unit.
         The ID allows for communication with each associated unit.
@@ -120,7 +121,7 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def set_sd(self, secondary_id_prefix: int):
+    def set_sd(self, secondary_id_prefix: int) -> str:
         """
         Set Secondary ID Prefix. ID should form a unique number for each unit.
         ID allows for communication with each associated unit.
@@ -135,7 +136,7 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def reset(self):
+    def reset(self) -> str:
         """
         Reset to fully open pistons
         """
@@ -148,12 +149,12 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def purge(self):
+    def purge(self) -> str:
         """
         Reset to fully open pistons
         """
         if self._device.get_pressure() < 100:
-            print(f"starting purge")
+            print("starting purge")
             self._device.purge()  # set phase to purging, this starts purge
         else:
             print("ERROR: cannot purge as pressure too high")
@@ -161,13 +162,14 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def set_sloop(self, sloop: int):
+    def set_sloop(self, sloop: int) -> str:
         """
         Represents binary bit to set loop mode
         0 = open loop mode
         1 = close loop mode
-        Open loop mode ramps to pressure in control system and then stop until anther command is sent.
-        Close loop mode will ramp to setpoint pressure value and remain active monitoring delivered pressure,
+        Open loop mode ramps to pressure in control system and then stop til anther command is sent.
+        Close loop mode will ramp to setpoint pressure value and
+        remain active monitoring delivered pressure,
         acting on mn and mx pressure values.
         @param sloop: (int) integer value setting system to open or closed loop - range [0-1]
         """
@@ -179,7 +181,7 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def set_sf(self, seal_fail_value: int):
+    def set_sf(self, seal_fail_value: int) -> str:
         """
         Set Seal Fail drop value.
         Sets the pressure drop required to trigger Seal Fail mode.
@@ -193,7 +195,7 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def error_reset(self):
+    def error_reset(self) -> str:
         """
         reset the last error code execpt for code 8 (seal fail)
         """
@@ -205,7 +207,7 @@ class PearlPCStreamInterface(StreamInterface):
         return f"Resetting error {self._device.last_error_code}"
 
     @conditional_reply("connected")
-    def set_ra(self, pressure_rate: int):
+    def set_ra(self, pressure_rate: int) -> str:
         """
         Set rate of pressure application in Bar/min
         A value of 0000 will be used to represent maximum slew rate of the motor.
@@ -223,7 +225,7 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def set_mn(self, min_measured: int):
+    def set_mn(self, min_measured: int) -> str:
         """
         Set the minimum value before re-servoing.
         This will only be acted upon in closed loop mode.
@@ -239,7 +241,7 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def set_sp(self, setpoint: int):
+    def set_sp(self, setpoint: int) -> str:
         """
         Set a setpoint to be initially reached if the measured pressure exceeds maximum value (mx)
         or falls below minimum value (mn) and the servo loop is closed.
@@ -254,7 +256,7 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def set_mx(self, max_measured: int):
+    def set_mx(self, max_measured: int) -> str:
         """
         set the maximum measured value before re-servoing
         @param max_measured: (integer) maximum measured value before re-servoing - range [0001-9999]
@@ -268,7 +270,7 @@ class PearlPCStreamInterface(StreamInterface):
         )
         return ""
 
-    def handle_error(self, request: object, error: object):
+    def handle_error(self, request: object, error: object) -> None:
         """
         Return any errors which have occurred when sending requests to device.
         @return: (str) Formatted error message
@@ -276,25 +278,25 @@ class PearlPCStreamInterface(StreamInterface):
         print(f"An error occurred at request {repr(request)} : {repr(error)}")
 
     @conditional_reply("connected")
-    def run(self):
+    def run(self) -> str:
         print("run")
         self._device.run()
         return ""
 
     @conditional_reply("connected")
-    def stop(self):
+    def stop(self) -> str:
         print("stop")
         self._device.stop()
         return ""
 
     @conditional_reply("connected")
-    def set_t(self, value):
+    def set_t(self, value: int) -> str:
         print(f"set_transducer  {value}")
         self._device.transducer = value
         return ""
 
     @conditional_reply("connected")
-    def set_th(self, value: int):
+    def set_th(self, value: int) -> str:
         print(f"set_transducer threshold {value}")
         if value < 1 or value > 999:
             print("ERROR: invalid th value")
@@ -302,23 +304,23 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def transducer_reset(self):
+    def transducer_reset(self) -> str:
         print("transducer_reset")
         return ""
 
     @conditional_reply("connected")
-    def set_algorithm(self, value):
+    def set_algorithm(self, value: str) -> str:
         print(f"set_algorithm {value}")
         self._device.algorithm = value
         return ""
 
     @conditional_reply("connected")
-    def get_dt(self):
+    def get_dt(self) -> str:
         print("get_dt")
         return "Transducer settings"
 
     @conditional_reply("connected")
-    def set_user_stop_limit(self, value: int):
+    def set_user_stop_limit(self, value: int) -> str:
         print(f"set_user_stop_limit {value}")
         if value < 0 or value > 9999:
             print("ERROR: set_user_stop_limit")
@@ -326,16 +328,16 @@ class PearlPCStreamInterface(StreamInterface):
         return ""
 
     @conditional_reply("connected")
-    def show_limits(self):
+    def show_limits(self) -> str:
         print("show_limits")
         return (
             f"User +Change +Offset -Change -Offset{self.out_terminator}"
-            f"{self._device.user_stop_limit} {self._device.dir_plus} {self._device.offset_plus} {self._device.dir_minus} {self._device.offset_minus}{self.out_terminator}"
+            f"{self._device.user_stop_limit} {self._device.dir_plus} {self._device.offset_plus} {self._device.dir_minus} {self._device.offset_minus}{self.out_terminator}"  # noqa: E501
             f"OK"
         )
 
     @conditional_reply("connected")
-    def get_memory(self, address: int):
+    def get_memory(self, address: int) -> str:
         value = 0
         if address < 0 or address > 1023:
             print("ERROR: show memory address")
@@ -361,18 +363,18 @@ class PearlPCStreamInterface(StreamInterface):
             print(f"ERROR: read memory error address {address}")
         return f"vr{address:04d} {value}"
 
-    def set_pos_lim(self, value):
+    def set_pos_lim(self, value: str) -> str:
         self._device.dir_plus = value
         return ""
 
-    def set_neg_lim(self, value):
+    def set_neg_lim(self, value: str) -> str:
         self._device.dir_minus = value
         return ""
 
-    def set_pos_offset(self, value):
+    def set_pos_offset(self, value: str) -> str:
         self._device.offset_plus = value
         return ""
 
-    def set_neg_offset(self, value):
+    def set_neg_offset(self, value: str) -> str:
         self._device.offset_minus = value
         return ""
