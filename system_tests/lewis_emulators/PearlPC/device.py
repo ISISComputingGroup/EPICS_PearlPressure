@@ -11,6 +11,7 @@ class RESET_STATUS(Enum):
     """
     Enum class for the reset status of the device
     """
+
     NOT_RESETTING_OR_PURGING = 0
     RESET_COMPLETE = 1
     RESETTING = 2
@@ -19,7 +20,6 @@ class RESET_STATUS(Enum):
 
 
 class SimulatedPearlPC(StateMachineDevice):
-
     def _initialize_data(self, status_dictionary=None):
         if status_dictionary is None:
             status_dictionary = {}
@@ -41,11 +41,11 @@ class SimulatedPearlPC(StateMachineDevice):
 
     def _get_state_handlers(self):
         return {
-            'default': DefaultState(),
+            "default": DefaultState(),
         }
 
     def _get_initial_state(self):
-        return 'default'
+        return "default"
 
     def _get_transition_handlers(self):
         return OrderedDict([])
@@ -106,8 +106,7 @@ class SimulatedPearlPC(StateMachineDevice):
             value = min(self.pump_pressure, self.cell_pressure)
         elif self.algorithm[:1] == "w" and len(self.algorithm) == 3:
             weight = float(self.algorithm[1:3]) / 100.0
-            value = weight * self.cell_pressure + \
-                (1.0 - weight) * self.pump_pressure
+            value = weight * self.cell_pressure + (1.0 - weight) * self.pump_pressure
         return int(value)
 
     def stop(self):
@@ -121,7 +120,7 @@ class SimulatedPearlPC(StateMachineDevice):
             self.fluid_type = "Oil"
         elif fluid_type == 2:
             self.fluid_type = "Pentane"
-        else: 
+        else:
             self.fluid_type = "Not Set"
 
     def get_fluid_type(self):
@@ -174,7 +173,7 @@ class SimulatedPearlPC(StateMachineDevice):
             self.last_error_code = 12
             self.stop_requested = 1
 
-# need to do closed loop better
+    # need to do closed loop better
     def running(self):
         pressure = self.get_pressure()
         if self.ramping == 1:
@@ -226,8 +225,7 @@ class SimulatedPearlPC(StateMachineDevice):
         """
         print(f"Received reset phase value: {piston_reset_phase}")
         self.reset_value = piston_reset_phase
-        self.add_to_dict(
-            value_id="re", unvalidated_value=self.piston_reset_phase)
+        self.add_to_dict(value_id="re", unvalidated_value=self.piston_reset_phase)
 
     def set_pu(self, purge_value: int):
         """
@@ -266,8 +264,7 @@ class SimulatedPearlPC(StateMachineDevice):
         """
         print(f"Received seal fail bit {sf_status}")
         self.seal_fail_status = sf_status
-        self.add_to_dict(value_id="sf_status",
-                         unvalidated_value=self.seal_fail_status)
+        self.add_to_dict(value_id="sf_status", unvalidated_value=self.seal_fail_status)
 
     def set_go(self, go_status: int):
         """

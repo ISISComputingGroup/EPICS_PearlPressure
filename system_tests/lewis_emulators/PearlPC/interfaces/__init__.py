@@ -1,3 +1,3 @@
 from .stream_interface import PearlPCStreamInterface
 
-__all__ = ['PearlPCStreamInterface']
+__all__ = ["PearlPCStreamInterface"]

@@ -79,43 +79,44 @@ class PEARLPCTests(unittest.TestCase):
         self.default_initial_value = 0
         self.default_id_prefix = 1111
         self.low_pressure = 50
-        self.lewis, self.ioc = get_running_lewis_and_ioc(
-            DEVICE_A_PREFIX, DEVICE_A_PREFIX)
+        self.lewis, self.ioc = get_running_lewis_and_ioc(DEVICE_A_PREFIX, DEVICE_A_PREFIX)
         self.ca = ChannelAccess(
-            default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_A_PREFIX)
+            default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_A_PREFIX
+        )
         self.lewis.backdoor_run_function_on_device("re_initialise")
         self.ca.set_pv_value("MN_PRESSURE:SP", 10)
         self.ca.set_pv_value("MX_PRESSURE:SP", 100)
         self.ca.set_pv_value("PRESSURE:SP", 40)
 
-    @parameterized.expand([
-        (True, "set_em_stop_status", 0, 1, 1),
-        (True, "set_ru", 1, 1, 1),
-        (True, "set_pu", 2, 3, 3),
-        (True, "set_re", 2, 1, 1),
-        (True, "set_stop_bit", 3, 1, 1),
-        (True, "set_by", 4, 1, 1),
-        (True, "set_go", 5, 1, 1),
-        (True, "set_am", 6, 1, 1),
-        (False, "SERVO", 7, "Closed Loop", 1),
-        (True, "set_sf_status", 8, 1, 1),
-        (True, "set_er", 9, 1, 1),
-        (False, "PRESSURE_RATE", 10, 35, 35),
-        (False, "MN_PRESSURE", 11, 36, 36),
-        (False, "MX_PRESSURE", 13, 48, 48)
-    ])
-    def test_WHEN_pv_set_THEN_pv_and_buffer_readback_correctly(self, emulator_backdoor, target, buffer_location,
-                                                               setpoint_value, buffer_value):
+    @parameterized.expand(
+        [
+            (True, "set_em_stop_status", 0, 1, 1),
+            (True, "set_ru", 1, 1, 1),
+            (True, "set_pu", 2, 3, 3),
+            (True, "set_re", 2, 1, 1),
+            (True, "set_stop_bit", 3, 1, 1),
+            (True, "set_by", 4, 1, 1),
+            (True, "set_go", 5, 1, 1),
+            (True, "set_am", 6, 1, 1),
+            (False, "SERVO", 7, "Closed Loop", 1),
+            (True, "set_sf_status", 8, 1, 1),
+            (True, "set_er", 9, 1, 1),
+            (False, "PRESSURE_RATE", 10, 35, 35),
+            (False, "MN_PRESSURE", 11, 36, 36),
+            (False, "MX_PRESSURE", 13, 48, 48),
+        ]
+    )
+    def test_WHEN_pv_set_THEN_pv_and_buffer_readback_correctly(
+        self, emulator_backdoor, target, buffer_location, setpoint_value, buffer_value
+    ):
         # If true, target is the backdoor function. If false its a pv record
         if emulator_backdoor:
-            self.lewis.backdoor_run_function_on_device(
-                target, [setpoint_value])
+            self.lewis.backdoor_run_function_on_device(target, [setpoint_value])
         else:
             self.ca.set_pv_value("{}:SP".format(target), setpoint_value)
             self.ca.process_pv("SEND_PARAMETERS")
             self.ca.assert_that_pv_is(target, setpoint_value)
-        self.ca.assert_that_pv_is(
-            "STATUS_ARRAY.[{}]".format(buffer_location), buffer_value)
+        self.ca.assert_that_pv_is("STATUS_ARRAY.[{}]".format(buffer_location), buffer_value)
 
     # pressure needs to be handled separately to above
     def test_WHEN_pv_set_THEN_pv_and_buffer_readback_correctly_pressure(self):
@@ -133,14 +134,12 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("ID_D:SP", self.pressure_value)
 
     def test_WHEN_id_prefixes_not_set_THEN_default_id_prefixes_read_back_correctly(self):
-        self.ca.assert_that_pv_is(
-            "ID", f"{self.default_id_prefix} {self.default_id_prefix}")
+        self.ca.assert_that_pv_is("ID", f"{self.default_id_prefix} {self.default_id_prefix}")
 
     def test_WHEN_id_prefixes_set_THEN_id_prefixes_read_back_correctly(self):
         self.ca.set_pv_value("ID_I:SP", self.pressure_value)
         self.ca.set_pv_value("ID_D:SP", self.pressure_value)
-        self.ca.assert_that_pv_is(
-            "ID", f"{self.pressure_value:04d} {self.pressure_value:04d}")
+        self.ca.assert_that_pv_is("ID", f"{self.pressure_value:04d} {self.pressure_value:04d}")
 
     def test_WHEN_pressure_set_lower_than_drvl_field_THEN_read_back_correctly(self):
         self.ca.set_pv_value("MN_PRESSURE:SP", 10)
@@ -160,8 +159,7 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("RESET_STATUS", 1)
 
     def test_WHEN_purge_bit_value_set_THEN_purge_bit_value_read_back_correctly_HIGH_PRESSURE(self):
-        self.lewis.backdoor_run_function_on_device(
-            "set_fluid_type", [2])
+        self.lewis.backdoor_run_function_on_device("set_fluid_type", [2])
         self.ca.set_pv_value("FLUID_TYPE", "Pentane")
         self.ca.set_pv_value("PRESSURE:SP", 35)
         self.ca.process_pv("SEND_PARAMETERS")
@@ -193,14 +191,15 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.set_pv_value("RESET:SP", 1)
         self.ca.assert_that_pv_is("READY_STATE", "NOT READY")
 
-    def start_device_with_parameters(self, min_pres, max_pres, nominal_pres, pres_rate, fluid_type=2):
+    def start_device_with_parameters(
+        self, min_pres, max_pres, nominal_pres, pres_rate, fluid_type=2
+    ):
         self.ca.set_pv_value("USER_LIMIT:SP", max_pres)
         self.ca.set_pv_value("MN_PRESSURE:SP", min_pres)
         self.ca.set_pv_value("MX_PRESSURE:SP", max_pres)
         self.ca.set_pv_value("PRESSURE:SP", nominal_pres)
         self.ca.set_pv_value("PRESSURE_RATE:SP", pres_rate)
-        self.lewis.backdoor_run_function_on_device(
-            "set_fluid_type", [fluid_type])
+        self.lewis.backdoor_run_function_on_device("set_fluid_type", [fluid_type])
         self.ca.assert_that_pv_is("SEND_PARAMETERS.DISP", "0")
         self.ca.process_pv("SEND_PARAMETERS")
         self.ca.assert_that_pv_is("PRESSURE:SP:RBV", nominal_pres)
@@ -229,11 +228,11 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("PRESSURE_PUMP", 25)
 
     @parameterized.expand(parameterized_list(itertools.product([99, 88], [44, 55])))
-    def test_WHEN_difference_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, cell_pressure, pump_pressure):
-        self.lewis.backdoor_run_function_on_device(
-            "set_pressures", [pump_pressure, cell_pressure])
-        self.ca.assert_that_pv_is(
-            "PRESSURE_DIFF", cell_pressure - pump_pressure)
+    def test_WHEN_difference_set_on_hardware_THEN_can_be_read_back_by_ioc(
+        self, _, cell_pressure, pump_pressure
+    ):
+        self.lewis.backdoor_run_function_on_device("set_pressures", [pump_pressure, cell_pressure])
+        self.ca.assert_that_pv_is("PRESSURE_DIFF", cell_pressure - pump_pressure)
 
     @parameterized.expand(parameterized_list([1, 999]))
     def test_WHEN_difference_threshold_set_on_hardware_THEN_can_be_read_back_by_ioc(self, _, val):
@@ -244,18 +243,15 @@ class PEARLPCTests(unittest.TestCase):
         pump_pressure = 100
         cell_pressure = 200
 
-        self.lewis.backdoor_run_function_on_device(
-            "set_pressures", [pump_pressure, cell_pressure])
+        self.lewis.backdoor_run_function_on_device("set_pressures", [pump_pressure, cell_pressure])
 
         diff = cell_pressure - pump_pressure
 
-        self.ca.assert_setting_setpoint_sets_readback(
-            diff - 1, "PRESSURE_DIFF_THOLD")
+        self.ca.assert_setting_setpoint_sets_readback(diff - 1, "PRESSURE_DIFF_THOLD")
         self.ca.assert_that_pv_is("PRESSURE_DIFF", diff)
         self.ca.assert_that_pv_alarm_is("PRESSURE_DIFF", self.ca.Alarms.MAJOR)
 
-        self.ca.assert_setting_setpoint_sets_readback(
-            diff + 1, "PRESSURE_DIFF_THOLD")
+        self.ca.assert_setting_setpoint_sets_readback(diff + 1, "PRESSURE_DIFF_THOLD")
         self.ca.assert_that_pv_is("PRESSURE_DIFF", diff)
         self.ca.assert_that_pv_alarm_is("PRESSURE_DIFF", self.ca.Alarms.NONE)
 
@@ -289,21 +285,18 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
 
     def test_WHEN_pressure_is_too_high_THEN_reset_is_disabled(self):
-        self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
         self.ca.assert_that_pv_is("PRESSURE", 99)
         self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "NO")
         self.ca.assert_that_pv_is("RESET:SP.DISP", "0")
 
-        self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=101, pres_rate=10)
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=101, pres_rate=10)
         self.ca.assert_that_pv_is("PRESSURE", 101)
         self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "YES")
         self.ca.assert_that_pv_is("RESET:SP.DISP", "1")
 
     def test_WHEN_pressure_is_okay_THEN_reset_works_correctly(self):
-        self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
         self.ca.assert_that_pv_is("PRESSURE", 99)
         self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "NO")
         self.ca.assert_that_pv_is("RESET:SP.DISP", "0")
@@ -311,14 +304,12 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("RESET_STATUS", 1)
 
     def test_WHEN_pressure_is_too_high_THEN_purge_is_disabled(self):
-        self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
         self.ca.assert_that_pv_is("PRESSURE", 99)
         self.ca.assert_that_pv_is("PURGE_PRESSURE_TOO_HIGH", "NO")
         self.ca.assert_that_pv_is("PURGE:SP.DISP", "0")
 
-        self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=101, pres_rate=10)
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=101, pres_rate=10)
         self.ca.assert_that_pv_is("PRESSURE", 101)
         self.ca.assert_that_pv_is("PURGE_PRESSURE_TOO_HIGH", "YES")
         self.ca.assert_that_pv_is("PURGE:SP.DISP", "1")
@@ -326,13 +317,13 @@ class PEARLPCTests(unittest.TestCase):
     @parameterized.expand(parameterized_list([0, 1]))
     def test_WHEN_fluid_type_is_oil_or_not_set_THEN_purge_is_disabled(self, _, fluid_type):
         self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10, fluid_type=fluid_type)
+            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10, fluid_type=fluid_type
+        )
         self.ca.assert_that_pv_is("PURGE_FLUID_TYPE_INCORRECT", 1)
         self.ca.assert_that_pv_is("PURGE:SP.DISP", "1")
 
     def test_WHEN_pressure_is_okay_THEN_purge_works_correctly(self):
-        self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
         self.ca.assert_that_pv_is("PRESSURE", 99)
         self.ca.assert_that_pv_is("PURGE_PRESSURE_TOO_HIGH", "NO")
         self.ca.assert_that_pv_is("PURGE:SP.DISP", "0")
