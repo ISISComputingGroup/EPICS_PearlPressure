@@ -1,8 +1,3 @@
-import time
-import threading
-from lewis.devices import StateMachineDevice
-from lewis.core import approaches
-from .states import DefaultState
 from collections import OrderedDict
 from enum import Enum
 
@@ -17,6 +12,11 @@ class RESET_STATUS(Enum):
     RESETTING = 2
     PURGE_DONE = 3
     PURGING = 4
+
+
+from lewis.devices import StateMachineDevice
+
+from .states import DefaultState
 
 
 class SimulatedPearlPC(StateMachineDevice):

@@ -1,7 +1,6 @@
-import re
-from lewis.adapters.stream import StreamInterface, Cmd
-from lewis.utils.command_builder import CmdBuilder
+from lewis.adapters.stream import StreamInterface
 from lewis.core.logging import has_log
+from lewis.utils.command_builder import CmdBuilder
 from lewis.utils.replies import conditional_reply
 
 
@@ -141,7 +140,7 @@ class PearlPCStreamInterface(StreamInterface):
         Reset to fully open pistons
         """
         if self._device.get_pressure() < 100:
-            print(f"starting reset")
+            print("starting reset")
             self._device.reset()  # set phase to resetting, this starts reset
         else:
             print("ERROR: cannot reset as pressure too high")

@@ -642,7 +642,7 @@ record(waveform, "$(P)ERROR_MSGS")
     field(NELM, "20")
     field(INP, ["no error", 
                 "Pressure above safe reset level",
-                "\\\\",
+                "\\",
                 ">",
                 "/",
                 "non numeric char from host PC",

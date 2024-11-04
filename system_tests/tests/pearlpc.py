@@ -1,11 +1,11 @@
 import itertools
 import unittest
 
-from utils.test_modes import TestModes
+from parameterized import parameterized
 from utils.channel_access import ChannelAccess
 from utils.ioc_launcher import get_default_ioc_dir
+from utils.test_modes import TestModes
 from utils.testing import get_running_lewis_and_ioc, parameterized_list
-from parameterized import parameterized
 
 # Device prefix
 DEVICE_A_PREFIX = "PEARLPC_01"
@@ -176,8 +176,9 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_error_occurs_THEN_error_translated_correctly(self, _, code, error):
         self.lewis.backdoor_run_function_on_device("set_er", [code])
         self.ca.assert_that_pv_is("ERRCODE", code)
-        # Shouldn't be significant delay after previous assert
-        self.ca.assert_that_pv_is("LAST_ERR", error, timeout=1)
+        self.ca.assert_that_pv_is(
+            "LAST_ERR", error, timeout=1
+        )  # Shouldn't be significant delay after previous assert
 
     def test_WHEN_value_set_THEN_status_readback_correctly(self):
         self.ca.set_pv_value("PRESSURE_RATE:SP", 35)
