@@ -162,7 +162,7 @@ class PEARLPCTests(unittest.TestCase):
     def test_WHEN_purge_bit_value_set_THEN_purge_bit_value_read_back_correctly_HIGH_PRESSURE(self):
         self.lewis.backdoor_run_function_on_device(
             "set_fluid_type", [2])
-        self.ca.set_pv_value("FLUID_TYPE", "pentane")
+        self.ca.set_pv_value("FLUID_TYPE", "Pentane")
         self.ca.set_pv_value("PRESSURE:SP", 35)
         self.ca.process_pv("SEND_PARAMETERS")
         self.ca.assert_that_pv_is("PRESSURE:SP:RBV", 35)
@@ -208,11 +208,11 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("MX_PRESSURE", max_pres)
         self.ca.assert_that_pv_is("PRESSURE_RATE", pres_rate)
         if fluid_type == 1:
-            self.ca.assert_that_pv_is("FLUID_TYPE", "oil")
+            self.ca.assert_that_pv_is("FLUID_TYPE", "Oil")
         elif fluid_type == 2:
-            self.ca.assert_that_pv_is("FLUID_TYPE", "pentane")
+            self.ca.assert_that_pv_is("FLUID_TYPE", "Pentane")
         else:
-            self.ca.assert_that_pv_is("FLUID_TYPE", "unknown")
+            self.ca.assert_that_pv_is("FLUID_TYPE", "Not Set")
         # now start pumping
         self.ca.set_pv_value("RUN:SP", 1)
         self.ca.assert_that_pv_is("RUN", "Active")
@@ -323,14 +323,10 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("PURGE_PRESSURE_TOO_HIGH", "YES")
         self.ca.assert_that_pv_is("PURGE:SP.DISP", "1")
 
-    def test_WHEN_fluid_type_is_oil_THEN_purge_is_disabled(self):
+    @parameterized.expand(parameterized_list([0, 1]))
+    def test_WHEN_fluid_type_is_oil_or_not_set_THEN_purge_is_disabled(self, _, fluid_type):
         self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10, fluid_type=2)
-        self.ca.assert_that_pv_is("PURGE_FLUID_TYPE_INCORRECT", 0)
-        self.ca.assert_that_pv_is("PURGE:SP.DISP", "0")
-
-        self.start_device_with_parameters(
-            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10, fluid_type=1)
+            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10, fluid_type=fluid_type)
         self.ca.assert_that_pv_is("PURGE_FLUID_TYPE_INCORRECT", 1)
         self.ca.assert_that_pv_is("PURGE:SP.DISP", "1")
 

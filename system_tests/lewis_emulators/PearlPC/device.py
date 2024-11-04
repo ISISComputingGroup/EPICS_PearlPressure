@@ -55,7 +55,7 @@ class SimulatedPearlPC(StateMachineDevice):
 
         self.initial_id_prefix = 1111  # 4 digits
         # "oil" or "pentane", set manually on the machine by the inst scientist
-        self.fluid_type = "pentane"
+        self.fluid_type = "Pentane"
         self.secondary_id_prefix = 1111  # 4 digits
         self.em_stop_status = 0  # Bool [0-1]
         self.run_bit = 0  # Bool [0-1]
@@ -118,9 +118,11 @@ class SimulatedPearlPC(StateMachineDevice):
 
     def set_fluid_type(self, fluid_type: int):
         if fluid_type == 1:
-            self.fluid_type = "oil"
+            self.fluid_type = "Oil"
         elif fluid_type == 2:
-            self.fluid_type = "pentane"
+            self.fluid_type = "Pentane"
+        else: 
+            self.fluid_type = "Not Set"
 
     def get_fluid_type(self):
         return self.fluid_type

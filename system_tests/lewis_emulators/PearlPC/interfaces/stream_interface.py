@@ -10,7 +10,8 @@ class PearlPCStreamInterface(StreamInterface):
     commands = {
         # Get status and id prefixes
         CmdBuilder("get_st").escape("st").eos().build(),
-        CmdBuilder("get_id").escape("id").eos().build(),
+        # ID deliberately does not append .eos() as it uses weird terminators
+        CmdBuilder("get_id").escape("id").build(),
         # Set ID prefixes
         CmdBuilder("set_si").escape("si").arg(
             "[0-9]{4}", argument_mapping=int).eos().build(),
@@ -99,7 +100,7 @@ class PearlPCStreamInterface(StreamInterface):
         print(
             f"ID prefix set to: {self._device.initial_id_prefix} {self._device.secondary_id_prefix}")
 
-        return f"{self._device.initial_id_prefix:04d} {self._device.secondary_id_prefix:04d} ISIS PEARL pressure intensifier V2.3 {self._device.fluid_type}"
+        return f"\r\n{self._device.initial_id_prefix:04d} {self._device.secondary_id_prefix:04d} ISIS PEARL INTENSIFIER CONTROLLER V2.4 {self._device.fluid_type}\r\n\n"
 
     @conditional_reply("connected")
     def set_fluid_type(self, fluid_type: int):
