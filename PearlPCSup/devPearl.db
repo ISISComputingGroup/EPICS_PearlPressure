@@ -37,8 +37,8 @@ record(mbbi, "$(P)FLUID_TYPE"){
     field(INP, "@PearlPC.proto get_fluid_type $(PORT)")
     field(SCAN, "1 second")
     field(ZRST, "Not Set")
-    field(ONST, "oil")
-    field(TWST, "pentane")
+    field(ONST, "Oil")
+    field(TWST, "Pentane")
     field(FLNK, "$(P)PURGE_FLUID_TYPE_INCORRECT")
 }
 
@@ -94,7 +94,7 @@ record(dfanout, "$(P)STATUS_FANOUT"){
 
 # kept for backwards compatibility of any that used to use RESET instead of the new STATUS pv
 record(mbbi, "$(P)RESET") {
-    field(DESC, "Alias for RESET record that was renamed to Status")
+    field(DESC, "Alias for RESET - renamed to Status")
     field(INP, "$(P)STATUS")
     field(DTYP, "Soft Channel")
     field(ZRST, "Not Resetting/Purging")
@@ -218,7 +218,7 @@ record(longin, "$(P)PRESSURE"){
 }
 
 record(dfanout, "$(P)HIGH_PRESSURE_CHECK_FANOUT"){
-    field(DESC, "Fanout to forward pressure to pressure check PVs")
+    field(DESC, "Forw. pres to pres check PVs")
     field(SELL, "$(P)PRESSURE")
     field(SELM, "All")
     field(OUTA, "$(P)HIGH_PRESSURE_RESET_CHECK.PROC")
