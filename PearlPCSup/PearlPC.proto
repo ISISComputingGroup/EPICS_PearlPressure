@@ -73,13 +73,24 @@ set_th {
 }
 
 get_id {
-	ExtraInput = Ignore;
 	out "id";
-	in "%/[0-9]{4} [0-9]{4}/";
+	InTerminator = CR LF LF;
+	in CR LF "%/[0-9]{4} [0-9]{4}/ ISIS PEARL INTENSIFIER CONTROLLER V%*f %*{Not Set|Oil|Pentane}";
+}
+
+get_fluid_type {
+    out "id";
+	InTerminator = CR LF LF;
+    in CR LF "%*d %*d ISIS PEARL INTENSIFIER CONTROLLER V%*f %{Not Set|Oil|Pentane}";
 }
 
 reset {
 	out "reset";
+	wait 100;
+}
+
+pu {
+	out "pu";
 	wait 100;
 }
 

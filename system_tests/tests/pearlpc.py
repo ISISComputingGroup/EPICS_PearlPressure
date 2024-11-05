@@ -92,6 +92,7 @@ class PEARLPCTests(unittest.TestCase):
         [
             (True, "set_em_stop_status", 0, 1, 1),
             (True, "set_ru", 1, 1, 1),
+            (True, "set_pu", 2, 3, 3),
             (True, "set_re", 2, 1, 1),
             (True, "set_stop_bit", 3, 1, 1),
             (True, "set_by", 4, 1, 1),
@@ -157,6 +158,15 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.set_pv_value("RESET:SP", 1)
         self.ca.assert_that_pv_is("RESET_STATUS", 1)
 
+    def test_WHEN_purge_bit_value_set_THEN_purge_bit_value_read_back_correctly_HIGH_PRESSURE(self):
+        self.lewis.backdoor_run_function_on_device("set_fluid_type", [2])
+        self.ca.set_pv_value("FLUID_TYPE", "Pentane")
+        self.ca.set_pv_value("PRESSURE:SP", 35)
+        self.ca.process_pv("SEND_PARAMETERS")
+        self.ca.assert_that_pv_is("PRESSURE:SP:RBV", 35)
+        self.ca.set_pv_value("PURGE:SP", 1)
+        self.ca.assert_that_pv_is("PURGE_STATUS", 1)
+
     def test_WHEN_General_error_occurs_THEN_general_error_readback_correctly(self):
         self.ca.assert_that_pv_is("GENERAL_ERROR", "NO")
         self.lewis.backdoor_run_function_on_device("set_er", [1])
@@ -182,18 +192,27 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.set_pv_value("RESET:SP", 1)
         self.ca.assert_that_pv_is("READY_STATE", "NOT READY")
 
-    def start_device_with_parameters(self, min_pres, max_pres, nominal_pres, pres_rate):
+    def start_device_with_parameters(
+        self, min_pres, max_pres, nominal_pres, pres_rate, fluid_type=2
+    ):
         self.ca.set_pv_value("USER_LIMIT:SP", max_pres)
         self.ca.set_pv_value("MN_PRESSURE:SP", min_pres)
         self.ca.set_pv_value("MX_PRESSURE:SP", max_pres)
         self.ca.set_pv_value("PRESSURE:SP", nominal_pres)
         self.ca.set_pv_value("PRESSURE_RATE:SP", pres_rate)
+        self.lewis.backdoor_run_function_on_device("set_fluid_type", [fluid_type])
         self.ca.assert_that_pv_is("SEND_PARAMETERS.DISP", "0")
         self.ca.process_pv("SEND_PARAMETERS")
         self.ca.assert_that_pv_is("PRESSURE:SP:RBV", nominal_pres)
         self.ca.assert_that_pv_is("MN_PRESSURE", min_pres)
         self.ca.assert_that_pv_is("MX_PRESSURE", max_pres)
         self.ca.assert_that_pv_is("PRESSURE_RATE", pres_rate)
+        if fluid_type == 1:
+            self.ca.assert_that_pv_is("FLUID_TYPE", "Oil")
+        elif fluid_type == 2:
+            self.ca.assert_that_pv_is("FLUID_TYPE", "Pentane")
+        else:
+            self.ca.assert_that_pv_is("FLUID_TYPE", "Not Set")
         # now start pumping
         self.ca.set_pv_value("RUN:SP", 1)
         self.ca.assert_that_pv_is("RUN", "Active")
@@ -276,3 +295,38 @@ class PEARLPCTests(unittest.TestCase):
         self.ca.assert_that_pv_is("PRESSURE", 101)
         self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "YES")
         self.ca.assert_that_pv_is("RESET:SP.DISP", "1")
+
+    def test_WHEN_pressure_is_okay_THEN_reset_works_correctly(self):
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
+        self.ca.assert_that_pv_is("PRESSURE", 99)
+        self.ca.assert_that_pv_is("RESET_PRESSURE_TOO_HIGH", "NO")
+        self.ca.assert_that_pv_is("RESET:SP.DISP", "0")
+        self.ca.set_pv_value("RESET:SP", 1)
+        self.ca.assert_that_pv_is("RESET_STATUS", 1)
+
+    def test_WHEN_pressure_is_too_high_THEN_purge_is_disabled(self):
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
+        self.ca.assert_that_pv_is("PRESSURE", 99)
+        self.ca.assert_that_pv_is("PURGE_PRESSURE_TOO_HIGH", "NO")
+        self.ca.assert_that_pv_is("PURGE:SP.DISP", "0")
+
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=101, pres_rate=10)
+        self.ca.assert_that_pv_is("PRESSURE", 101)
+        self.ca.assert_that_pv_is("PURGE_PRESSURE_TOO_HIGH", "YES")
+        self.ca.assert_that_pv_is("PURGE:SP.DISP", "1")
+
+    @parameterized.expand(parameterized_list([0, 1]))
+    def test_WHEN_fluid_type_is_oil_or_not_set_THEN_purge_is_disabled(self, _, fluid_type):
+        self.start_device_with_parameters(
+            min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10, fluid_type=fluid_type
+        )
+        self.ca.assert_that_pv_is("PURGE_FLUID_TYPE_INCORRECT", 1)
+        self.ca.assert_that_pv_is("PURGE:SP.DISP", "1")
+
+    def test_WHEN_pressure_is_okay_THEN_purge_works_correctly(self):
+        self.start_device_with_parameters(min_pres=1, max_pres=500, nominal_pres=99, pres_rate=10)
+        self.ca.assert_that_pv_is("PRESSURE", 99)
+        self.ca.assert_that_pv_is("PURGE_PRESSURE_TOO_HIGH", "NO")
+        self.ca.assert_that_pv_is("PURGE:SP.DISP", "0")
+        self.ca.set_pv_value("PURGE:SP", 1)
+        self.ca.assert_that_pv_is("PURGE_STATUS", 1)
